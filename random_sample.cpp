@@ -9,7 +9,8 @@ class RandomSampleVertex : public poplar::MultiVertex {
 
     // Compute function
     bool compute(unsigned workerId) {
-        for (std::size_t i = workerId * (over_sampling_factor - 1); i < local_list.size(); i += MultiVertex::numWorkers()) {
+        auto increment_by = MultiVertex::numWorkers * over_sampling_factor;
+        for (std::size_t i = workerId * (over_sampling_factor - 1); i < local_list.size(); i += increment_by) {
             sampled_list[i / over_sampling_factor] = local_list[i];
         }
         return true;
