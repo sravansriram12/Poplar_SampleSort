@@ -2,6 +2,13 @@
 #include <poplar/Engine.hpp>
 #include <poplar/Graph.hpp>
 #include <poplar/IPUModel.hpp>
+#include <poplar/DeviceManager.hpp>
+#include <algorithm>
+#include <cmath>
+#include <fstream>
+#include <iostream>
+#include <limits>
+#include <memory>
 #include <stdlib.h>
 #include <string>
 #include <vector>
@@ -82,13 +89,6 @@ int main() {
                 engineOpts);
   engine.load(device);
   engine.connectStream("initial_list", input_list.data());
-
-  // Add step to execute the compute set
-  prog.add(Execute(computeSet));
-
-  // Create the engine
-  Engine engine(graph, prog);
-  engine.load(device);
 
   // Run the control program
   std::cout << "Running program\n";
