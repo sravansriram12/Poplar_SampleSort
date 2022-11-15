@@ -94,7 +94,7 @@ int main() {
   prog.add(Copy(in_stream_list, initial_list));
   prog.add(Execute(computeSet));
   unsigned dim = 0;
-  popops::sortInPlace(graph, full_sampled, dim, prog);
+  Tensor sorted = popops::sort(graph, full_sampled, dim, prog);
   prog.add(PrintTensor("initial_list", initial_list));
   prog.add(PrintTensor("full_sampled_list", full_sampled));
 
