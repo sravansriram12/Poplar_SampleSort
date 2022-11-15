@@ -65,7 +65,6 @@ int main() {
   ComputeSet computeSet = graph.addComputeSet("computeSet");
 
   // Create a control program that is a sequence of steps
-  Sequence prog;
 
   auto input_list = std::vector<int>(n);
   auto output_list = std::vector<int>(n);
@@ -91,7 +90,7 @@ int main() {
   prog.add(Copy(in_stream_list, initial_list));
   prog.add(PrintTensor("initial_list", initial_list));
   prog.add(Execute(computeSet));
-  prog.add(PrintTensor("full_sampled_list"), full_sampled);
+  prog.add(PrintTensor("full_sampled_list", full_sampled));
 
   Engine engine(graph, prog);
   engine.load(device);
