@@ -58,14 +58,17 @@ int main() {
 
   // Create the Graph object
   Graph graph(device);
+  Sequence prog;
 
   // Add codelets to the graph
   graph.addCodelets("random_sample.cpp");
+  ComputeSet computeSet = graph.addComputeSet("computeSet");
 
   // Create a control program that is a sequence of steps
   Sequence prog;
 
   auto input_list = std::vector<int>(n);
+  auto output_list = std::vector<int>(n);
 
   for (unsigned idx = 0; idx < n; ++idx) {
     input_list[idx] = rand();
@@ -73,20 +76,24 @@ int main() {
 
   // Set up data streams to copy data in and out of graph
   Tensor initial_list = graph.addVariable(INT, {p, local_list_size}, "initial_list");
-  graph.setTileMapping(initial_list, p + 1);
-
-  /*Tensor full_sampled = graph.addVariable(INT, {p * k}, "full_sampled");
-  graph.setTileMapping(initial_list, p + 1);
+  Tensor full_sampled = graph.addVariable(INT, {p * k}, "full_sampled");
   graph.setTileMapping(full_sampled, p + 1);
-  for (unsigned idx = 0; idx < n; idx++) {
-        list[idx] = rand();
+
+  for (unsigned processor = 0; processor < p; processor++) {
+    graph.setTileMapping(initial_list[processor], processor);
+    VertexRef vtx = graph.addVertex(computeSet, "RandomSampleVertex");
+    graph.connect(vtx["local_list"], initial_list[processor]);
+    graph.connect(vtx["sampled_list"], full_sampled.slice(i * k, (i + 1) * k));
   }
-  ComputeSet computeSet = graph.addComputeSet("computeSet"); */
 
   auto in_stream_list = graph.addHostToDeviceFIFO("initial_list", INT, n);
 
-  Engine engine(graph,
-                Sequence({Copy(in_stream_list, initial_list)}));
+  prog.add(Copy(in_stream_list, initial_list));
+  prog.add(PrintTensor("initial_list", initial_list));
+  prog.add(Execute(computeSet));
+  prog.add(PrintTensor("full_sampled_list"), full_sampled);
+
+  Engine engine(graph, prog);
   engine.load(device);
   engine.connectStream("initial_list", input_list.data());
 
@@ -97,9 +104,3 @@ int main() {
 
   return 0;
 }
-
-/*
-VertexRef vtx = graph.addVertex(computeSet, "RandomSampleVertex");
-graph.connect(vtx["local_list"], variableI);
-graph.connect(vtx["out"], full_sampled.slice(i * k, (i + 1) * k));
-graph.setTileMapping(vtx, i); */
