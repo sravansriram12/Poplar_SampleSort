@@ -5,6 +5,7 @@
 #include <poplar/DeviceManager.hpp>
 #include <popops/TopK.hpp>
 #include <popops/SortOrder.hpp>
+#include <popops/codelets.hpp>
 #include <algorithm>
 #include <cmath>
 #include <fstream>
