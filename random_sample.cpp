@@ -1,5 +1,4 @@
 #include <poplar/Vertex.hpp>
-#include <stdlib.h>
 
 class RandomSampleVertex : public poplar::MultiVertex {
     public:
@@ -9,9 +8,8 @@ class RandomSampleVertex : public poplar::MultiVertex {
 
     // Compute function
     bool compute(unsigned workerId) {
-        srand (time(NULL));
         for (std::size_t i = workerId; i < sampled_list.size(); i += MultiVertex::numWorkers()) {
-            sampled_list[i] = rand() % in.size();
+            sampled_list[i] = 2;
         }
         return true;
     }
