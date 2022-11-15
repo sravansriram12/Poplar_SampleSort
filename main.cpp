@@ -3,6 +3,7 @@
 #include <poplar/Graph.hpp>
 #include <poplar/IPUModel.hpp>
 #include <poplar/DeviceManager.hpp>
+#include <popops/Sort.hpp>
 #include <algorithm>
 #include <cmath>
 #include <fstream>
