@@ -1,5 +1,4 @@
 #include <iostream>
-#include <ArrayRef.hpp>
 #include <poplar/Engine.hpp>
 #include <poplar/Graph.hpp>
 #include <poplar/IPUModel.hpp>
