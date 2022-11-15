@@ -82,7 +82,7 @@ int main() {
     graph.setTileMapping(initial_list[processor], processor);
     VertexRef vtx = graph.addVertex(computeSet, "RandomSampleVertex");
     graph.connect(vtx["local_list"], initial_list[processor]);
-    graph.connect(vtx["sampled_list"], full_sampled.slice(i * k, (i + 1) * k));
+    graph.connect(vtx["sampled_list"], full_sampled.slice(processor * k, (processor + 1) * k));
   }
 
   auto in_stream_list = graph.addHostToDeviceFIFO("initial_list", INT, n);
