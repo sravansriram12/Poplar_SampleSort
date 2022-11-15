@@ -73,6 +73,7 @@ int main() {
 
   // Set up data streams to copy data in and out of graph
   Tensor initial_list = graph.addVariable(INT, {p, local_list_size}, "initial_list");
+  graph.setTileMapping(initial_list, p + 1);
 
   /*Tensor full_sampled = graph.addVariable(INT, {p * k}, "full_sampled");
   graph.setTileMapping(initial_list, p + 1);
