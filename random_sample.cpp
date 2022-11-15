@@ -12,5 +12,6 @@ class RandomSampleVertex : public poplar::MultiVertex {
         for (std::size_t i = workerId * (over_sampling_factor - 1); i < local_list.size(); i += MultiVertex::numWorkers()) {
             sampled_list[i / over_sampling_factor] = local_list[i];
         }
+        return true;
     }
 };
