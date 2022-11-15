@@ -3,7 +3,7 @@
 #include <poplar/Graph.hpp>
 #include <poplar/IPUModel.hpp>
 #include <poplar/DeviceManager.hpp>
-#include <popops/Sort.hpp>
+#include <popops/TopK.hpp>
 #include <algorithm>
 #include <cmath>
 #include <fstream>
@@ -93,8 +93,6 @@ int main() {
 
   prog.add(Copy(in_stream_list, initial_list));
   prog.add(Execute(computeSet));
-  unsigned dim = 0;
-  Tensor sorted = popops::sort(graph, full_sampled, dim, prog);
   prog.add(PrintTensor("initial_list", initial_list));
   prog.add(PrintTensor("full_sampled_list", full_sampled));
 
