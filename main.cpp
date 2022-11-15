@@ -18,6 +18,7 @@
 
 using namespace poplar;
 using namespace poplar::program;
+using namespace popops;
 using std::to_string;
 
 int main() {
@@ -96,7 +97,7 @@ int main() {
   prog.add(Copy(in_stream_list, initial_list));
   prog.add(Execute(computeSet));
   TopKParams params(p * k, false, popops::SortOrder.ASCENDING);
-  poplar::topK(graph, prog, full_sampled, params);
+  Tensor sorted_sample = topK(graph, prog, full_sampled, params);
   prog.add(PrintTensor("initial_list", initial_list));
   prog.add(PrintTensor("full_sampled_list", full_sampled));
 
