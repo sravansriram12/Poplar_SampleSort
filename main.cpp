@@ -102,6 +102,7 @@ int main() {
   Tensor sorted_sample = topK(graph, prog, full_sampled, params);
   prog.add(PrintTensor("initial_list", initial_list));
   prog.add(PrintTensor("full_sampled_list", full_sampled));
+  prog.add(PrintTensor("sorted_sample", sorted_sample));
 
   Engine engine(graph, prog);
   engine.load(device);
