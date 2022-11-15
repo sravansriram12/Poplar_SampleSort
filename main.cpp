@@ -85,8 +85,7 @@ int main() {
   auto in_stream_list = graph.addHostToDeviceFIFO("initial_list", INT, n);
 
   Engine engine(graph,
-                Sequence({Copy(in_stream_list, initial_list)}),
-                engineOpts);
+                Sequence({Copy(in_stream_list, initial_list)}));
   engine.load(device);
   engine.connectStream("initial_list", input_list.data());
 
