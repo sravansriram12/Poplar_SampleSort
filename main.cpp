@@ -62,6 +62,7 @@ int main() {
   // Create the Graph object
   Graph graph(device);
   Sequence prog;
+  popops::addCodelets(graph);
 
   // Add codelets to the graph
   graph.addCodelets("random_sample.cpp");
