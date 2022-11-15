@@ -10,7 +10,7 @@ class RandomSampleVertex : public poplar::MultiVertex {
     // Compute function
     bool compute(unsigned workerId) {
         for (std::size_t i = workerId; i < local_list.size(); i += MultiVertex::numWorkers()) {
-            buckets[i] = rand();
+            sampled_list[i] = rand();
         }
     }
 };
