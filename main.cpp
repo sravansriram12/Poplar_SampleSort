@@ -25,7 +25,7 @@ int main() {
   unsigned k = 3;   // oversampling factor
   unsigned p = 3;   // number of processors (tiles)
   unsigned local_list_size = n / p;
-  const char *dev = "ipu";
+  const char *dev = "model-ipu2";
   srand (time(NULL));
   
   Device device;
