@@ -93,7 +93,7 @@ int main() {
 
   prog.add(Copy(in_stream_list, initial_list));
   prog.add(Execute(computeSet));
-  sortInPlace(graph, full_sampled, 0, prog);
+  popops::sortInPlace(graph, full_sampled, 0, prog);
   prog.add(PrintTensor("initial_list", initial_list));
   prog.add(PrintTensor("full_sampled_list", full_sampled));
 
