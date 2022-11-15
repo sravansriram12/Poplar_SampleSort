@@ -84,7 +84,6 @@ int main() {
     graph.connect(vtx["local_list"], initial_list[processor]);
     graph.connect(vtx["sampled_list"], full_sampled.slice(processor * k, (processor + 1) * k));
     graph.setTileMapping(vtx, processor);
-    graph.setPerfEstimate(vtx, 20);
   }
 
   auto in_stream_list = graph.addHostToDeviceFIFO("initial_list", INT, n);
