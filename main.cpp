@@ -4,6 +4,7 @@
 #include <poplar/IPUModel.hpp>
 #include <poplar/DeviceManager.hpp>
 #include <popops/TopK.hpp>
+#include <popops/SortOrder.hpp>
 #include <algorithm>
 #include <cmath>
 #include <fstream>
@@ -90,9 +91,12 @@ int main() {
   }
 
   auto in_stream_list = graph.addHostToDeviceFIFO("initial_list", INT, n);
+  
 
   prog.add(Copy(in_stream_list, initial_list));
   prog.add(Execute(computeSet));
+  TopKParams params(p * k, false, popops::SortOrder.ASCENDING);
+  poplar::topK(graph, prog, full_sampled, params);
   prog.add(PrintTensor("initial_list", initial_list));
   prog.add(PrintTensor("full_sampled_list", full_sampled));
 
