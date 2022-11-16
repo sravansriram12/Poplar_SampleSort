@@ -1,6 +1,7 @@
 #include <poplar/Vertex.hpp>
 using namespace poplar;
 
+/*
 class RandomSampleVertex : public MultiVertex {
     public:
     // Fields
@@ -19,16 +20,58 @@ class RandomSampleVertex : public MultiVertex {
         }
         return true;
     }
-};
+}; */
 
-class BucketVertex : public poplar::MultiVertex {
+class LocalSort : public Vertex {
     public:
     // Fields
-    Input<Vector<int>> local_list;
-    Output<Vector<Tensor>> buckets;
+    InOut<Vector<int>> local_list;
+
+
+    /* This function takes last element as pivot, places
+    the pivot element at its correct position in sorted
+    array, and places all smaller (smaller than pivot)
+    to left of pivot and all greater elements to right
+    of pivot */
+    int partition(int low, int high) {
+        int pivot = local_list[high]; // pivot
+        int i = (low - 1); // Index of smaller element and indicates
+                    // the right position of pivot found so far
+    
+        for (int j = low; j <= high - 1; j++) {
+            // If current element is smaller than the pivot
+            if (local_list[j] < pivot) {
+                i++; // increment index of smaller element
+                int temp = local_list[i];
+                local_list[i] = local_list[j];
+                local_list[j] = temp;
+            }
+        }
+        int temp = local_list[i + 1];
+        local_list[i + 1] = local_list[high];
+        local_list[high] = temp;
+        return (i + 1);
+    }
+  
+    /* The main function that implements QuickSort
+    arr[] --> Array to be sorted,
+    low --> Starting index,
+    high --> Ending index */
+    void quickSort(int low, int high) {
+        if (low < high) {
+            /* pi is partitioning index, arr[p] is now
+            at right place */
+            int pi = partition(low, high);
+    
+            // Separately sort elements before
+            // partition and after partition
+            quickSort(low, pi - 1);
+            quickSort(pi + 1, high);
+        }
+    }
 
     // Compute function
-    bool compute(unsigned workerId) {
-       return true;
+    void compute() {
+      quickSort(0, local_list.size() - 1);
     }
 };
