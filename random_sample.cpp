@@ -26,7 +26,6 @@ class QuickSort : public Vertex {
     public:
     // Fields
     InOut<Vector<int>> local_list;
-    Input<int> num_processors;
 
     int partition(int low, int high) {
         int pivot = local_list[high]; // pivot
