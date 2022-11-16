@@ -67,7 +67,8 @@ int main() {
 
   // Add codelets to the graph
   graph.addCodelets("random_sample.cpp");
-  ComputeSet computeSet = graph.addComputeSet("computeSet");
+  ComputeSet local_sort = graph.addComputeSet("Local sort");
+  ComputeSet local_sample = graph.addComputeSet("Local samples");
 
   // Create a control program that is a sequence of steps
 
@@ -79,30 +80,39 @@ int main() {
 
   // Set up data streams to copy data in and out of graph
   Tensor initial_list = graph.addVariable(INT, {p, local_list_size}, "initial_list");
+  Tensor compiled_samples = graph.addVariable(INT, {p * (p - 1)}, "compiled_samples");
 
   for (unsigned processor = 0; processor < p; processor++) {
     graph.setTileMapping(initial_list[processor], processor);
-    VertexRef vtx = graph.addVertex(computeSet, "QuickSort");
-    graph.connect(vtx["local_list"], initial_list[processor]);
-    graph.setTileMapping(vtx, processor);
-    graph.setPerfEstimate(vtx, 20);
+
+    VertexRef quickSort_vtx = graph.addVertex(local_sort, "QuickSort");
+    graph.connect(quickSort_vtx["local_list"], initial_list[processor]);
+    graph.setTileMapping(quickSort_vtx, processor);
+    graph.setPerfEstimate(quickSort_vtx, 20);
+
+    VertexRef sample_vtx = graph.addVertex(local_sample, "LocalSamples");
+    graph.connect(sample_vtx["local_sorted_list"], initial_list[processor]);
+    graph.connect(sample_vtx["num_processors"], p);
+    graph.connect(sample_vtx["local_samples"], compiled_samples.split(processor * p, (processor + 1) * p));
+    graph.setTileMapping(sample_vtx, processor);
+    graph.setPerfEstimate(sample_vtx, 20);
   }
 
   auto in_stream_list = graph.addHostToDeviceFIFO("initial_list", INT, n);
   
-
   prog.add(Copy(in_stream_list, initial_list));
-  prog.add(Execute(computeSet));
-  prog.add(PrintTensor("initial_list", initial_list));
+  prog.add(PrintTensor('initial lists', initial_list));
+  prog.add(Execute(local_sort));
+  prog.add(PrintTensor('locally sorted lists', initial_list));
+  prog.add(Execute(local_sample));
+  prog.add(PrintTensor("compiled samples", compiled_samples));
 
   Engine engine(graph, prog);
   engine.load(device);
   engine.connectStream("initial_list", input_list.data());
 
   // Run the control program
-  std::cout << "Running program\n";
   engine.run(0);
-  std::cout << "Program complete\n";
 
   return 0;
 }

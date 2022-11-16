@@ -26,22 +26,16 @@ class QuickSort : public Vertex {
     public:
     // Fields
     InOut<Vector<int>> local_list;
+    Input<int> num_processors;
+    Out<Vector<int>> splits;
 
-
-    /* This function takes last element as pivot, places
-    the pivot element at its correct position in sorted
-    array, and places all smaller (smaller than pivot)
-    to left of pivot and all greater elements to right
-    of pivot */
     int partition(int low, int high) {
         int pivot = local_list[high]; // pivot
-        int i = (low - 1); // Index of smaller element and indicates
-                    // the right position of pivot found so far
+        int i = (low - 1);
     
         for (int j = low; j <= high - 1; j++) {
-            // If current element is smaller than the pivot
             if (local_list[j] < pivot) {
-                i++; // increment index of smaller element
+                i++;
                 int temp = local_list[i];
                 local_list[i] = local_list[j];
                 local_list[j] = temp;
@@ -53,26 +47,37 @@ class QuickSort : public Vertex {
         return (i + 1);
     }
   
-    /* The main function that implements QuickSort
-    arr[] --> Array to be sorted,
-    low --> Starting index,
-    high --> Ending index */
     void quickSort(int low, int high) {
         if (low < high) {
-            /* pi is partitioning index, arr[p] is now
-            at right place */
             int pi = partition(low, high);
-    
-            // Separately sort elements before
-            // partition and after partition
             quickSort(low, pi - 1);
             quickSort(pi + 1, high);
         }
     }
 
-    // Compute function
     bool compute() {
       quickSort(0, local_list.size() - 1);
+      for (int i = 0; i < num_processors - 1; i++) {
+        splits[i] = local_list[num_processors * i];
+      }
       return true;
     }
 };
+
+class LocalSamples : public MultiVertex {
+    public: 
+    // Fields
+    In<Vector<int>> local_sorted_list;
+    Input<int> num_processors;
+    Out<Vector<int>> local_samples;
+
+    bool compute(unsigned workerId) {
+      unsigned starting_position = (local_sorted_list.size() / num_processors) * (workerId + 1) - 1;
+      unsigned increment_by = MultiVertex::numWorkers() * (local_sorted_list.size() / num_processors) + 1;
+      for (int i = starting_position; i < local_sorted_list.size(); i += increment_by) {
+        unsigned output_index = (starting_position / (local_sorted_list.size() / num_processors)) - 1;
+        local_samples[output_index] = local_list[i];
+      }
+      return true;
+    }
+}
