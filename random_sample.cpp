@@ -67,7 +67,7 @@ class LocalSamples : public MultiVertex {
     Output<Vector<int>> local_samples;
 
     bool compute(unsigned workerId) {
-      unsigned starting_position = ceil(local_sorted_list.size() / num_processors) * (workerId + 1) - 1;
+      unsigned starting_position = (local_sorted_list.size() / num_processors) * (workerId + 1) - 1;
       unsigned increment_by = MultiVertex::numWorkers() * (local_sorted_list.size() / num_processors) + 1;
       for (int i = starting_position; i < local_sorted_list.size(); i += increment_by) {
         unsigned output_index = (starting_position / (local_sorted_list.size() / num_processors)) - 1;
