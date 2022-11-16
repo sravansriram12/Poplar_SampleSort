@@ -1,4 +1,5 @@
 #include <poplar/Vertex.hpp>
+#include <poplar/Tensor.hpp>
 using namespace poplar;
 
 class RandomSampleVertex : public MultiVertex {
@@ -25,7 +26,7 @@ class BucketVertex : public poplar::MultiVertex {
     public:
     // Fields
     Input<Vector<int>> local_list;
-    Output<Vector<Tensor<int>>> buckets;
+    Output<Vector<Tensor>> buckets;
 
     // Compute function
     bool compute(unsigned workerId) {
