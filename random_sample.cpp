@@ -1,11 +1,12 @@
 #include <poplar/Vertex.hpp>
+using namespace poplar;
 
-class RandomSampleVertex : public poplar::MultiVertex {
+class RandomSampleVertex : public MultiVertex {
     public:
     // Fields
-    poplar::Input<poplar::Vector<int>> local_list;
-    poplar::Input<int> over_sampling_factor;
-    poplar::Output<poplar::Vector<int>> sampled_list;
+    Input<Vector<int>> local_list;
+    Input<int> over_sampling_factor;
+    Output<Vector<int>> sampled_list;
 
     // Compute function
     bool compute(unsigned workerId) {
@@ -17,5 +18,17 @@ class RandomSampleVertex : public poplar::MultiVertex {
             sampled_list[output_index] = local_list[i];
         }
         return true;
+    }
+};
+
+class BucketVertex : public poplar::MultiVertex {
+    public:
+    // Fields
+    Input<Vector<int>> local_list;
+    Output<Vector<Tensor<int>>> buckets;
+
+    // Compute function
+    bool compute(unsigned workerId) {
+       return true;
     }
 };
