@@ -93,7 +93,7 @@ int main() {
     VertexRef sample_vtx = graph.addVertex(local_sample, "LocalSamples");
     graph.connect(sample_vtx["local_sorted_list"], initial_list[processor]);
     graph.connect(sample_vtx["num_processors"], p);
-    graph.connect(sample_vtx["local_samples"], compiled_samples.split(processor * p, (processor + 1) * p));
+    graph.connect(sample_vtx["local_samples"], compiled_samples.slice(processor * p, (processor + 1) * p));
     graph.setTileMapping(sample_vtx, processor);
     graph.setPerfEstimate(sample_vtx, 20);
   }
@@ -101,9 +101,9 @@ int main() {
   auto in_stream_list = graph.addHostToDeviceFIFO("initial_list", INT, n);
   
   prog.add(Copy(in_stream_list, initial_list));
-  prog.add(PrintTensor('initial lists', initial_list));
+  prog.add(PrintTensor("initial lists", initial_list));
   prog.add(Execute(local_sort));
-  prog.add(PrintTensor('locally sorted lists', initial_list));
+  prog.add(PrintTensor("locally sorted lists", initial_list));
   prog.add(Execute(local_sample));
   prog.add(PrintTensor("compiled samples", compiled_samples));
 
