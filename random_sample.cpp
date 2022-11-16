@@ -67,9 +67,9 @@ class QuickSort : public Vertex {
 class LocalSamples : public MultiVertex {
     public: 
     // Fields
-    In<Vector<int>> local_sorted_list;
+    Input<Vector<int>> local_sorted_list;
     Input<int> num_processors;
-    Out<Vector<int>> local_samples;
+    Output<Vector<int>> local_samples;
 
     bool compute(unsigned workerId) {
       unsigned starting_position = (local_sorted_list.size() / num_processors) * (workerId + 1) - 1;
