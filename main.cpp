@@ -25,8 +25,8 @@ using std::to_string;
 int main() {
   // Create the IPU model device
 
-  unsigned n = 30;  // number of elements
-  unsigned p = 3;   // number of processors (tiles)
+  unsigned n = 20;  // number of elements
+  unsigned p = 2;   // number of processors (tiles)
   unsigned local_list_size = n / p;
   const char *dev = "model-ipu2";
   srand (time(NULL));
@@ -74,7 +74,7 @@ int main() {
   auto input_list = std::vector<int>(n);
 
   for (unsigned idx = 0; idx < n; ++idx) {
-    input_list[idx] = rand();
+    input_list[idx] = rand() % 100;
   }
 
   // Set up data streams to copy data in and out of graph
