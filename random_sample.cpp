@@ -71,7 +71,8 @@ class LocalSort : public Vertex {
     }
 
     // Compute function
-    void compute() {
+    bool compute() {
       quickSort(0, local_list.size() - 1);
+      return true;
     }
 };
