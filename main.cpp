@@ -81,6 +81,7 @@ int main() {
   // Set up data streams to copy data in and out of graph
   Tensor initial_list = graph.addVariable(INT, {p, local_list_size}, "initial_list");
   Tensor compiled_samples = graph.addVariable(INT, {p * (p - 1)}, "compiled_samples");
+  graph.setTileMapping(compiled_samples, p);
 
   for (unsigned processor = 0; processor < p; processor++) {
     graph.setTileMapping(initial_list[processor], processor);
