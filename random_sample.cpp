@@ -1,5 +1,4 @@
 #include <poplar/Vertex.hpp>
-#include <poplar/Tensor.hpp>
 using namespace poplar;
 
 class RandomSampleVertex : public MultiVertex {
