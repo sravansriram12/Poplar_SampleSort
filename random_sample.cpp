@@ -27,7 +27,6 @@ class QuickSort : public Vertex {
     // Fields
     InOut<Vector<int>> local_list;
     Input<int> num_processors;
-    Out<Vector<int>> splits;
 
     int partition(int low, int high) {
         int pivot = local_list[high]; // pivot
@@ -57,9 +56,6 @@ class QuickSort : public Vertex {
 
     bool compute() {
       quickSort(0, local_list.size() - 1);
-      for (int i = 0; i < num_processors - 1; i++) {
-        splits[i] = local_list[num_processors * i];
-      }
       return true;
     }
 };
@@ -80,4 +76,4 @@ class LocalSamples : public MultiVertex {
       }
       return true;
     }
-}
+};
