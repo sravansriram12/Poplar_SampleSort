@@ -93,7 +93,7 @@ int main() {
     VertexRef sample_vtx = graph.addVertex(local_sample, "LocalSamples");
     graph.connect(sample_vtx["local_sorted_list"], initial_list[processor]);
     graph.connect(sample_vtx["num_processors"], p);
-    graph.connect(sample_vtx["local_samples"], compiled_samples.slice(processor * p, (processor + 1) * p));
+    graph.connect(sample_vtx["local_samples"], compiled_samples.slice(processor * (p - 1), (processor + 1) * (p - 1)));
     graph.setTileMapping(sample_vtx, processor);
     graph.setPerfEstimate(sample_vtx, 20);
   }
