@@ -22,7 +22,7 @@ class RandomSampleVertex : public MultiVertex {
     }
 }; */
 
-class LocalSort : public Vertex {
+class QuickSort : public Vertex {
     public:
     // Fields
     InOut<Vector<int>> local_list;

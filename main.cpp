@@ -72,7 +72,6 @@ int main() {
   // Create a control program that is a sequence of steps
 
   auto input_list = std::vector<int>(n);
-  auto output_list = std::vector<int>(n);
 
   for (unsigned idx = 0; idx < n; ++idx) {
     input_list[idx] = rand();
@@ -80,15 +79,11 @@ int main() {
 
   // Set up data streams to copy data in and out of graph
   Tensor initial_list = graph.addVariable(INT, {p, local_list_size}, "initial_list");
-  Tensor full_sampled = graph.addVariable(INT, {p * k}, "full_sampled");
-  graph.setTileMapping(full_sampled, p + 1);
 
   for (unsigned processor = 0; processor < p; processor++) {
     graph.setTileMapping(initial_list[processor], processor);
-    VertexRef vtx = graph.addVertex(computeSet, "RandomSampleVertex");
+    VertexRef vtx = graph.addVertex(computeSet, "QuickSort");
     graph.connect(vtx["local_list"], initial_list[processor]);
-    graph.connect(vtx["over_sampling_factor"], k);
-    graph.connect(vtx["sampled_list"], full_sampled.slice(processor * k, (processor + 1) * k));
     graph.setTileMapping(vtx, processor);
     graph.setPerfEstimate(vtx, 20);
   }
@@ -98,11 +93,7 @@ int main() {
 
   prog.add(Copy(in_stream_list, initial_list));
   prog.add(Execute(computeSet));
-  TopKParams params(p * k, false, SortOrder::ASCENDING);
-  Tensor sorted_sample = topK(graph, prog, full_sampled, params);
   prog.add(PrintTensor("initial_list", initial_list));
-  prog.add(PrintTensor("full_sampled_list", full_sampled));
-  prog.add(PrintTensor("sorted_sample", sorted_sample));
 
   Engine engine(graph, prog);
   engine.load(device);
