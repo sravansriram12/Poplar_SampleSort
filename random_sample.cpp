@@ -72,7 +72,7 @@ class LocalSamples : public MultiVertex {
       unsigned increment_by = MultiVertex::numWorkers() * (local_sorted_list.size() / num_processors) + 1;
       for (int i = starting_position; i < local_sorted_list.size(); i += increment_by) {
         unsigned output_index = (starting_position / (local_sorted_list.size() / num_processors)) - 1;
-        local_samples[output_index] = local_list[i];
+        local_samples[output_index] = local_sorted_list[i];
       }
       return true;
     }
