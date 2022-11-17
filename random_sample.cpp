@@ -55,3 +55,34 @@ class LocalSamples : public MultiVertex {
       return true;
     }
 };
+
+
+class DetermineBuckets : public Vertex {
+    public: 
+    // Fields
+    Input<Vector<int>> local_sorted_list;
+    Input<Vector<int>> global_samples;
+    Output<Vector<int>> index_boundaries;
+
+    bool compute() {
+        for (unsigned i = 0; i < global_samples.size(); i++) {
+            int low = 0, high = local_sorted_list.size();
+            int target = global_samples[i];
+            int ans = -1;
+            while (low != high) {
+                int mid = (low + high) / 2;
+
+                if (local_sorted_list[mid] >= target) {
+                    high = mid - 1;
+                }
+                else {
+                    ans = mid;
+                    low = mid + 1;
+                }
+             }
+            index_boundaries[i] = mid + 1;
+        }
+       
+        return true;
+    }
+};

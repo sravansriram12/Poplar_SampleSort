@@ -69,6 +69,8 @@ int main() {
   ComputeSet local_sort = graph.addComputeSet("Local sort");
   ComputeSet local_sample = graph.addComputeSet("Local samples");
   ComputeSet sort_compiled_samples = graph.addComputeSet("Sort compiled samples");
+  ComputeSet sample_compiled_samples = graph.addComputeSet("Sample compiled samples");
+  ComputeSet determine_buckets = graph.addComputeSet("Sample compiled samples");
 
   // Create a control program that is a sequence of steps
 
@@ -104,6 +106,28 @@ int main() {
   graph.setTileMapping(sort_samples_vtx, p);
   graph.setPerfEstimate(sort_samples_vtx, 20);
 
+  Tensor global_samples = graph.addVariable(INT, {p - 1}, "global_samples");
+
+  VertexRef global_sample_vtx = graph.addVertex(sample_compiled_samples, "LocalSamples");
+  graph.connect(global_sample_vtx["local_sorted_list"], compiled_samples);
+  graph.connect(global_sample_vtx["num_processors"], p);
+  graph.connect(global_sample_vtx["local_samples"], global_samples);
+  graph.setTileMapping(global_sample_vtx, processor);
+  graph.setPerfEstimate(global_sample_vtx, 20);
+
+  Tensor buckets = graph.addConstant<int>(INT, {p * (p - 1)}, "buckets");
+  
+  for (unsigned processor = 0; processor < p; processor++) {
+    graph.setTileMapping(buckets[processor], processor);
+
+    VertexRef boundaries_vtx = graph.addVertex(determine_buckets, "DetermineBuckets");
+    graph.connect(boundaries_vtx["local_sorted_list"], initial_list[processor]);
+    graph.connect(boundaries_vtx["global_samples"], global_samples);
+    graph.connect(boundaries_vtx["index_boundaries"], buckets[processor]);
+    graph.setTileMapping(boundaries_vtx, p);
+    graph.setPerfEstimate(boundaries_vtx, 20);
+  }
+
 
   auto in_stream_list = graph.addHostToDeviceFIFO("initial_list", INT, n);
   
@@ -115,6 +139,10 @@ int main() {
   prog.add(PrintTensor("initially compiled samples", compiled_samples));
   prog.add(Execute(sort_compiled_samples));
   prog.add(PrintTensor("sorted compiled samples", compiled_samples));
+  prog.add(Execute(sample_compiled_samples));
+  prog.add(PrintTensor("global samples", global_samples));
+  prog.add(Execute(determine_buckets));
+  prog.add(PrintTensor("bucket boundaries of each processor", buckets));
 
   Engine engine(graph, prog);
   engine.load(device);
