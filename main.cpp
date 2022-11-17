@@ -107,7 +107,7 @@ int main() {
   graph.setPerfEstimate(sort_samples_vtx, 20);
 
   Tensor global_samples = graph.addVariable(INT, {p - 1}, "global_samples");
-  graph.setTileMapping(global_sample_vtx, p);
+  graph.setTileMapping(global_samples, p);
 
   VertexRef global_sample_vtx = graph.addVertex(sample_compiled_samples, "LocalSamples");
   graph.connect(global_sample_vtx["local_sorted_list"], compiled_samples);
