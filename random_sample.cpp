@@ -81,7 +81,7 @@ class DetermineBuckets : public Vertex {
                     low = mid + 1;
                 }
              } */
-            index_boundaries[i] = 0;
+            index_boundaries[i] = -1;
         } 
 
        
