@@ -100,7 +100,7 @@ int main() {
   }
 
   VertexRef sort_samples_vtx = graph.addVertex(sort_compiled_samples, "QuickSort");
-  graph.connext(sort_sample_vtx["local_list"], compiled_samples);
+  graph.connect(sort_samples_vtx["local_list"], compiled_samples);
   graph.setTileMapping(sort_samples_vtx, p);
   graph.setPerfEstimate(sort_samples_vtx, 20);
 
