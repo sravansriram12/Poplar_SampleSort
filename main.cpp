@@ -125,7 +125,7 @@ int main() {
     graph.connect(boundaries_vtx["local_sorted_list"], initial_list[processor]);
     graph.connect(boundaries_vtx["global_samples"], global_samples);
     graph.connect(boundaries_vtx["index_boundaries"], buckets[processor]);
-    graph.setTileMapping(boundaries_vtx, p);
+    graph.setTileMapping(boundaries_vtx, processor);
     graph.setPerfEstimate(boundaries_vtx, 20);
   }
 
