@@ -68,6 +68,7 @@ int main() {
   graph.addCodelets("random_sample.cpp");
   ComputeSet local_sort = graph.addComputeSet("Local sort");
   ComputeSet local_sample = graph.addComputeSet("Local samples");
+  ComputeSet sort_compiled_samples = graph.addComputeSet("Sort compiled samples");
 
   // Create a control program that is a sequence of steps
 
@@ -98,6 +99,12 @@ int main() {
     graph.setPerfEstimate(sample_vtx, 20);
   }
 
+  VertexRef sort_samples_vtx = graph.addVertex(sort_compiled_samples, "QuickSort");
+  graph.connext(sort_sample_vtx["local_list"], compiled_samples);
+  graph.setTileMapping(sort_samples_vtx, p);
+  graph.setPerfEstimate(sort_samples_vtx, 20);
+
+
   auto in_stream_list = graph.addHostToDeviceFIFO("initial_list", INT, n);
   
   prog.add(Copy(in_stream_list, initial_list));
@@ -105,7 +112,9 @@ int main() {
   prog.add(Execute(local_sort));
   prog.add(PrintTensor("locally sorted lists", initial_list));
   prog.add(Execute(local_sample));
-  prog.add(PrintTensor("compiled samples", compiled_samples));
+  prog.add(PrintTensor("initially compiled samples", compiled_samples));
+  prog.add(Execute(sort_compiled_samples));
+  prog.add(PrintTensor("sorted compiled samples", compiled_samples));
 
   Engine engine(graph, prog);
   engine.load(device);
