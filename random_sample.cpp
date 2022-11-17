@@ -66,7 +66,7 @@ class DetermineBuckets : public Vertex {
 
     bool compute() {
         
-        for (unsigned i = 0; i < global_samples.size(); i++) {
+        for (unsigned i = 0; i < global_samples.size() + 1; i++) {
             /*int low = 0, high = local_sorted_list.size();
             int target = global_samples[i];
             int ans = -2;
