@@ -25,8 +25,8 @@ using std::to_string;
 int main() {
   // Create the IPU model device
 
-  unsigned n = 20;  // number of elements
-  unsigned p = 2;   // number of processors (tiles)
+  unsigned n = 50;  // number of elements
+  unsigned p = 5;   // number of processors (tiles)
   unsigned local_list_size = n / p;
   const char *dev = "model-ipu2";
   srand (time(NULL));
