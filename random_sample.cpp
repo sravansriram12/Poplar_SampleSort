@@ -65,8 +65,9 @@ class DetermineBuckets : public Vertex {
     Output<Vector<int>> index_boundaries;
 
     bool compute() {
+        
         for (unsigned i = 0; i < global_samples.size(); i++) {
-            int low = 0, high = local_sorted_list.size();
+            /*int low = 0, high = local_sorted_list.size();
             int target = global_samples[i];
             int ans = -2;
             while (low != high) {
@@ -79,9 +80,10 @@ class DetermineBuckets : public Vertex {
                     ans = mid;
                     low = mid + 1;
                 }
-             }
-            index_boundaries[i] = ans + 1;
-        }
+             } */
+            index_boundaries[i] = 0;
+        } 
+
        
         return true;
     }
