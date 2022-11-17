@@ -112,10 +112,10 @@ int main() {
   graph.connect(global_sample_vtx["local_sorted_list"], compiled_samples);
   graph.connect(global_sample_vtx["num_processors"], p);
   graph.connect(global_sample_vtx["local_samples"], global_samples);
-  graph.setTileMapping(global_sample_vtx, processor);
+  graph.setTileMapping(global_sample_vtx, p);
   graph.setPerfEstimate(global_sample_vtx, 20);
 
-  Tensor buckets = graph.addConstant<int>(INT, {p * (p - 1)}, "buckets");
+  Tensor buckets = graph.addConstant<int>(INT, {p * (p - 1)}, -1);
   
   for (unsigned processor = 0; processor < p; processor++) {
     graph.setTileMapping(buckets[processor], processor);

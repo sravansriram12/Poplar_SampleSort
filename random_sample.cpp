@@ -68,7 +68,7 @@ class DetermineBuckets : public Vertex {
         for (unsigned i = 0; i < global_samples.size(); i++) {
             int low = 0, high = local_sorted_list.size();
             int target = global_samples[i];
-            int ans = -1;
+            int ans = -2;
             while (low != high) {
                 int mid = (low + high) / 2;
 
@@ -80,7 +80,7 @@ class DetermineBuckets : public Vertex {
                     low = mid + 1;
                 }
              }
-            index_boundaries[i] = mid + 1;
+            index_boundaries[i] = ans + 1;
         }
        
         return true;
