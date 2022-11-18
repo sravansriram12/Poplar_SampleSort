@@ -69,15 +69,15 @@ class DetermineBuckets : public Vertex {
         for (unsigned i = 0; i < global_samples.size(); i++) {
             int end = global_samples.size();
             int target = global_samples[i];
+            int start = 0;
             if(end == 0) return -1;
            
             if (target > local_sorted_list[end - 1]) return end-1;
         
-            int start = 0;
+            
         
             int ans = -1;
-            while (start <= end)
-            {
+            while (start <= end) {
                 int mid = (start + end) / 2;
         
                 if (local_sorted_list[mid] >= target) {

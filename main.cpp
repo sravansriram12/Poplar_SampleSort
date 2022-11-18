@@ -97,7 +97,7 @@ int main() {
   ComputeSet local_sample = graph.addComputeSet("Local samples");
   ComputeSet sort_compiled_samples = graph.addComputeSet("Sort compiled samples");
   ComputeSet sample_compiled_samples = graph.addComputeSet("Sample compiled samples");
-  ComputeSet determine_buckets = graph.addComputeSet("Sample compiled samples");
+  ComputeSet determine_buckets = graph.addComputeSet("Determine buckets");
 
   // initial list of data that is copied from host to device
   auto input_list = std::vector<int>(n);
