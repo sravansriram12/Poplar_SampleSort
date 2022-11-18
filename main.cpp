@@ -22,6 +22,23 @@ using namespace poplar::program;
 using namespace popops;
 using std::to_string;
 
+void quick_sort(ComputeSet& computeSet, Graph& graph, Tensor& local_list, unsigned processorId) {
+    VertexRef quickSort_vtx = graph.addVertex(computeSet, "QuickSort");
+    graph.connect(quickSort_vtx["local_list"], local_list);
+    graph.setTileMapping(quickSort_vtx, procesorId);
+    graph.setPerfEstimate(quickSort_vtx, 20);
+
+}
+
+void local_sampling(ComputeSet& computeSet, Graph& graph, Tensor& input_list, Tensor& output_list, unsigned p, unsigned processorId) {
+    VertexRef sample_vtx = graph.addVertex(computeSet, "LocalSamples");
+    graph.connect(sample_vtx["local_sorted_list"], input_list);
+    graph.connect(sample_vtx["num_processors"], p);
+    graph.connect(sample_vtx["local_samples"], output_list);
+    graph.setTileMapping(sample_vtx, processorId);
+    graph.setPerfEstimate(sample_vtx, 20);
+}
+
 int main() {
   // Create the IPU model device
 
@@ -32,23 +49,6 @@ int main() {
   srand (time(NULL));
   
   Device device;
-
-  void quick_sort(ComputeSet& computeSet, Graph& graph, Tensor& local_list, unsigned processorId) {
-    VertexRef quickSort_vtx = graph.addVertex(computeSet, "QuickSort");
-    graph.connect(quickSort_vtx["local_list"], local_list);
-    graph.setTileMapping(quickSort_vtx, procesorId);
-    graph.setPerfEstimate(quickSort_vtx, 20);
-
-  }
-
-  void local_sampling(ComputeSet& computeSet, Graph& graph, Tensor& input_list, Tensor& output_list, unsigned p, unsigned processorId) {
-    VertexRef sample_vtx = graph.addVertex(computeSet, "LocalSamples");
-    graph.connect(sample_vtx["local_sorted_list"], list);
-    graph.connect(sample_vtx["num_processors"], p);
-    graph.connect(sample_vtx["local_samples"], output_list);
-    graph.setTileMapping(sample_vtx, processorId);
-    graph.setPerfEstimate(sample_vtx, 20);
-  }
 
   if (strcmp(dev, "ipu") == 0) {
     // The DeviceManager is used to discover IPU devices
