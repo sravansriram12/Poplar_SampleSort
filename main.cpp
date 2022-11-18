@@ -127,6 +127,7 @@ int main() {
   graph.setTileMapping(global_samples, p);
   sampling(sample_compiled_samples, graph, compiled_samples, global_samples, p, p);
 
+
   // Third computation phase - finding buckets belonging to different processor based on global samples
   Tensor buckets = graph.addVariable(INT, {p, p - 1}, "buckets");
   for (unsigned processor = 0; processor < p; processor++) {
