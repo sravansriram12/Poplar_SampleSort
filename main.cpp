@@ -33,6 +33,23 @@ int main() {
   
   Device device;
 
+  void quick_sort(ComputeSet& computeSet, Graph& graph, Tensor& local_list, unsigned processorId) {
+    VertexRef quickSort_vtx = graph.addVertex(computeSet, "QuickSort");
+    graph.connect(quickSort_vtx["local_list"], local_list);
+    graph.setTileMapping(quickSort_vtx, procesorId);
+    graph.setPerfEstimate(quickSort_vtx, 20);
+
+  }
+
+  void local_sampling(ComputeSet& computeSet, Graph& graph, Tensor& input_list, Tensor& output_list, unsigned p, unsigned processorId) {
+    VertexRef sample_vtx = graph.addVertex(computeSet, "LocalSamples");
+    graph.connect(sample_vtx["local_sorted_list"], list);
+    graph.connect(sample_vtx["num_processors"], p);
+    graph.connect(sample_vtx["local_samples"], output_list);
+    graph.setTileMapping(sample_vtx, processorId);
+    graph.setPerfEstimate(sample_vtx, 20);
+  }
+
   if (strcmp(dev, "ipu") == 0) {
     // The DeviceManager is used to discover IPU devices
     auto manager = DeviceManager::createDeviceManager();
@@ -88,17 +105,10 @@ int main() {
   for (unsigned processor = 0; processor < p; processor++) {
     graph.setTileMapping(initial_list[processor], processor);
 
-    VertexRef quickSort_vtx = graph.addVertex(local_sort, "QuickSort");
-    graph.connect(quickSort_vtx["local_list"], initial_list[processor]);
-    graph.setTileMapping(quickSort_vtx, processor);
-    graph.setPerfEstimate(quickSort_vtx, 20);
+    quick_sort(local_sort, graph, initial_list[processor], processor);
 
-    VertexRef sample_vtx = graph.addVertex(local_sample, "LocalSamples");
-    graph.connect(sample_vtx["local_sorted_list"], initial_list[processor]);
-    graph.connect(sample_vtx["num_processors"], p);
-    graph.connect(sample_vtx["local_samples"], compiled_samples.slice(processor * (p - 1), (processor + 1) * (p - 1)));
-    graph.setTileMapping(sample_vtx, processor);
-    graph.setPerfEstimate(sample_vtx, 20);
+    local_sampling(local_sample, graph, initial_list[processor], 
+        compiled_samples.slice(processor * (p - 1), (processor + 1) * (p - 1)), p, processor);
   }
 
   VertexRef sort_samples_vtx = graph.addVertex(sort_compiled_samples, "QuickSort");
