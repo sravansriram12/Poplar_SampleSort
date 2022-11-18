@@ -22,15 +22,15 @@ using namespace poplar::program;
 using namespace popops;
 using std::to_string;
 
-void quick_sort(ComputeSet& computeSet, Graph& graph, Tensor& local_list, unsigned processorId) {
+void quick_sort(ComputeSet& computeSet, Graph& graph, Tensor local_list, unsigned processorId) {
     VertexRef quickSort_vtx = graph.addVertex(computeSet, "QuickSort");
     graph.connect(quickSort_vtx["local_list"], local_list);
-    graph.setTileMapping(quickSort_vtx, procesorId);
+    graph.setTileMapping(quickSort_vtx, processorId);
     graph.setPerfEstimate(quickSort_vtx, 20);
 
 }
 
-void local_sampling(ComputeSet& computeSet, Graph& graph, Tensor& input_list, Tensor& output_list, unsigned p, unsigned processorId) {
+void local_sampling(ComputeSet& computeSet, Graph& graph, Tensor input_list, Tensor output_list, unsigned p, unsigned processorId) {
     VertexRef sample_vtx = graph.addVertex(computeSet, "LocalSamples");
     graph.connect(sample_vtx["local_sorted_list"], input_list);
     graph.connect(sample_vtx["num_processors"], p);
