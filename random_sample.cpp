@@ -67,20 +67,19 @@ class DetermineBuckets : public Vertex {
     bool compute() {
         
         for (unsigned i = 0; i < global_samples.size(); i++) {
-            int end = global_samples.size();
+            int end = local_sorted_list.size();
             int target = global_samples[i];
             int start = 0;
-            if(end == 0) return -1;
            
-            if (target > local_sorted_list[end - 1]) return end-1;
-        
-            
+            if (target > local_sorted_list[end - 1]) {
+                index_boundaries[i] = end-1;
+            }
         
             int ans = -1;
             while (start <= end) {
                 int mid = (start + end) / 2;
         
-                if (local_sorted_list[mid] >= target) {
+                if (local_sorted_list[mid] > target) {
                     end = mid - 1;
                 } else {
                     ans = mid;
