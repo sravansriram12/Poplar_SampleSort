@@ -91,7 +91,7 @@ int main() {
   addCodelets(graph);
 
   // Add codelets to the graph
-  graph.addCodelets("random_sample.cpp");
+  graph.addCodelets("vertices.cpp");
   // Determine compute sets
   ComputeSet local_sort = graph.addComputeSet("Local sort");
   ComputeSet local_sample = graph.addComputeSet("Local samples");
