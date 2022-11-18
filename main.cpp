@@ -134,6 +134,7 @@ int main() {
     bin_buckets(determine_buckets, graph, initial_list[processor], global_samples, buckets[processor], processor);
   }
 
+  auto in_stream_list = graph.addHostToDeviceFIFO("initial_list", INT, n);
   
   // Add sequence of compute sets to program
   prog.add(Copy(in_stream_list, initial_list));
@@ -150,7 +151,6 @@ int main() {
   prog.add(PrintTensor("bucket boundaries of each processor", buckets));
 
   // Run graph and associated prog on engine and device a way to communicate host list to device initial list
-  auto in_stream_list = graph.addHostToDeviceFIFO("initial_list", INT, n);
   Engine engine(graph, prog);
   engine.load(device);
   engine.connectStream("initial_list", input_list.data());
