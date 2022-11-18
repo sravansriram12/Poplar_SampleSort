@@ -38,7 +38,7 @@ class QuickSort : public Vertex {
     }
 };
 
-class LocalSamples : public MultiVertex {
+class Samples : public MultiVertex {
     public: 
     // Fields
     Input<Vector<int>> local_sorted_list;
