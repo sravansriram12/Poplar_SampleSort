@@ -142,7 +142,6 @@ int main() {
     graph.connect(boundaries_vtx["index_boundaries"], index_boundary);
     graph.setTileMapping(boundaries_vtx, processor);
     graph.setPerfEstimate(boundaries_vtx, 20);
-}
   }
 
   auto in_stream_list = graph.addHostToDeviceFIFO("initial_list", INT, n);
