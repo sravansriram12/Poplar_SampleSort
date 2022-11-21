@@ -165,13 +165,12 @@ int main() {
 
   Sequence prog2;
   
-  Tensor singleElement = graph.addVariable(INT, {1}, "sliced");
   for (unsigned processor = 0; processor < 1; processor++) {
     int first_index;
     int* last_index;
     buckets[processor][processor].getConstantValue(last_index);
-    singleElement[0] = initial_list[processor].slice(0, *last_index);
-   
+    int index = *last_index;
+    initial_list[processor].slice(0, index);
   }
 
   prog2.add(PrintTensor("checking slice", singleElement));
