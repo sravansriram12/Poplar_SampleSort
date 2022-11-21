@@ -20,6 +20,7 @@
 using namespace poplar;
 using namespace poplar::program;
 using namespace popops;
+using std::cout, std::endl;
 using std::to_string;
 
 void quick_sort(ComputeSet& computeSet, Graph& graph, Tensor local_list, unsigned processorId) {
