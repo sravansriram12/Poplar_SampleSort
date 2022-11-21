@@ -209,12 +209,12 @@ int main() {
     int first_index;
     int* last_index;
     buckets[processor][processor].getConstantValue(last_index);
-    singleElement[0] = *last_index;
+    singleElement[0] = initial_list[processor].slice(0, last_index);
    
   }
 
   prog2.add(PrintTensor("checking slice", singleElement));
-  Engine engine2(graph. prog2);
+  Engine engine2(graph, prog2);
   engine2.load(device);
   
   engine2.run(0);
