@@ -168,7 +168,7 @@ int main() {
   // Get back buckets from remote buffer
   // Do rest of the processing
   int* last_index;
-  b/*uckets[0][0].getConstantValue(last_index);
+  /*buckets[0][0].getConstantValue(last_index);
   int index = *last_index;
   cout << index << endl; */
   prog2.add(PrintTensor(buckets));
