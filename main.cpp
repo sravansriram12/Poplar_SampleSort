@@ -167,7 +167,7 @@ int main() {
   // Get back buckets from remote buffer
   // Do rest of the processing
   Sequence prog2;
-  prog.add(PrintTensor("bucket boundaries of each processor", buckets));
+  prog2.add(PrintTensor("bucket boundaries of each processor", buckets));
 
   Engine engine2(graph, prog2);
   engine2.load(device);
