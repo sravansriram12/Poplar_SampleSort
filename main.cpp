@@ -130,7 +130,6 @@ int main() {
 
   // Third computation phase - finding buckets belonging to different processor based on global samples
   Tensor buckets = graph.addVariable(INT, {p, p - 1}, "buckets");
-  //auto input_list = std::vector<int>(p, p - 1);
 
   for (unsigned processor = 0; processor < p; processor++) {
     graph.setTileMapping(buckets[processor], processor);
@@ -155,6 +154,8 @@ int main() {
   prog.add(Execute(determine_buckets));
   prog.add(PrintTensor("bucket boundaries of each processor", buckets));
 
+  // Add buckets to remote buffer
+
   // Run graph and associated prog on engine and device a way to communicate host list to device initial list
   Engine engine(graph, prog);
   engine.load(device);
@@ -163,22 +164,29 @@ int main() {
   // Run the control program
   engine.run(0);
 
+  // Get back buckets from remote buffer
+  // Do rest of the processing
   Sequence prog2;
+  prog.add(PrintTensor("bucket boundaries of each processor", buckets));
+
+  Engine engine2(graph, prog2);
+  engine2.load(device);
+
+  // Run the control program
+  engine2.run(0);
+
+
   
-  for (unsigned processor = 0; processor < 1; processor++) {
+  /*for (unsigned processor = 0; processor < 1; processor++) {
     int first_index;
     int* last_index;
     buckets[processor][processor].getConstantValue(last_index);
     int index = *last_index;
     std::cout << index << std::endl;
     initial_list[processor].slice(0, index);
-  }
+  } */
 
-  //prog2.add(PrintTensor("checking slice", singleElement));
-  //Engine engine2(graph, prog2);
-  //engine2.load(device);
   
-  //engine2.run(0);
 
 
   return 0;
