@@ -137,6 +137,7 @@ int main() {
   }
 
   auto in_stream_list = graph.addHostToDeviceFIFO("initial_list", INT, n);
+  auto sorted_stream_list = graph.addHostToDeviceFIFO("initial_list", INT, n);
   RemoteBuffer bucket_buffer = graph.addRemoteBuffer("buckets", INT, p * (p - 1));
   RemoteBuffer sorted_list_buffer = graph.addRemoteBuffer("sorted_lists", INT, n);
   
@@ -153,14 +154,14 @@ int main() {
   prog.add(PrintTensor("global samples", global_samples));
   prog.add(Execute(determine_buckets));
   prog.add(PrintTensor("bucket boundaries of each processor", buckets));
-  prog.add(Copy(buckets, bucket_buffer));
-  prog.add(Copy(initial_list, sorted_list_buffer));
+ 
 
 
   // Add buckets to remote buffer
+  Sequence prog2;
 
   // Run graph and associated prog on engine and device a way to communicate host list to device initial list
-  Engine engine(graph, prog);
+  Engine engine(graph, {prog, prog2});
   engine.load(device);
   engine.connectStream("initial_list", input_list.data());
 
@@ -169,9 +170,6 @@ int main() {
 
   // Get back buckets from remote buffer
   // Do rest of the processing
-  Graph graph2(device);
-  Tensor new_buckets = graph2.addVariable(INT, {p * (p -1)}, "new_buckets");
-  Tensor sorted_lists = graph2.addVariable(INT, {n}, "lists_sorted");
 
   graph2.setTileMapping(new_buckets, 0);
   graph2.setTileMapping(sorted_lists, 0);
