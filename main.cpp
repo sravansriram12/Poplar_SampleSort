@@ -137,7 +137,7 @@ int main() {
     bin_buckets(determine_buckets, graph, initial_list[processor], global_samples, buckets[processor], processor);
   }
 
-  initial_list[0].split(bucket_list[0], bucket_list[1]);
+  Tensor a = initial_list[0].slice(bucket_list[0], bucket_list[1]);
 
   auto in_stream_list = graph.addHostToDeviceFIFO("initial_list", INT, n);
   auto bucket_stream_list = graph.addDeviceToHostFIFO("bucket_list", INT, p * (p - 1));
@@ -155,6 +155,7 @@ int main() {
   prog.add(PrintTensor("global samples", global_samples));
   prog.add(Execute(determine_buckets));
   prog.add(PrintTensor("bucket boundaries of each processor", buckets));
+  prog.add(PrintTensor("a", a));
   prog.add(Copy(buckets, bucket_stream_list));
 
   // Run graph and associated prog on engine and device a way to communicate host list to device initial list
