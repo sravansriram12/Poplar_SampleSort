@@ -153,14 +153,17 @@ int main() {
     for (unsigned bucket = 0; bucket < p; bucket++) {
         if (bucket != processor) {
               int index_one;
-              int index_two = buckets[processor][processor] + 1;
+              int index_two = buckets[processor][processor];
+              index_two++;
               if (processor - 1 < 0) {
                 index_one = 0;
               } else if (processor == p - 1) {
                 index_two = local_list_size - 1;
-                index_one = buckets[processor][processor - 1] + 1;
+                index_one = buckets[processor][processor - 1];
+                index_one++;
               } else {
-                index_one = buckets[processor][processor - 1] + 1;
+                index_one = buckets[processor][processor - 1];
+                index_one++;
               }
               if (index_two - index_one > 0) {
                 Tensor send_list = initial_list[processor].slice(index_one, index_two);
