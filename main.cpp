@@ -170,14 +170,15 @@ int main() {
     int* last_index;
     buckets[processor][processor].getConstantValue(last_index);
     int index = *last_index;
+    cout << index << endl;
     initial_list[processor].slice(0, index);
   }
 
-  prog2.add(PrintTensor("checking slice", singleElement));
-  Engine engine2(graph, prog2);
-  engine2.load(device);
+  //prog2.add(PrintTensor("checking slice", singleElement));
+  //Engine engine2(graph, prog2);
+  //engine2.load(device);
   
-  engine2.run(0);
+  //engine2.run(0);
 
 
   return 0;
