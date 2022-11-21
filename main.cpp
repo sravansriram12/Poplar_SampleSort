@@ -137,8 +137,8 @@ int main() {
   }
 
   auto in_stream_list = graph.addHostToDeviceFIFO("initial_list", INT, n);
-  RemoteBuffer bucket_buffer = graph.addRemoteBuffer("buckets", INT, (p - 1), p);
-  RemoteBuffer sorted_list_buffer = graph.addRemoteBuffer("sorted_lists", INT, local_list_size, p);
+  RemoteBuffer bucket_buffer = graph.addRemoteBuffer("buckets", INT, p * (p - 1));
+  RemoteBuffer sorted_list_buffer = graph.addRemoteBuffer("sorted_lists", INT, n);
   
   // Add sequence of compute sets to program
   prog.add(Copy(in_stream_list, initial_list));
