@@ -170,7 +170,7 @@ int main() {
     int* last_index;
     buckets[processor][processor].getConstantValue(last_index);
     int index = *last_index;
-    cout << index << endl;
+    std::cout << index << std::endl;
     initial_list[processor].slice(0, index);
   }
 
