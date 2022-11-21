@@ -137,7 +137,7 @@ int main() {
     bin_buckets(determine_buckets, graph, initial_list[processor], global_samples, buckets[processor], processor);
   }
 
-  initial_list[processor].split(bucket_list[0], bucket_list[1]);
+  initial_list[0].split(bucket_list[0], bucket_list[1]);
 
   auto in_stream_list = graph.addHostToDeviceFIFO("initial_list", INT, n);
   auto bucket_stream_list = graph.addDeviceToHostFIFO("bucket_list", INT, p * (p - 1));
