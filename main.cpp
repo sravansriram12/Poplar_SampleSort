@@ -129,18 +129,24 @@ int main() {
 
 
   // Third computation phase - finding buckets belonging to different processor based on global samples
-  Tensor buckets = graph.addVariable(INT, {p, p - 1}, "buckets");
-  auto bucket_list = std::vector<int>(p * (p - 1)); 
+  //Tensor buckets = graph.addVariable(INT, {p, p - 1}, "buckets");
+  //auto bucket_list = std::vector<int>(p * (p - 1)); 
 
   for (unsigned processor = 0; processor < p; processor++) {
     graph.setTileMapping(buckets[processor], processor);
-    bin_buckets(determine_buckets, graph, initial_list[processor], global_samples, buckets[processor], processor);
+    int index_boundary = 0;
+    //bin_buckets(determine_buckets, graph, initial_list[processor], global_samples, buckets[processor], processor);
+    VertexRef boundaries_vtx = graph.addVertex(computeSet, "DetermineBuckets");
+    graph.connect(boundaries_vtx["local_sorted_list"], initial_list[processor]);
+    graph.connect(boundaries_vtx["global_samples"], global_samples[0]);
+    graph.connect(boundaries_vtx["index_boundaries"], index_boundary);
+    graph.setTileMapping(boundaries_vtx, processor);
+    graph.setPerfEstimate(boundaries_vtx, 20);
+}
   }
 
-  Tensor a = initial_list[0].slice(0, bucket_list[0]);
-
   auto in_stream_list = graph.addHostToDeviceFIFO("initial_list", INT, n);
-  auto bucket_stream_list = graph.addDeviceToHostFIFO("bucket_list", INT, p * (p - 1));
+  //auto bucket_stream_list = graph.addDeviceToHostFIFO("bucket_list", INT, p * (p - 1));
   
   // Add sequence of compute sets to program
   prog.add(Copy(in_stream_list, initial_list));
@@ -154,15 +160,15 @@ int main() {
   prog.add(Execute(sample_compiled_samples));
   prog.add(PrintTensor("global samples", global_samples));
   prog.add(Execute(determine_buckets));
-  prog.add(PrintTensor("bucket boundaries of each processor", buckets));
-  prog.add(PrintTensor("a", a));
-  prog.add(Copy(buckets, bucket_stream_list));
+  //prog.add(PrintTensor("bucket boundaries of each processor", buckets));
+  //prog.add(Copy(buckets, bucket_stream_list));
+  //prog.add(PrintTensor("a", a));
 
   // Run graph and associated prog on engine and device a way to communicate host list to device initial list
   Engine engine(graph, prog);
   engine.load(device);
   engine.connectStream("initial_list", input_list.data());
-  engine.connectStream("bucket_list", bucket_list.data());
+  //engine.connectStream("bucket_list", bucket_list.data());
 
   // Run the control program
   engine.run(0);
