@@ -136,11 +136,9 @@ int main() {
     bin_buckets(determine_buckets, graph, initial_list[processor], global_samples, buckets[processor], processor);
   }
 
-  
-  
   auto in_stream_list = graph.addHostToDeviceFIFO("initial_list", INT, n);
   RemoteBuffer bucket_buffer = graph.addRemoteBuffer("buckets", INT, (p - 1), p);
-  RemoteBuffer sorted_lists = graph.addRemoteBuffer("sorted_lists", INT, local_list_size, p);
+  RemoteBuffer sorted_list_buffer = graph.addRemoteBuffer("sorted_lists", INT, local_list_size, p);
   
   // Add sequence of compute sets to program
   prog.add(Copy(in_stream_list, initial_list));
@@ -156,7 +154,7 @@ int main() {
   prog.add(Execute(determine_buckets));
   prog.add(PrintTensor("bucket boundaries of each processor", buckets));
   prog.add(Copy(buckets, bucket_buffer));
-  prog.add(Copy(initial_list, sorted_lists));
+  prog.add(Copy(initial_list, sorted_list_buffer));
 
 
   // Add buckets to remote buffer
@@ -172,7 +170,8 @@ int main() {
   // Get back buckets from remote buffer
   // Do rest of the processing
   Sequence prog2;
-  prog2.add(PrintTensor("bucket boundaries of each processor", buckets));
+  prog2.add(Copy(bucket_buffer, buckets));
+  prog2.add(Copy(sorted_list_buffer, initial_list));
 
   Engine engine2(graph, prog2);
   engine2.load(device);
