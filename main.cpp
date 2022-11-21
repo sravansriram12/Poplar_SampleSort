@@ -170,8 +170,8 @@ int main() {
   // Get back buckets from remote buffer
   // Do rest of the processing
   Graph graph2(device);
-  Tensor new_buckets = graph2.addVariable(INT, {p, p -1}, "new_buckets");
-  Tensor sorted_lists = graph2.addVariable(INT, {p, local_list_size}, "sorted_lists");
+  Tensor new_buckets = graph2.addVariable(INT, {p * (p -1)}, "new_buckets");
+  Tensor sorted_lists = graph2.addVariable(INT, {n}, "sorted_lists");
 
   graph2.setTileMapping(new_buckets, 0);
   graph2.setTileMapping(sorted_lists, 0);
