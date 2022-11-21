@@ -137,7 +137,6 @@ int main() {
   }
 
   auto in_stream_list = graph.addHostToDeviceFIFO("initial_list", INT, n);
-  auto sorted_stream_list = graph.addHostToDeviceFIFO("initial_list", INT, n);
   
   // Add sequence of compute sets to program
   prog.add(Copy(in_stream_list, initial_list));
