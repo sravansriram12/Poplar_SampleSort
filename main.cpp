@@ -169,6 +169,7 @@ int main() {
   // Get back buckets from remote buffer
   // Do rest of the processing
   int* last_index;
+  cout << buckets.shape().size() << endl;
   buckets[0][0].getConstantValue(last_index);
   int index = *last_index;
   cout << index << endl; 
