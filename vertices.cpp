@@ -54,7 +54,7 @@ class Samples : public MultiVertex {
       }
       return true;
     }
-};
+}; 
 
 
 class DetermineBuckets : public Vertex {

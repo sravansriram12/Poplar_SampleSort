@@ -88,7 +88,6 @@ int main() {
   // Create the Graph object
   Graph graph(device);
   Sequence prog;
-  addCodelets(graph);
 
   // Add codelets to the graph
   graph.addCodelets("vertices.cpp");
@@ -115,11 +114,12 @@ int main() {
   // First computation phase - local sorting and sampling
   for (unsigned processor = 0; processor < p; processor++) {
     graph.setTileMapping(initial_list[processor], processor);
-    quick_sort(local_sort, graph, initial_list[processor], processor);
+    quick_sort(local_sort, graph, initial_list[processor], processor); 
     sampling(local_sample, graph, initial_list[processor], 
         compiled_samples.slice(processor * (p - 1), (processor + 1) * (p - 1)), p, processor);
   }
 
+   
 
   // Second computation phase - sorting the compilation of the local samples and picking global samples
   quick_sort(sort_compiled_samples, graph, compiled_samples, p);
@@ -130,10 +130,44 @@ int main() {
 
   // Third computation phase - finding buckets belonging to different processor based on global samples
   Tensor buckets = graph.addVariable(INT, {p, p - 1}, "buckets");
+
   for (unsigned processor = 0; processor < p; processor++) {
     graph.setTileMapping(buckets[processor], processor);
     bin_buckets(determine_buckets, graph, initial_list[processor], global_samples, buckets[processor], processor);
   }
+
+  
+  for (unsigned processor = 0; processor < p; processor++) {
+    int first_index;
+    int last_index = buckets[processor][processor] + 1;
+    if (processor - 1 < 0) {
+      first_index = 0;
+    } else if (processor == p - 1) {
+      last_index = local_list_size - 1;
+      first_index = buckets[processor][processor - 1] + 1;
+    } else {
+      first_index = buckets[processor][processor - 1] + 1;
+    }
+
+    Tensor processor_lists = initial_list[processor].slice(first_index, last_index);
+    for (unsigned bucket = 0; bucket < p; bucket++) {
+        if (bucket != processor) {
+              int index_one;
+              int index_two = buckets[processor][processor] + 1;
+              if (processor - 1 < 0) {
+                index_one = 0;
+              } else if (processor == p - 1) {
+                index_two = local_list_size - 1;
+                index_one = buckets[processor][processor - 1] + 1;
+              } else {
+                index_one = buckets[processor][processor - 1] + 1;
+              }
+              if (index_two - index_one > 0) {
+                Tensor send_list = initial_list[processor].slice(index_one, index_two);
+                processor_lists = concat(processor_lists, send_list, 1);
+              }
+        }
+    }
 
   auto in_stream_list = graph.addHostToDeviceFIFO("initial_list", INT, n);
   
