@@ -169,6 +169,7 @@ int main() {
   int* last_index;
   buckets[0][0].getConstantValue(last_index);
   int index = *last_index;
+  cout << index << endl;
   prog2.add(PrintTensor(initial_list[0].slice(0, index)));
   engine.run(1);
 
