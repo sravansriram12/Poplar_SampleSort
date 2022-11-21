@@ -137,7 +137,7 @@ int main() {
     bin_buckets(determine_buckets, graph, initial_list[processor], global_samples, buckets[processor], processor);
   }
 
-  Tensor a = initial_list[0].slice(bucket_list[0], bucket_list[1]);
+  Tensor a = initial_list[0].slices(0, bucket_list[0]);
 
   auto in_stream_list = graph.addHostToDeviceFIFO("initial_list", INT, n);
   auto bucket_stream_list = graph.addDeviceToHostFIFO("bucket_list", INT, p * (p - 1));
