@@ -139,14 +139,17 @@ int main() {
   
   for (unsigned processor = 0; processor < p; processor++) {
     int first_index;
-    int last_index = buckets[processor][processor] + 1;
+    int last_index = buckets[processor][processor];
+    last_index++;
     if (processor - 1 < 0) {
       first_index = 0;
     } else if (processor == p - 1) {
       last_index = local_list_size - 1;
-      first_index = buckets[processor][processor - 1] + 1;
+      first_index = buckets[processor][processor - 1];
+      first_index++;
     } else {
-      first_index = buckets[processor][processor - 1] + 1;
+      first_index = buckets[processor][processor - 1];
+      first_index++;
     }
 
     Tensor processor_lists = initial_list[processor].slice(first_index, last_index);
