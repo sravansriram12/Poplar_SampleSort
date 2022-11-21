@@ -133,10 +133,11 @@ int main() {
   //auto bucket_list = std::vector<int>(p * (p - 1)); 
 
   for (unsigned processor = 0; processor < p; processor++) {
-    graph.setTileMapping(buckets[processor], processor);
+    //graph.setTileMapping(buckets[processor], processor);
     int index_boundary = 0;
+    graph.setTileMapping(index_boundary, processor);
     //bin_buckets(determine_buckets, graph, initial_list[processor], global_samples, buckets[processor], processor);
-    VertexRef boundaries_vtx = graph.addVertex(computeSet, "DetermineBuckets");
+    VertexRef boundaries_vtx = graph.addVertex(determine_buckets, "DetermineBuckets");
     graph.connect(boundaries_vtx["local_sorted_list"], initial_list[processor]);
     graph.connect(boundaries_vtx["global_samples"], global_samples[0]);
     graph.connect(boundaries_vtx["index_boundaries"], index_boundary);
