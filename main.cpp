@@ -129,24 +129,55 @@ int main() {
 
 
   // Third computation phase - finding buckets belonging to different processor based on global samples
-  //Tensor buckets = graph.addVariable(INT, {p, p - 1}, "buckets");
-  //auto bucket_list = std::vector<int>(p * (p - 1)); 
+  Tensor buckets = graph.addVariable(INT, {p, p - 1}, "buckets");
+  auto input_list = std::vector<int>(p, p - 1);
 
   for (unsigned processor = 0; processor < p; processor++) {
-    //graph.setTileMapping(buckets[processor], processor);
-    int index_boundary = 0;
-    //graph.setTileMapping(index_boundary, processor);
-    //bin_buckets(determine_buckets, graph, initial_list[processor], global_samples, buckets[processor], processor);
-    VertexRef boundaries_vtx = graph.addVertex(determine_buckets, "DetermineBuckets");
-    graph.connect(boundaries_vtx["local_sorted_list"], initial_list[processor]);
-    graph.connect(boundaries_vtx["global_samples"], global_samples[0]);
-    graph.connect(boundaries_vtx["index_boundaries"], index_boundary);
-    graph.setTileMapping(boundaries_vtx, processor);
-    graph.setPerfEstimate(boundaries_vtx, 20);
+    graph.setTileMapping(buckets[processor], processor);
+    bin_buckets(determine_buckets, graph, initial_list[processor], global_samples, buckets[processor], processor);
+  }
+
+  
+  for (unsigned processor = 0; processor < p; processor++) {
+    int first_index;
+    int last_index = getConstantValue(buckets[processor][processor1]) + 1;
+    /*last_index++;
+    if (processor - 1 < 0) {
+      first_index = 0;
+    } else if (processor == p - 1) {
+      last_index = local_list_size - 1;
+      first_index = buckets[processor][processor - 1];
+      first_index++;
+    } else {
+      first_index = buckets[processor][processor - 1];
+      first_index++;
+    } */
+
+    //Tensor processor_lists = initial_list[processor].slice(buckets[processor][processor], buckets[processor][processor]);
+    /*for (unsigned bucket = 0; bucket < p; bucket++) {
+        if (bucket != processor) {
+              int index_one;
+              int index_two = buckets[processor][processor];
+              index_two++;
+              if (processor - 1 < 0) {
+                index_one = 0;
+              } else if (processor == p - 1) {
+                index_two = local_list_size - 1;
+                index_one = buckets[processor][processor - 1];
+                index_one++;
+              } else {
+                index_one = buckets[processor][processor - 1];
+                index_one++;
+              }
+              if (index_two - index_one > 0) {
+                Tensor send_list = initial_list[processor].slice(index_one, index_two);
+                processor_lists = concat(processor_lists, send_list, 1);
+              }
+        }
+    } */
   }
 
   auto in_stream_list = graph.addHostToDeviceFIFO("initial_list", INT, n);
-  //auto bucket_stream_list = graph.addDeviceToHostFIFO("bucket_list", INT, p * (p - 1));
   
   // Add sequence of compute sets to program
   prog.add(Copy(in_stream_list, initial_list));
@@ -160,15 +191,12 @@ int main() {
   prog.add(Execute(sample_compiled_samples));
   prog.add(PrintTensor("global samples", global_samples));
   prog.add(Execute(determine_buckets));
-  //prog.add(PrintTensor("bucket boundaries of each processor", buckets));
-  //prog.add(Copy(buckets, bucket_stream_list));
-  //prog.add(PrintTensor("a", a));
+  prog.add(PrintTensor("bucket boundaries of each processor", buckets));
 
   // Run graph and associated prog on engine and device a way to communicate host list to device initial list
   Engine engine(graph, prog);
   engine.load(device);
   engine.connectStream("initial_list", input_list.data());
-  //engine.connectStream("bucket_list", bucket_list.data());
 
   // Run the control program
   engine.run(0);
