@@ -169,13 +169,17 @@ int main() {
 
   // Get back buckets from remote buffer
   // Do rest of the processing
-  Sequence prog2;
-  prog2.add(Copy(bucket_buffer, buckets));
-  prog2.add(Copy(sorted_list_buffer, initial_list));
-  prog2.add(PrintTensor(buckets));
-  prog2.add(PrintTensor(initial_list));
+  Graph graph2(device);
+  Tensor new_buckets = graph2.addVariable(INT, {p, p -1}, "new_buckets");
+  Tensor sorted_lists = graph2.addVariable(INT, {p, local_list_size}, "sorted_lists");
 
-  Engine engine2(graph, prog2);
+  Sequence prog2;
+  prog2.add(Copy(bucket_buffer, new_buckets));
+  prog2.add(Copy(sorted_list_buffer, sorted_lists));
+  prog2.add(PrintTensor(new_buckets));
+  prog2.add(PrintTensor(sorted_lists));
+
+  Engine engine2(graph2, prog2);
   engine2.load(device);
 
   // Run the control program
