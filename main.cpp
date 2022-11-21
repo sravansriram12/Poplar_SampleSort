@@ -135,7 +135,7 @@ int main() {
   for (unsigned processor = 0; processor < p; processor++) {
     //graph.setTileMapping(buckets[processor], processor);
     int index_boundary = 0;
-    graph.setTileMapping(index_boundary, processor);
+    //graph.setTileMapping(index_boundary, processor);
     //bin_buckets(determine_buckets, graph, initial_list[processor], global_samples, buckets[processor], processor);
     VertexRef boundaries_vtx = graph.addVertex(determine_buckets, "DetermineBuckets");
     graph.connect(boundaries_vtx["local_sorted_list"], initial_list[processor]);
