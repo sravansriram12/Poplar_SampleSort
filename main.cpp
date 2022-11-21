@@ -171,7 +171,7 @@ int main() {
   // Do rest of the processing
   Graph graph2(device);
   Tensor new_buckets = graph2.addVariable(INT, {p * (p -1)}, "new_buckets");
-  Tensor sorted_lists = graph2.addVariable(INT, {n}, "sorted_lists");
+  Tensor sorted_lists = graph2.addVariable(INT, {n}, "lists_sorted");
 
   graph2.setTileMapping(new_buckets, 0);
   graph2.setTileMapping(sorted_lists, 0);
