@@ -173,6 +173,9 @@ int main() {
   Tensor new_buckets = graph2.addVariable(INT, {p, p -1}, "new_buckets");
   Tensor sorted_lists = graph2.addVariable(INT, {p, local_list_size}, "sorted_lists");
 
+  graph2.setTileMapping(new_buckets, 0);
+  graph2.setTileMapping(sorted_lists, 0);
+
   Sequence prog2;
   prog2.add(Copy(bucket_buffer, new_buckets));
   prog2.add(Copy(sorted_list_buffer, sorted_lists));
