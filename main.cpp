@@ -139,6 +139,8 @@ int main() {
   
   
   auto in_stream_list = graph.addHostToDeviceFIFO("initial_list", INT, n);
+  RemoteBuffer bucket_buffer = graph.addRemoteBuffer("buckets", INT, (p - 1), p);
+  RemoteBuffer sorted_lists = graph.addRemoteBuffer("sorted_lists", INT, local_list_size, p);
   
   // Add sequence of compute sets to program
   prog.add(Copy(in_stream_list, initial_list));
@@ -153,6 +155,9 @@ int main() {
   prog.add(PrintTensor("global samples", global_samples));
   prog.add(Execute(determine_buckets));
   prog.add(PrintTensor("bucket boundaries of each processor", buckets));
+  prog.add(Copy(buckets, bucket_buffer));
+  prog.add(Copy(initial_list, sorted_lists));
+
 
   // Add buckets to remote buffer
 
