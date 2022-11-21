@@ -130,17 +130,11 @@ int main() {
 
   // Third computation phase - finding buckets belonging to different processor based on global samples
   Tensor buckets = graph.addVariable(INT, {p, p - 1}, "buckets");
-  auto input_list = std::vector<int>(p, p - 1);
+  auto bucket_list = std::vector<int>(p, p - 1);
 
   for (unsigned processor = 0; processor < p; processor++) {
     graph.setTileMapping(buckets[processor], processor);
     bin_buckets(determine_buckets, graph, initial_list[processor], global_samples, buckets[processor], processor);
-  }
-
-  
-  for (unsigned processor = 0; processor < p; processor++) {
-
-    Tensor processor_lists = initial_list[processor].slice(buckets[processor][processor], buckets[processor][processor]);
   }
 
   auto in_stream_list = graph.addHostToDeviceFIFO("initial_list", INT, n);
