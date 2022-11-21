@@ -163,6 +163,7 @@ int main() {
   // Run the control program
   engine.run(0);
 
+  std::cout << "here" << std::endl;
   // Get back buckets from remote buffer
   // Do rest of the processing
   int* last_index;
