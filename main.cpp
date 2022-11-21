@@ -166,9 +166,10 @@ int main() {
 
   // Get back buckets from remote buffer
   // Do rest of the processing
-
-  Sequence prog2;
-  prog2.add(PrintTensor(initial_list[0].slice(0, buckets[0][0])));
+  int* last_index;
+  buckets[0][0.getConstantValue(last_index);
+  int index = *last_index;
+  prog2.add(PrintTensor(initial_list[0].slice(0, index)));
   engine.run(1);
 
 
