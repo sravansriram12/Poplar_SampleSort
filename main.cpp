@@ -137,45 +137,6 @@ int main() {
     bin_buckets(determine_buckets, graph, initial_list[processor], global_samples, buckets[processor], processor);
   }
 
-  for (unsigned processor = 0; processor < p - 1; processor++) {
-    int first_index;
-    int* last_index;
-    buckets[processor][processor].getConstantValue(last_index);
-    /*last_index++;
-    if (processor - 1 < 0) {
-      first_index = 0;
-    } else if (processor == p - 1) {
-      last_index = local_list_size - 1;
-      first_index = buckets[processor][processor - 1];
-      first_index++;
-    } else {
-      first_index = buckets[processor][processor - 1];
-      first_index++;
-    } */
-
-    //Tensor processor_lists = initial_list[processor].slice(buckets[processor][processor], buckets[processor][processor]);
-    /*for (unsigned bucket = 0; bucket < p; bucket++) {
-        if (bucket != processor) {
-              int index_one;
-              int index_two = buckets[processor][processor];
-              index_two++;
-              if (processor - 1 < 0) {
-                index_one = 0;
-              } else if (processor == p - 1) {
-                index_two = local_list_size - 1;
-                index_one = buckets[processor][processor - 1];
-                index_one++;
-              } else {
-                index_one = buckets[processor][processor - 1];
-                index_one++;
-              }
-              if (index_two - index_one > 0) {
-                Tensor send_list = initial_list[processor].slice(index_one, index_two);
-                processor_lists = concat(processor_lists, send_list, 1);
-              }
-        }
-    } */
-
   
   
   auto in_stream_list = graph.addHostToDeviceFIFO("initial_list", INT, n);
@@ -209,7 +170,7 @@ int main() {
     int first_index;
     int* last_index;
     buckets[processor][processor].getConstantValue(last_index);
-    singleElement[0] = initial_list[processor].slice(0, last_index);
+    singleElement[0] = initial_list[processor].slice(0, *last_index);
    
   }
 
