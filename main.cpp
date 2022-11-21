@@ -159,7 +159,7 @@ int main() {
   Engine engine(graph, prog);
   engine.load(device);
   engine.connectStream("initial_list", input_list.data());
-  engine.connectStream("bucket_list", bucket_stream_list.data());
+  engine.connectStream("bucket_list", bucket_list.data());
 
   // Run the control program
   engine.run(0);
