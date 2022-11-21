@@ -154,9 +154,9 @@ int main() {
   prog.add(PrintTensor("global samples", global_samples));
   prog.add(Execute(determine_buckets));
   prog.add(PrintTensor("bucket boundaries of each processor", buckets));
+  prog.add(Copy(buckets, bucket_buffer));
+  prog.add(Copy(initial_list, sorted_list_buffer));
  
-
-
   // Add buckets to remote buffer
   Sequence prog2;
 
@@ -171,20 +171,13 @@ int main() {
   // Get back buckets from remote buffer
   // Do rest of the processing
 
-  graph2.setTileMapping(new_buckets, 0);
-  graph2.setTileMapping(sorted_lists, 0);
-
   Sequence prog2;
   prog2.add(Copy(bucket_buffer, new_buckets));
   prog2.add(Copy(sorted_list_buffer, sorted_lists));
   prog2.add(PrintTensor(new_buckets));
   prog2.add(PrintTensor(sorted_lists));
-
-  Engine engine2(graph2, prog2);
-  engine2.load(device);
-
-  // Run the control program
-  engine2.run(0);
+  
+  engine.run(1);
 
 
   
