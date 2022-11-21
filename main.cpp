@@ -130,7 +130,7 @@ int main() {
 
   // Third computation phase - finding buckets belonging to different processor based on global samples
   Tensor buckets = graph.addVariable(INT, {p, p - 1}, "buckets");
-  std::vector<std::vector<int>> bucket_list( p, std::vector<int> (p - 1, 0)); 
+  auto bucket_list = std::vector<int>(p * (p - 1)); 
 
   for (unsigned processor = 0; processor < p; processor++) {
     graph.setTileMapping(buckets[processor], processor);
