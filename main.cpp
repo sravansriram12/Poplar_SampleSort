@@ -140,7 +140,7 @@ int main() {
   
   for (unsigned processor = 0; processor < p; processor++) {
     int first_index;
-    int last_index;
+    INT* last_index;
     buckets[processor][processor].getConstantValue(last_index);
     /*last_index++;
     if (processor - 1 < 0) {
