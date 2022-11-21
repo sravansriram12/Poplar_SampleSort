@@ -137,37 +137,10 @@ int main() {
     bin_buckets(determine_buckets, graph, initial_list[processor], global_samples, buckets[processor], processor);
   }
 
-  
-  
-  auto in_stream_list = graph.addHostToDeviceFIFO("initial_list", INT, n);
-  
-  // Add sequence of compute sets to program
-  prog.add(Copy(in_stream_list, initial_list));
-  prog.add(PrintTensor("initial lists", initial_list));
-  prog.add(Execute(local_sort));
-  prog.add(PrintTensor("locally sorted lists", initial_list));
-  prog.add(Execute(local_sample));
-  prog.add(PrintTensor("initially compiled samples", compiled_samples));
-  prog.add(Execute(sort_compiled_samples));
-  prog.add(PrintTensor("sorted compiled samples", compiled_samples));
-  prog.add(Execute(sample_compiled_samples));
-  prog.add(PrintTensor("global samples", global_samples));
-  prog.add(Execute(determine_buckets));
-  prog.add(PrintTensor("bucket boundaries of each processor", buckets));
-
-  // Run graph and associated prog on engine and device a way to communicate host list to device initial list
-  Engine engine(graph, prog);
-  engine.load(device);
-  engine.connectStream("initial_list", input_list.data());
-
-  // Run the control program
-  engine.run(0);
-
   for (unsigned processor = 0; processor < p - 1; processor++) {
     int first_index;
     int* last_index;
     buckets[processor][processor].getConstantValue(last_index);
-    std::cout << *last_index << std::endl;
     /*last_index++;
     if (processor - 1 < 0) {
       first_index = 0;
@@ -202,7 +175,49 @@ int main() {
               }
         }
     } */
+
+  
+  
+  auto in_stream_list = graph.addHostToDeviceFIFO("initial_list", INT, n);
+  
+  // Add sequence of compute sets to program
+  prog.add(Copy(in_stream_list, initial_list));
+  prog.add(PrintTensor("initial lists", initial_list));
+  prog.add(Execute(local_sort));
+  prog.add(PrintTensor("locally sorted lists", initial_list));
+  prog.add(Execute(local_sample));
+  prog.add(PrintTensor("initially compiled samples", compiled_samples));
+  prog.add(Execute(sort_compiled_samples));
+  prog.add(PrintTensor("sorted compiled samples", compiled_samples));
+  prog.add(Execute(sample_compiled_samples));
+  prog.add(PrintTensor("global samples", global_samples));
+  prog.add(Execute(determine_buckets));
+  prog.add(PrintTensor("bucket boundaries of each processor", buckets));
+
+  // Run graph and associated prog on engine and device a way to communicate host list to device initial list
+  Engine engine(graph, prog);
+  engine.load(device);
+  engine.connectStream("initial_list", input_list.data());
+
+  // Run the control program
+  engine.run(0);
+
+  Sequence prog2;
+  
+  Tensor singleElement = graph.addVariable(INT, {1}, "sliced");
+  for (unsigned processor = 0; processor < 1; processor++) {
+    int first_index;
+    int* last_index;
+    buckets[processor][processor].getConstantValue(last_index);
+    singleElement[0] = *last_index;
+   
   }
+
+  prog2.add(PrintTensor("checking slice", singleElement));
+  Engine engine2(graph. prog2);
+  engine2.load(device);
+  
+  engine2.run(0);
 
 
   return 0;
