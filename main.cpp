@@ -167,23 +167,20 @@ int main() {
   engine.connectStream("bucket_list", bucket_list.data());
   engine.connectStream("sort_list", sort_list.data());
 
+  Graph merge(device);
+  Tensor reread_lists = merge.addExternalVariable(INT, {p, local_list_size}, "reread_lists");
+  auto lists = merge.addHostToDeviceFIFO("sort_list", INT, n);
+
+  Sequence prog2;
+  prog2.add(Copy(sort_stream_list, reread_lists));
+
+  Engine engine2(graph, prog2);
+  engine2.connectStream("reread_lists", sort_list.data());
+
+
   // Run the control program
   engine.run(0);
-
-
-
   
-  /*for (unsigned processor = 0; processor < 1; processor++) {
-    int first_index;
-    int* last_index;
-    buckets[processor][processor].getConstantValue(last_index);
-    int index = *last_index;
-    std::cout << index << std::endl;
-    initial_list[processor].slice(0, index);
-  } */
-
-  
-
-
+   
   return 0;
 }
