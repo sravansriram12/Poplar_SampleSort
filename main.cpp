@@ -170,9 +170,9 @@ int main() {
   // Do rest of the processing
   int* last_index;
   cout << buckets.shape()[0] << endl;
-  buckets[0][0].getConstantValue(last_index);
-  int index = *last_index;
-  cout << index << endl; 
+  /*buckets[0][0].getConstantValue(last_index);
+  int index = *last_index; */
+  cout << buckets[0][0] << endl; 
   
   //prog2.add(PrintTensor(initial_list[0].slice(0, index)));
   engine.run(1);
