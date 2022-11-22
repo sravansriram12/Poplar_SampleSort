@@ -157,7 +157,7 @@ int main() {
   Sequence prog2;
  //prog2.add(PrintTensor(buckets));
   Tensor try1;
-  prog2.add(PrintTensor(try1));
+  //prog2.add(PrintTensor(try1));
 
   // Run graph and associated prog on engine and device a way to communicate host list to device initial list
   Engine engine(graph, {prog, prog2});
