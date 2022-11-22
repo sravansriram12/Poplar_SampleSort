@@ -169,15 +169,18 @@ int main() {
 
   engine.run(0);
 
-  //Graph merge(device);
-  //Tensor reread_lists = merge.addVariable(INT, {p, local_list_size}, "reread_lists");
-  auto lists = graph.addHostToDeviceFIFO("sort_list", INT, n);
+  Graph graph2(device);
+  Tensor reread_lists = graph2.addVariable(INT, {p, local_list_size}, "reread_lists");
+  for (unsigned processor = 0; processor < p; processor++) {
+    graph2.setTileMapping(reread_lists[processor], processor);
+  }
+  auto lists = graph2.addHostToDeviceFIFO("sort_list", INT, n);
 
   Sequence prog2;
   prog2.add(Copy(lists, initial_list));
 
-  Engine engine2(graph, prog2);
-  engine2.connectStream("initial_list", sort_list.data());
+  Engine engine2(graph2, prog2);
+  engine2.connectStream("reread_lists", sort_list.data());
 
 
   // Run the control program
