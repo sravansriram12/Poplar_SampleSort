@@ -171,7 +171,7 @@ int main() {
   // Get back buckets from remote buffer
   // Do rest of the processing
   int* last_index;
-  Tensor try1 = graph.addVariable(INT, {1}, "try");
+  //Tensor try1 = graph.addVariable(INT, {1}, "try");
   cout << buckets.shape()[0] << endl;
   /*buckets[0][0].getConstantValue(last_index);
   int index = *last_index; */
