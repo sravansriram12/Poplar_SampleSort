@@ -174,7 +174,7 @@ int main() {
   cout << buckets.shape()[0] << endl;
   /*buckets[0][0].getConstantValue(last_index);
   int index = *last_index; */
-  append(compiled_samples, try1);
+  append(global_samples, try1);
   
   //prog2.add(PrintTensor(initial_list[0].slice(0, index)));
   engine.run(1);
