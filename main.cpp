@@ -142,10 +142,13 @@ int main() {
   auto in_stream_list = graph.addHostToDeviceFIFO("initial_list", INT, n);
   auto bucket_stream_list = graph.addDeviceToHostFIFO("bucket_list", INT, p * (p - 1));
   auto sort_stream_list = graph.addDeviceToHostFIFO("sort_list", INT, n);
+
+  //auto sort_stream_list = graph.addRemoteBuffer("sort_list", INT, n);
   
   // Add sequence of compute sets to program
   prog.add(Copy(in_stream_list, initial_list));
   prog.add(PrintTensor("initial lists", initial_list));
+  //prog.add(WriteUndef(var));
   prog.add(Execute(local_sort));
   prog.add(PrintTensor("locally sorted lists", initial_list));
   prog.add(Execute(local_sample));
@@ -178,10 +181,11 @@ int main() {
   auto lists = graph2.addHostToDeviceFIFO("sort_list", INT, n);
 
   Sequence prog2;
-  prog2.add(Copy(lists, reread_lists));
-  prog2.add(PrintTensor(reread_lists));
+  //prog2.add(Copy(lists, reread_lists));
+  //prog2.add(PrintTensor(reread_lists));
+  prog2.add(PrintTensor(buckets))
 
-  Engine engine2(graph2, prog2);
+  Engine engine2(graph, prog2);
   engine2.load(device);
   engine2.connectStream("sort_list", sort_list.data());
 
