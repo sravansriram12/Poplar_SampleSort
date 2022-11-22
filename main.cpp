@@ -101,6 +101,7 @@ int main() {
 
   // initial list of data that is copied from host to device
   auto input_list = std::vector<int>(n);
+  auto bucket_list = std::vector<int>(p * (p - 1));
   for (unsigned idx = 0; idx < n; ++idx) {
     input_list[idx] = rand() % 100;
   }
@@ -138,6 +139,8 @@ int main() {
   }
 
   auto in_stream_list = graph.addHostToDeviceFIFO("initial_list", INT, n);
+  auto bucket_stream_list = graph.addDeviceToHostFIFO("bucket_list", INT, p * (p - 1));
+  auto sort_stream_list = graph.addDeviceToHostFIFO("initial_list", INT, n);
   
   // Add sequence of compute sets to program
   prog.add(Copy(in_stream_list, initial_list));
@@ -152,33 +155,19 @@ int main() {
   prog.add(PrintTensor("global samples", global_samples));
   prog.add(Execute(determine_buckets));
   prog.add(PrintTensor("bucket boundaries of each processor", buckets));
+  prog.add(Copy(initial_list, sort_stream_list));
+  prog.add(Copy(buckets, bucket_stream_list))
  
-  // Add buckets to remote buffer
-  Sequence prog2;
- //prog2.add(PrintTensor(buckets));
-  Tensor try1;
-  //prog2.add(PrintTensor(try1));
 
   // Run graph and associated prog on engine and device a way to communicate host list to device initial list
-  Engine engine(graph, {prog, prog2});
+  Engine engine(graph, prog);
   engine.load(device);
   engine.connectStream("initial_list", input_list.data());
+  engine.connectStream("bucket_list", bucket_list.data());
 
   // Run the control program
   engine.run(0);
 
-  std::cout << "here" << std::endl;
-  // Get back buckets from remote buffer
-  // Do rest of the processing
-  int* last_index;
-  //Tensor try1 = graph.addVariable(INT, {1}, "try");
-  cout << buckets.shape()[0] << endl;
-  /*buckets[0][0].getConstantValue(last_index);
-  int index = *last_index; */
-  try1 = buckets;
-  
-  //prog2.add(PrintTensor(initial_list[0].slice(0, index)));
-  engine.run(1);
 
 
   
