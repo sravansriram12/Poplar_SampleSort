@@ -156,7 +156,7 @@ int main() {
   prog.add(Execute(determine_buckets));
   prog.add(PrintTensor("bucket boundaries of each processor", buckets));
   prog.add(Copy(initial_list, sort_stream_list));
-  prog.add(Copy(buckets, bucket_stream_list))
+  prog.add(Copy(buckets, bucket_stream_list));
  
 
   // Run graph and associated prog on engine and device a way to communicate host list to device initial list
