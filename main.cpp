@@ -167,6 +167,8 @@ int main() {
   engine.connectStream("bucket_list", bucket_list.data());
   engine.connectStream("sort_list", sort_list.data());
 
+  engine.run(0);
+
   Graph merge(device);
   Tensor reread_lists = merge.addVariable(INT, {p, local_list_size}, "reread_lists");
   auto lists = merge.addHostToDeviceFIFO("sort_list", INT, n);
@@ -179,7 +181,7 @@ int main() {
 
 
   // Run the control program
-  engine.run(0);
+  engine2.run(0);
   
    
   return 0;
