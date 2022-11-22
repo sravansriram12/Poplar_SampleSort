@@ -174,7 +174,7 @@ int main() {
   Sequence prog2;
   prog2.add(Copy(sort_stream_list, reread_lists));
 
-  Engine engine2(graph, prog2);
+  Engine engine2(merge, prog2);
   engine2.connectStream("reread_lists", sort_list.data());
 
 
