@@ -177,7 +177,7 @@ int main() {
   auto lists = graph2.addHostToDeviceFIFO("sort_list", INT, n);
 
   Sequence prog2;
-  prog2.add(Copy(lists, initial_list));
+  prog2.add(Copy(lists, reread_lists));
 
   Engine engine2(graph2, prog2);
   engine2.connectStream("reread_lists", sort_list.data());
