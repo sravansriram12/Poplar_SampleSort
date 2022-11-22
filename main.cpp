@@ -164,7 +164,8 @@ int main() {
  
 
   // Run graph and associated prog on engine and device a way to communicate host list to device initial list
-  Engine engine(std::ref(graph), prog);
+  Sequence prog_dummy;
+  Engine engine(std::move(graph), {prog, prog_dummy});
   engine.load(device);
   engine.connectStream("initial_list", input_list.data());
   engine.connectStream("bucket_list", bucket_list.data());
@@ -172,7 +173,7 @@ int main() {
 
   engine.run(0);
 
-  Graph graph2(device);
+  
 
   Tensor reread_lists = graph2.addVariable(INT, {p, local_list_size}, "reread_lists");
   for (unsigned processor = 0; processor < p; processor++) {
