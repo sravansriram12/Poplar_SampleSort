@@ -180,7 +180,7 @@ int main() {
   prog2.add(Copy(lists, reread_lists));
 
   Engine engine2(graph2, prog2);
-  engine2.connectStream("reread_lists", sort_list.data());
+  engine2.connectStream("sort_list", sort_list.data());
 
 
   // Run the control program
