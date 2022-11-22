@@ -164,7 +164,7 @@ int main() {
  
 
   // Run graph and associated prog on engine and device a way to communicate host list to device initial list
-  Engine engine(graph, prog);
+  Engine engine(std::move(graph), prog);
   engine.load(device);
   engine.connectStream("initial_list", input_list.data());
   engine.connectStream("bucket_list", bucket_list.data());
