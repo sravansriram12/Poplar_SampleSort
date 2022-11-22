@@ -156,7 +156,8 @@ int main() {
   // Add buckets to remote buffer
   Sequence prog2;
  //prog2.add(PrintTensor(buckets));
-  prog2.add(PrintTensor(compiled_samples));
+  Tensor try1;
+  prog2.add(PrintTensor(try1));
 
   // Run graph and associated prog on engine and device a way to communicate host list to device initial list
   Engine engine(graph, {prog, prog2});
@@ -174,7 +175,7 @@ int main() {
   cout << buckets.shape()[0] << endl;
   /*buckets[0][0].getConstantValue(last_index);
   int index = *last_index; */
-  append(global_samples, try1);
+  try1 = buckets;
   
   //prog2.add(PrintTensor(initial_list[0].slice(0, index)));
   engine.run(1);
