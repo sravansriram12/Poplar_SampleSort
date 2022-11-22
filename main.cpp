@@ -179,6 +179,7 @@ int main() {
 
   Sequence prog2;
   prog2.add(Copy(lists, reread_lists));
+  prog2.add(PrintTensor(reread_lists));
 
   Engine engine2(graph2, prog2);
   engine2.load(device);
