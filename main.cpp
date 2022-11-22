@@ -168,7 +168,7 @@ int main() {
   engine.connectStream("sort_list", sort_list.data());
 
   Graph merge(device);
-  Tensor reread_lists = merge.addExternalVariable(INT, {p, local_list_size}, "reread_lists");
+  Tensor reread_lists = merge.addVariable(INT, {p, local_list_size}, "reread_lists");
   auto lists = merge.addHostToDeviceFIFO("sort_list", INT, n);
 
   Sequence prog2;
