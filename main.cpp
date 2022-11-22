@@ -171,7 +171,7 @@ int main() {
 
   //Graph merge(device);
   //Tensor reread_lists = merge.addVariable(INT, {p, local_list_size}, "reread_lists");
-  auto lists = merge.addHostToDeviceFIFO("sort_list", INT, n);
+  auto lists = graph.addHostToDeviceFIFO("sort_list", INT, n);
 
   Sequence prog2;
   prog2.add(Copy(lists, initial_list));
