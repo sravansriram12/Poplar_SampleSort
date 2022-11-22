@@ -102,6 +102,7 @@ int main() {
   // initial list of data that is copied from host to device
   auto input_list = std::vector<int>(n);
   auto bucket_list = std::vector<int>(p * (p - 1));
+  auto sort_list = std::vector<int>(n);
   for (unsigned idx = 0; idx < n; ++idx) {
     input_list[idx] = rand() % 100;
   }
@@ -140,7 +141,7 @@ int main() {
 
   auto in_stream_list = graph.addHostToDeviceFIFO("initial_list", INT, n);
   auto bucket_stream_list = graph.addDeviceToHostFIFO("bucket_list", INT, p * (p - 1));
-  auto sort_stream_list = graph.addDeviceToHostFIFO("initial_list", INT, n);
+  auto sort_stream_list = graph.addDeviceToHostFIFO("sort_list", INT, n);
   
   // Add sequence of compute sets to program
   prog.add(Copy(in_stream_list, initial_list));
@@ -164,6 +165,7 @@ int main() {
   engine.load(device);
   engine.connectStream("initial_list", input_list.data());
   engine.connectStream("bucket_list", bucket_list.data());
+  engine.connectStream("sort_list", sort_list.data());
 
   // Run the control program
   engine.run(0);
