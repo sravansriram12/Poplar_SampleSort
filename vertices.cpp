@@ -101,4 +101,4 @@ class MergeLists : public MultiVertex {
     bool compute (unsigned workerId) {
         return true;
     }
-}
+};
