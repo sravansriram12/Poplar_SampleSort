@@ -174,17 +174,19 @@ int main() {
       int first = 0;
       int last = 0;
       if (i % (p - 1) == 0) {
-        last = bucket_list[i] + 1;
+        last = max(local_list_size, bucket_list[i] + 1);
       } else if (i % (p - 1) == 0) {
         first = bucket_list[i] + 1;
-        last = p - 1;
+        last = local_list_size;
       } else {
-        last = bucket_list[i] + 1;
+        last = max(local_list_size, bucket_list[i] + 1);
         first = bucket_list[i - 1] + 1;
       }
 
       cout << first << " " << last << endl;
-      graph.setTileMapping(initial_list[processorId].slice(first, last), i);
+      if (first < local_list_size) {
+         graph.setTileMapping(initial_list[processorId].slice(first, last), i);
+      }
     }
     start = i - 1;
     processorId++;
