@@ -197,7 +197,7 @@ int main() {
   unsigned first = bucket_list[bucket_list.size() - 1] + 1;
   unsigned last = local_list_size;
   if (first < local_list_size) {
-      graph.setTileMapping(initial_list[p - 1].slice(first, last), i);
+      graph.setTileMapping(initial_list[p - 1].slice(first, last), p - 1);
   }
 
 
