@@ -189,13 +189,13 @@ int main() {
       }
     }
 
-    unsigned first = bucket_list[i] + 1;
+    unsigned first = bucket_list[p - 2] + 1;
     unsigned last = local_list_size;
     cout << first << " here " << last << endl;
     if (first < local_list_size) {
          graph.setTileMapping(initial_list[processorId].slice(first, last), i);
       }
-    start = i - 1;
+    start = i;
     processorId++;
   }
 
