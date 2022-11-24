@@ -192,7 +192,9 @@ int main() {
           seen = true;
          } else {
             Tensor append_list = initial_list[current_processor].slice(first, last).reshape({last - first});
-            processor_merge_lists = append(processor_merge_lists, append_list);
+            processor_merge_lists = append(processor_merge_lists.reshape({procesor_merge_lists.numElements()}), 
+              append_list.reshape(append_list.numElements()));
+              cout << "here" << endl;
          }
       }
       current_processor++;
