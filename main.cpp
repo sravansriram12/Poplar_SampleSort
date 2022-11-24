@@ -15,6 +15,7 @@
 #include <stdlib.h>
 #include <string>
 #include <vector>
+#include <algorithm>
 
 
 using namespace poplar;
@@ -174,12 +175,12 @@ int main() {
       int first = 0;
       int last = 0;
       if (i % (p - 1) == 0) {
-        last = max(local_list_size, bucket_list[i] + 1);
+        last = std::max(local_list_size, bucket_list[i] + 1);
       } else if (i % (p - 1) == 0) {
         first = bucket_list[i] + 1;
         last = local_list_size;
       } else {
-        last = max(local_list_size, bucket_list[i] + 1);
+        last = std::max(local_list_size, bucket_list[i] + 1);
         first = bucket_list[i - 1] + 1;
       }
 
