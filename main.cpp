@@ -6,7 +6,6 @@
 #include <popops/TopK.hpp>
 #include <popops/SortOrder.hpp>
 #include <popops/codelets.hpp>
-#include <gccs/ArrayRef.hpp>
 #include <algorithm>
 #include <cmath>
 #include <fstream>
@@ -199,7 +198,7 @@ int main() {
           processor_merge_lists.push_back(initial_list[p - 1].slice(first, last));
       }
     }
-    gccs::ArrayRef<Tensor> merge_input(processor_merge_lists);
+    ArrayRef<Tensor> merge_input(processor_merge_lists);
   }
 
  
