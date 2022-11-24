@@ -171,15 +171,12 @@ int main() {
   int processorId = 0;
   while(start != bucket_list.size()) {
     unsigned i;
-    for (i = start; i <= start + p; i++) {
+    for (i = start; i < start + p; i++) {
       unsigned first = 0;
       unsigned last = 0;
       if (i % (p - 1) == 0) {
         unsigned tempLast = bucket_list[i] + 1;
         last = std::min(local_list_size, tempLast);
-      } else if (i % (p - 1) == 0) {
-        first = bucket_list[i] + 1;
-        last = local_list_size;
       } else {
         unsigned tempLast = bucket_list[i] + 1;
         last = std::min(local_list_size, tempLast);
@@ -191,6 +188,13 @@ int main() {
          graph.setTileMapping(initial_list[processorId].slice(first, last), i);
       }
     }
+
+    unsigned first = bucket_list[i] + 1;
+    unsigned last = local_list_size;
+    cout << first << " " << last << endl;
+    if (first < local_list_size) {
+         graph.setTileMapping(initial_list[processorId].slice(first, last), i);
+      }
     start = i - 1;
     processorId++;
   }
