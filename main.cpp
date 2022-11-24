@@ -166,9 +166,28 @@ int main() {
   engine.readTensor("list-read", input_list.data(), input_list.data() + input_list.size());
   engine.readTensor("bucket-read", bucket_list.data(), bucket_list.data() + bucket_list.size());
 
-  for (int i = 0; i < bucket_list.size(); i++) {
-    cout << bucket_list[i] << endl;
+  int start = 0;
+  int processorId = 0;
+  while(start != bucket_list.size()) {
+    unsigned int i;
+    for (i = start; i < start + (p - 1); i++) {
+      int first = 0;
+      int last = 0;
+      if (i % (p - 1) == 0) {
+        last = bucket_list[i];
+      } else if ((i + 1) % (p - 1) == 0) {
+        last = p - 1;
+      } else {
+        last = bucket_list[i] + 1;
+        first = bucket_list[i - 1] + 1;
+      }
+
+      cout << first << " " << last << endl;
+      graph.setTileMapping(initial_list[processorId].slice(first, last), i);
+    }
+    start = i;
+    processorId++;
   }
-   
+
   return 0;
 }
