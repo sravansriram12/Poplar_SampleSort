@@ -169,7 +169,7 @@ int main() {
 
   for (int i = 0; i < p; i++) {
     int current_processor = 0;
-    std::vector<Tensor> processor_merge_lists;
+    Tensor processor_merge_lists;
     for (int j = i; j < bucket_list.size(); j += (p - 1)) {
       unsigned first = 0;
       unsigned last = 0;
@@ -186,7 +186,7 @@ int main() {
       }
       if (first < local_list_size) {
          graph.setTileMapping(initial_list[current_processor].slice(first, last), i);
-         processor_merge_lists.push_back(initial_list[current_processor].slice(first, last));
+         append(processor_merge_lists, initial_list[current_processor].slice(first, last));
       }
       current_processor++;
     }
@@ -195,10 +195,10 @@ int main() {
       unsigned last = local_list_size;
       if (first < local_list_size) {
           graph.setTileMapping(initial_list[p - 1].slice(first, last), p - 1);
-          processor_merge_lists.push_back(initial_list[p - 1].slice(first, last));
+          append(processor_merge_lists, initial_list[p - 1].slice(first, last));
       }
     }
-    ArrayRef<Tensor> merge_input(processor_merge_lists);
+    //ArrayRef<Tensor> merge_input(processor_merge_lists);
   }
 
  

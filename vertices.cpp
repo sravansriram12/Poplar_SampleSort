@@ -92,3 +92,13 @@ class DetermineBuckets : public Vertex {
         return true;
     }
 };
+
+class MergeLists : public MultiVertex {
+    public:
+    InOut<Vector<int>> sorted_sub_lists;
+    Output<Vector<int>> sorted_final_list;
+    
+    bool compute (unsigned workerId) {
+        return true;
+    }
+}
