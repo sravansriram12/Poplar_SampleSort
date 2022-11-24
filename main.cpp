@@ -6,6 +6,7 @@
 #include <popops/TopK.hpp>
 #include <popops/SortOrder.hpp>
 #include <popops/codelets.hpp>
+#include <gccs/ArrayRef.hpp>
 #include <algorithm>
 #include <cmath>
 #include <fstream>
@@ -167,11 +168,9 @@ int main() {
   engine.readTensor("list-read", input_list.data(), input_list.data() + input_list.size());
   engine.readTensor("bucket-read", bucket_list.data(), bucket_list.data() + bucket_list.size());
 
-  int start = 0;
-  int processorId = 0;
-
   for (int i = 0; i < p; i++) {
     int current_processor = 0;
+    std::vector<Tensor> processor_merge_lists;
     for (int j = i; j < bucket_list.size(); j += (p - 1)) {
       unsigned first = 0;
       unsigned last = 0;
@@ -186,19 +185,24 @@ int main() {
         last = std::min(local_list_size, temp_last);
         first = bucket_list[j - 1] + 1;
       }
-      cout << first << " " << last << endl;
       if (first < local_list_size) {
          graph.setTileMapping(initial_list[current_processor].slice(first, last), i);
+         processor_merge_lists.push_back(initial_list[current_processor].slice(first, last));
       }
       current_processor++;
     }
+    if (i == p - 1) {
+      unsigned first = bucket_list[bucket_list.size() - 1] + 1;
+      unsigned last = local_list_size;
+      if (first < local_list_size) {
+          graph.setTileMapping(initial_list[p - 1].slice(first, last), p - 1);
+          processor_merge_lists.push_back(initial_list[p - 1].slice(first, last));
+      }
+    }
+    gccs::ArrayRef<Tensor> merge_input(processor_merge_lists);
   }
 
-  unsigned first = bucket_list[bucket_list.size() - 1] + 1;
-  unsigned last = local_list_size;
-  if (first < local_list_size) {
-      graph.setTileMapping(initial_list[p - 1].slice(first, last), p - 1);
-  }
+ 
 
 
   return 0;
