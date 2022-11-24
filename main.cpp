@@ -171,7 +171,7 @@ int main() {
   int processorId = 0;
   while(start != bucket_list.size()) {
     unsigned i;
-    for (i = start; i < start + p; i++) {
+    for (i = start; i <= start + p; i++) {
       unsigned first = 0;
       unsigned last = 0;
       if (i % (p - 1) == 0) {
