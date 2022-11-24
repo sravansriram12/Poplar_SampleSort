@@ -194,6 +194,7 @@ int main() {
          } else {
             Tensor append_list = initial_list[current_processor].slice(first, last);
             append_list.reshape({last - first});
+            cout << append_list.rank() << endl;
             append(processor_merge_lists, append_list);
          }
       }
@@ -204,8 +205,9 @@ int main() {
       unsigned last = local_list_size;
       if (first < local_list_size) {
           graph.setTileMapping(initial_list[p - 1].slice(first, last), p - 1);
-          Tensor append_list = initial_list[current_processor].slice(first, last);
+          Tensor append_list = initial_list[p - 1].slice(first, last);
           append_list.reshape({last - first});
+          cout << append_list.rank() << endl;
           append(processor_merge_lists, append_list);
       }
     }
