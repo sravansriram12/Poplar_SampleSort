@@ -188,7 +188,7 @@ int main() {
       if (first < local_list_size) {
          graph.setTileMapping(initial_list[current_processor].slice(first, last), i);
          if (!seen) {
-          processor_merge_lists = initial_list[current_processor].slice(first, last)reshape({last - first});
+          processor_merge_lists = initial_list[current_processor].slice(first, last).reshape({last - first});
           seen = true;
          } else {
             Tensor append_list = initial_list[current_processor].slice(first, last).reshape({last - first});
