@@ -166,7 +166,9 @@ int main() {
   engine.readTensor("list-read", input_list.data(), input_list.data() + input_list.size());
   engine.readTensor("bucket-read", bucket_list.data(), bucket_list.data() + bucket_list.size());
 
-  
+  for (int i = 0; i < bucket_list.size(); i++) {
+    cout << bucket_list[i] << endl;
+  }
    
   return 0;
 }
