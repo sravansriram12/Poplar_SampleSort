@@ -176,13 +176,13 @@ int main() {
       unsigned last = 0;
       if (i % (p - 1) == 0) {
         unsigned tempLast = bucket_list[i] + 1;
-        last = std::max(local_list_size, tempLast);
+        last = std::min(local_list_size, tempLast);
       } else if (i % (p - 1) == 0) {
         first = bucket_list[i] + 1;
         last = local_list_size;
       } else {
         unsigned tempLast = bucket_list[i] + 1;
-        last = std::max(local_list_size, tempLast);
+        last = std::min(local_list_size, tempLast);
         first = bucket_list[i - 1] + 1;
       }
 
