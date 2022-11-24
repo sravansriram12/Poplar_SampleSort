@@ -169,31 +169,6 @@ int main() {
 
   int start = 0;
   int processorId = 0;
-  
-  /*while(start != bucket_list.size()) {
-    unsigned i;
-    ArrayRef<Tensor> 
-    for (i = start; i < start + (p - 1); i++) {
-      unsigned first = 0;
-      unsigned last = 0;
-      if (i % (p - 1) == 0) {
-        unsigned tempLast = bucket_list[i] + 1;
-        last = std::min(local_list_size, tempLast);
-      } else {
-        
-      }
-      if (first < local_list_size) {
-         graph.setTileMapping(initial_list[processorId].slice(first, last), i);
-      }
-    }
-
-   
-    if (first < local_list_size) {
-         graph.setTileMapping(initial_list[processorId].slice(first, last), i);
-      }
-    start = i;
-    processorId++;
-  } */
 
   for (int i = 0; i < p; i++) {
     int current_processor = 0;
@@ -213,10 +188,18 @@ int main() {
       }
       cout << first << " " << last << endl;
       if (first < local_list_size) {
-         graph.setTileMapping(initial_list[processorId].slice(first, last), i);
+         graph.setTileMapping(initial_list[current_processor].slice(first, last), i);
       }
+      current_processor++;
     }
   }
+
+  unsigned first = bucket_list[bucket_list.size() - 1] + 1;
+  unsigned last = local_list_size;
+  if (first < local_list_size) {
+      graph.setTileMapping(initial_list[p - 1].slice(first, last), i);
+  }
+
 
   return 0;
 }
