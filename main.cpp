@@ -190,10 +190,11 @@ int main() {
          if (!seen) {
           processor_merge_lists = initial_list[current_processor].slice(first, last);
           processor_merge_lists.reshape({last - first});
-          cout << processor_merge_lists.rank() << endl;
           seen = true;
          } else {
-            append(processor_merge_lists, initial_list[current_processor].slice(first, last));
+            Tensor append_list = initial_list[current_processor].slice(first, last);
+            append_list.reshape({last - first});
+            append(processor_merge_lists, append_list);
          }
       }
       current_processor++;
