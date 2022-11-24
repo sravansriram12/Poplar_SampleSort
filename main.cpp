@@ -102,7 +102,6 @@ int main() {
   // initial list of data that is copied from host to device
   auto input_list = std::vector<int>(n);
   auto bucket_list = std::vector<int>(p * (p - 1));
-  auto sort_list = std::vector<int>(n);
   for (unsigned idx = 0; idx < n; ++idx) {
     input_list[idx] = rand() % 100;
   }
@@ -122,7 +121,6 @@ int main() {
         compiled_samples.slice(processor * (p - 1), (processor + 1) * (p - 1)), p, processor);
   }
 
-   
 
   // Second computation phase - sorting the compilation of the local samples and picking global samples
   quick_sort(sort_compiled_samples, graph, compiled_samples, p);
@@ -139,14 +137,11 @@ int main() {
     bin_buckets(determine_buckets, graph, initial_list[processor], global_samples, buckets[processor], processor);
   }
 
-  auto in_stream_list = graph.addHostToDeviceFIFO("initial_list", INT, n);
-  auto bucket_stream_list = graph.addDeviceToHostFIFO("bucket_list", INT, p * (p - 1));
-  auto sort_stream_list = graph.addDeviceToHostFIFO("sort_list", INT, n);
-
-  //auto sort_stream_list = graph.addRemoteBuffer("sort_list", INT, n);
+  graph.createHostWrite("list-write", initial_list);
+  graph.createHostRead("list-read", initial_list);
+  graph.createHostRead("bucket-read", buckets);
   
   // Add sequence of compute sets to program
-  prog.add(Copy(in_stream_list, initial_list));
   prog.add(PrintTensor("initial lists", initial_list));
   //prog.add(WriteUndef(var));
   prog.add(Execute(local_sort));
@@ -159,40 +154,18 @@ int main() {
   prog.add(PrintTensor("global samples", global_samples));
   prog.add(Execute(determine_buckets));
   prog.add(PrintTensor("bucket boundaries of each processor", buckets));
-  prog.add(Copy(initial_list, sort_stream_list));
-  prog.add(Copy(buckets, bucket_stream_list));
  
 
   // Run graph and associated prog on engine and device a way to communicate host list to device initial list
-  Sequence prog_dummy;
-  Engine engine(&graph, {prog, prog_dummy});
+  Engine engine(graph, prog);
   engine.load(device);
-  engine.connectStream("initial_list", input_list.data());
-  engine.connectStream("bucket_list", bucket_list.data());
-  engine.connectStream("sort_list", sort_list.data());
+  engine.writeTensor("list-write", input_list.data(), input_list.data() + input_list.size());
 
   engine.run(0);
 
-  
-  Graph graph2(device);
-  Tensor reread_lists = graph2.addVariable(INT, {p, local_list_size}, "reread_lists");
-  for (unsigned processor = 0; processor < p; processor++) {
-    graph2.setTileMapping(reread_lists[processor], processor);
-  }
-  auto lists = graph2.addHostToDeviceFIFO("sort_list", INT, n);
+  engine.readTensor("list-read", input_list.data(), input_list.data() + input_list.size());
+  engine.readTensor("bucket-read", bucket_list.data(), bucket_list.data() + bucket_list.size());
 
-  Sequence prog2;
-  //prog2.add(Copy(lists, reread_lists));
-  //prog2.add(PrintTensor(reread_lists));
-  prog2.add(PrintTensor(buckets));
-
-  Engine engine2(graph, prog2);
-  engine2.load(device);
-  engine2.connectStream("sort_list", sort_list.data());
-
-
-  // Run the control program
-  engine2.run(0);
   
    
   return 0;
