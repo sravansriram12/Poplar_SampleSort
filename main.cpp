@@ -102,7 +102,7 @@ int main() {
 
   // initial list of data that is copied from host to device
   auto input_list = std::vector<int>(n);
-  auto bucket_list = std::vector<int>(p * (p - 1));
+  auto bucket_list = std::vector<unsigned int>(p * (p - 1));
   for (unsigned idx = 0; idx < n; ++idx) {
     input_list[idx] = rand() % 100;
   }
@@ -170,17 +170,19 @@ int main() {
   int start = 0;
   int processorId = 0;
   while(start != bucket_list.size()) {
-    unsigned int i;
+    unsigned i;
     for (i = start; i < start + p; i++) {
-      int first = 0;
-      int last = 0;
+      unsigned first = 0;
+      unsigned last = 0;
       if (i % (p - 1) == 0) {
-        last = std::max(local_list_size, bucket_list[i] + 1);
+        unsigned tempLast = bucket_list[i] + 1;
+        last = std::max(local_list_size, tempLast);
       } else if (i % (p - 1) == 0) {
         first = bucket_list[i] + 1;
         last = local_list_size;
       } else {
-        last = std::max(local_list_size, bucket_list[i] + 1);
+        unsigned tempLast = bucket_list[i] + 1;
+        last = std::max(local_list_size, tempLast);
         first = bucket_list[i - 1] + 1;
       }
 
