@@ -197,6 +197,7 @@ int main() {
             cout << append_list.rank() << endl;
             cout << processor_merge_lists.rank() << endl;
             processor_merge_lists = append(processor_merge_lists, append_list);
+            cout << "here" << endl;
          }
       }
       current_processor++;
