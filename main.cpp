@@ -170,12 +170,13 @@ int main() {
   int processorId = 0;
   while(start != bucket_list.size()) {
     unsigned int i;
-    for (i = start; i < start + (p - 1); i++) {
+    for (i = start; i < start + p; i++) {
       int first = 0;
       int last = 0;
       if (i % (p - 1) == 0) {
-        last = bucket_list[i];
+        last = bucket_list[i] + 1;
       } else if ((i + 1) % (p - 1) == 0) {
+        first = bucket_list[i] + 1;
         last = p - 1;
       } else {
         last = bucket_list[i] + 1;
@@ -185,7 +186,7 @@ int main() {
       cout << first << " " << last << endl;
       graph.setTileMapping(initial_list[processorId].slice(first, last), i);
     }
-    start = i;
+    start = i - 1;
     processorId++;
   }
 
