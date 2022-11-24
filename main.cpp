@@ -189,7 +189,7 @@ int main() {
       }
     }
 
-    unsigned first = bucket_list[p - 2] + 1;
+    unsigned first = bucket_list[i - 1] + 1;
     unsigned last = local_list_size;
     cout << first << " here " << last << endl;
     if (first < local_list_size) {
