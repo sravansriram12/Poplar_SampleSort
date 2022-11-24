@@ -171,7 +171,7 @@ int main() {
   int processorId = 0;
   while(start != bucket_list.size()) {
     unsigned i;
-    for (i = start; i < start + p; i++) {
+    for (i = start; i < start + (p - 1); i++) {
       unsigned first = 0;
       unsigned last = 0;
       if (i % (p - 1) == 0) {
@@ -191,7 +191,7 @@ int main() {
 
     unsigned first = bucket_list[i] + 1;
     unsigned last = local_list_size;
-    cout << first << " " << last << endl;
+    cout << first << " here " << last << endl;
     if (first < local_list_size) {
          graph.setTileMapping(initial_list[processorId].slice(first, last), i);
       }
