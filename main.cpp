@@ -195,7 +195,8 @@ int main() {
             Tensor append_list = initial_list[current_processor].slice(first, last);
             append_list.reshape({last - first});
             cout << append_list.rank() << endl;
-            append(processor_merge_lists, append_list);
+            cout << processor_merge_lists.rank() << endl;
+            processor_merge_lists = append(processor_merge_lists, append_list);
          }
       }
       current_processor++;
@@ -208,7 +209,8 @@ int main() {
           Tensor append_list = initial_list[p - 1].slice(first, last);
           append_list.reshape({last - first});
           cout << append_list.rank() << endl;
-          append(processor_merge_lists, append_list);
+          cout << processor_merge_lists.rank() << endl;
+          processor_merge_lists = append(processor_merge_lists, append_list);
       }
     }
     //ArrayRef<Tensor> merge_input(processor_merge_lists);
