@@ -192,7 +192,7 @@ int main() {
           seen = true;
          } else {
             Tensor append_list = initial_list[current_processor].slice(first, last).reshape({last - first});
-            processor_merge_lists = append(processor_merge_lists.reshape({processor_merge_lists.numElements()}), 
+            processor_merge_lists = concat(processor_merge_lists.reshape({processor_merge_lists.numElements()}), 
               append_list.reshape({append_list.numElements()}));
               cout << "here" << endl;
          }
@@ -205,7 +205,7 @@ int main() {
       if (first < local_list_size) {
           graph.setTileMapping(initial_list[p - 1].slice(first, last), p - 1);
           Tensor append_list = initial_list[p - 1].slice(first, last).reshape({last - first});
-          processor_merge_lists = append(processor_merge_lists, append_list);
+          processor_merge_lists = concat(processor_merge_lists, append_list);
       }
     }
     //ArrayRef<Tensor> merge_input(processor_merge_lists);
