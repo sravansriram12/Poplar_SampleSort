@@ -175,7 +175,7 @@ int main() {
       int last = 0;
       if (i % (p - 1) == 0) {
         last = bucket_list[i] + 1;
-      } else if ((i + 1) % (p - 1) == 0) {
+      } else if (i % (p - 1) == 0) {
         first = bucket_list[i] + 1;
         last = p - 1;
       } else {
