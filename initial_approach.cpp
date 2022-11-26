@@ -138,6 +138,20 @@ int main() {
     graph.setTileMapping(processor_mapping, i);
     find_processor(determine_processors, graph, initial_list[i], global_samples, processor_mapping[i], i);
   }
+
+  std::vector<Tensor> final_unsorted_lists (p);
+  unsigned idx = 0;
+  for (unsigned i = 0; i < p; i++) {
+    for (unsigned j = 0; j < local_list_size; j++) {
+        //graph.setTileMapping(initial_list[i][j], processor_list[idx]);
+        final_unsorted_lists[processor_list[idx]] = concat(final_unsorted_lists[processor_list[idx]], initial_list[i][j]);
+        idx++;
+    }
+  }
+
+  for (int i = 0; i < p; i++) {
+    quick_sort(local_sort, graph, final_unsorted_lists[i], i);
+  }
   
 
   graph.createHostWrite("list-write", initial_list);
@@ -153,7 +167,9 @@ int main() {
   prog.add(PrintTensor("global samples", global_samples));
   prog.add(Execute(determine_processors));
   //prog.add(WriteUndef(global_samples));
-  prog.add(PrintTensor("bucket boundaries of each processor", processor_mapping));
+  prog.add(PrintTensor("processor mapping", processor_mapping));
+  prog.add(Execute(local_sort));
+  prog.add(PrintTensor(initial_list));
  
 
   // Run graph and associated prog on engine and device a way to communicate host list to device initial list
@@ -163,29 +179,17 @@ int main() {
 
   engine.run(0);
 
-  engine.readTensor("processor-mapping-read", processor_list.data(), processor_list.data() + processor_list.size());
+  //engine.readTensor("processor-mapping-read", processor_list.data(), processor_list.data() + processor_list.size());
   
-  std::vector<Tensor> final_unsorted_lists (p);
-  unsigned idx = 0;
-  for (unsigned i = 0; i < p; i++) {
-    for (unsigned j = 0; j < local_list_size; j++) {
-        graph.setTileMapping(initial_list[i][j], processor_list[idx]);
-        final_unsorted_lists[processor_list[idx]] = concat(final_unsorted_lists[processor_list[idx]], initial_list[i][j]);
-        idx++;
-    }
-  }
+ 
 
-  for (int i = 0; i < p; i++) {
-    quick_sort(local_sort, graph, final_unsorted_lists[i], i);
-  }
-
-  Sequence prog2;
+  /*Sequence prog2;
   prog2.add(Execute(local_sort));
   prog2.add(PrintTensor(initial_list));
   Engine engine2(graph, prog2);
   engine2.load(device);
   engine2.writeTensor("list-write", input_list.data(), input_list.data() + input_list.size());
-  engine2.run(0);
+  engine2.run(0); */
 
 
 

@@ -84,7 +84,7 @@ class DetermineProcessor: public Vertex {
                     start = mid + 1;
                 }
             }
-            processor[i] = ans;
+            processor[i] = ans + 1;
         } 
        
         return true;
