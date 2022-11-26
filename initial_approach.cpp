@@ -66,7 +66,7 @@ void find_processor(ComputeSet& computeSet, Graph& graph, Tensor input_list, Ten
 int main() {
   // Create the IPU model device
 
-  unsigned n = 10000;  // number of elements
+  unsigned n = 10000000;  // number of elements
   unsigned p = 5;   // number of processors (tiles)
   unsigned local_list_size = n / p;
   const char *dev = "model-ipu2";
@@ -159,15 +159,11 @@ int main() {
   // Add sequence of compute sets to program
   prog.add(PrintTensor("initial lists", initial_list));
   prog.add(Execute(local_sample));
-  prog.add(PrintTensor("initially compiled samples", compiled_samples));
   prog.add(Execute(sort_compiled_samples));
-  prog.add(PrintTensor("sorted compiled samples", compiled_samples));
   prog.add(Execute(sample_compiled_samples));
-  prog.add(PrintTensor("global samples", global_samples));
   prog.add(Execute(determine_processors));
   //prog.add(WriteUndef(global_samples));
-  prog.add(PrintTensor("processor mapping", processor_mapping));
- 
+
   // Run graph and associated prog on engine and device a way to communicate host list to device initial list
   Engine engine(graph, prog);
   engine.load(device);
