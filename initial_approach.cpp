@@ -113,7 +113,7 @@ int main() {
 
   // initial list of data that is copied from host to device
   auto input_list = std::vector<int>(n);
-  auto processor_list = std::vector<unsigned int>(n);
+  auto processor_list = std::vector<unsigned>(n);
   for (unsigned idx = 0; idx < n; ++idx) {
     input_list[idx] = rand() % 100;
   }

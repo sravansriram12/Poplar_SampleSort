@@ -71,6 +71,7 @@ class DetermineProcessor: public Vertex {
            
             if (target > global_samples[end - 1]) {
                 processor[i] = end;
+                continue;
             }
         
             int ans = -1;
