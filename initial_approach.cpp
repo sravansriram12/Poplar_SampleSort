@@ -181,6 +181,7 @@ int main() {
     indexes[processor_list[i]].push_back(std::size_t(i));
   }
 
+  cout << "here" << endl;
   for (unsigned i = 0; i < p; i++) {
     final_processor_sort(local_sort, graph, initial_list, indexes[i], i);
   }
