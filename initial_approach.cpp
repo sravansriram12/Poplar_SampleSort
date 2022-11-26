@@ -191,7 +191,7 @@ int main() {
 
     ArrayRef<Tensor> sub_tensor = initial_list.slices({1 , 2});
     Tensor final_tensor = concat(sub_tensor);
-    getTileMapping(final_tensor[0]);
+    getTileMapping(final_tensor);
   
   /*for (unsigned i = 0; i < p; i++) {
     for (unsigned j = 0; j < indexes[i].size(); i++) {
