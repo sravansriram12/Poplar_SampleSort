@@ -57,6 +57,7 @@ class Samples : public MultiVertex {
 }; 
 
 class DetermineProcessor: public Vertex {
+    public:
     Input<Vector<int>> local_list;
     Input<Vector<int>> global_samples;
     Output<Vector<int>> processor;
