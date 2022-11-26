@@ -187,6 +187,11 @@ int main() {
 
     Sequence prog2;
     prog2.add(PrintTensor(initial_list));
+
+
+    ArrayRef<Tensor> sub_tensor = initial_list.slices({1 , 2});
+    Tensor final_tensor = concat(sub_tensor);
+    cout << final_tensor[0].getTileMapping();
   
   for (unsigned i = 0; i < p; i++) {
     for (unsigned j = 0; j < indexes[i].size(); i++) {
@@ -196,7 +201,9 @@ int main() {
     for (unsigned j = 0; j < indices.size(); i++) {
         cout << indices[j] << endl;
     }
+    cout << "here" << endl;
     ArrayRef<Tensor> sub_tensor = initial_list.slices(indices);
+    Tensor final_tensor = concat(sub_tensor);
 
     for (int i = 0; i < sub_tensor.size(); i++) {
         prog2.add(PrintTensor(sub_tensor[i]));
