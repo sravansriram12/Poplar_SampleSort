@@ -48,7 +48,7 @@ void quick_sort(ComputeSet& computeSet, Graph& graph, Tensor& input_list, unsign
 
 }
 
-void sampling(ComputeSet& computeSet, Graph& graph, Tensor& input_list, Tensor& output_list, unsigned p, unsigned processorId) {
+void sampling(ComputeSet& computeSet, Graph& graph, Tensor& input_list, Tensor output_list, unsigned p, unsigned processorId) {
     VertexRef sample_vtx = graph.addVertex(computeSet, "Samples");
     graph.connect(sample_vtx["local_sorted_list"], input_list);
     graph.connect(sample_vtx["num_processors"], p);
