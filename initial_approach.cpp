@@ -119,7 +119,7 @@ int main() {
   auto input_list = std::vector<int>(n);
   auto processor_list = std::vector<unsigned>(n);
   for (unsigned idx = 0; idx < n; ++idx) {
-    input_list[idx] = rand() % 1000;
+    input_list[idx] = rand() % 1000 + 2;
   }
 
 
@@ -162,6 +162,7 @@ int main() {
   prog.add(Execute(sort_compiled_samples));
   prog.add(PrintTensor(compiled_samples));
   prog.add(Execute(sample_compiled_samples));
+  prog.add(PrintTensor(global_samples));
   prog.add(Execute(determine_processors));
   //prog.add(WriteUndef(global_samples));
 
