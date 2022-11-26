@@ -56,6 +56,40 @@ class Samples : public MultiVertex {
     }
 }; 
 
+class DetermineProcessor: public Vertex {
+    Input<Vector<int>> local_list;
+    Input<Vector<int>> global_samples;
+    Output<Vector<int>> processor;
+
+     bool compute() {
+        
+        for (unsigned i = 0; i < local_list.size(); i++) {
+            int end = global_samples.size();
+            int target = local_list[i];
+            int start = 0;
+           
+            if (target > global_samples[end - 1]) {
+                processor[i] = end;
+            }
+        
+            int ans = -1;
+            while (start <= end) {
+                int mid = (start + end) / 2;
+        
+                if (global_samples[mid] >= target) {
+                    end = mid - 1;
+                } else {
+                    ans = mid;
+                    start = mid + 1;
+                }
+            }
+            processor[i] = ans;
+        } 
+       
+        return true;
+    }
+}
+
 
 class DetermineBuckets : public Vertex {
     public: 
@@ -96,9 +130,81 @@ class DetermineBuckets : public Vertex {
 class MergeLists : public MultiVertex {
     public:
     InOut<Vector<int>> sorted_sub_lists;
+    Input<Vector<int>> indexes;
     Output<Vector<int>> sorted_final_list;
+
+     int binary_search_lt(int target, unsigned start, unsigned end) {
+        unsigned left = start; 
+        unsigned right = end; 
+
+        if (sorted_sub_lists[left] >= target) return left; 
+        if (sorted_sub_lists[right] < target) return right+1;
+        int mid = (left+right)/2; 
+        while (mid > left) {
+            if (sorted_sub_lists[mid] < target) {
+                left = mid; 
+            } else {
+                right = mid;
+            }
+            mid = (left+right)/2;
+        }
+        return right;
+    }
+
+    int binary_search_le(int target, unsigned start, unsigned end) {
+    
+        unsigned left = start; 
+        unsigned right = end; 
+
+        if (sorted_sub_lists[left] > target) return left; 
+        if (sorted_sub_lists[right] <= target) return right+1;
+        int mid = (left+right)/2; 
+        while (mid > left) {
+            if (sorted_sub_lists[mid] <= target) {
+                left = mid; 
+            } else {
+                right = mid;
+            }
+            mid = (left+right)/2;
+        }
+        return right;
+    }
     
     bool compute (unsigned workerId) {
+        for (unsigned sublist = workerId; sublist < indexes.size(); sublist += MultiVertex::numWorkers) {
+            unsigned neighbor_sublist;
+            unsigned start;
+            unsigned end;
+            if (workerId % 2 == 0) {
+                neighbor_sublist = workerId + 1;
+                if (neighbor_sublist < indexes.size()) {
+                    start = indexes[workerId];
+                    end = indexes[neighbor_sublist];
+                }
+            } else {
+                neighbor_sublist = workerId - 1;
+                start = neighbor_sublist == 0 ? 0 : indexes[neighbor_sublist];
+                end = indexes[workerId];
+            }
+            for (unsigned i = indexes[sublist]; i < indexes[sublist + 1]; i++) {
+                unsigned idx;
+                if (workerId % 2 == 0) {
+                    if (neighbor_sublist < indexes.size()) {
+                        idx = binary_search_lt(sorted_sub_lists[i], start, end); 
+                        unsigned j = idx - start;
+                        unsigned sorted_idx = i + (idx - start);
+                        sorted_final_list[sorted_idx] = sorted_sub_lists[i];
+                    } else {
+                        sorted_final_list[i] = sorted_sub_lists[i];
+                    }
+                } else {
+                    idx = binary_search_le(sorted_sub_lists[i], start, end); 
+                    unsigned sorted_idx = idx + (i - indexes[sublist]);
+                    sorted_final_list[sorted_idx] = sorted_sub_lists[i];
+                }
+            }
+        }
+        
         return true;
     }
 };
