@@ -66,8 +66,8 @@ void find_processor(ComputeSet& computeSet, Graph& graph, Tensor input_list, Ten
 int main() {
   // Create the IPU model device
 
-  unsigned n = 1000;  // number of elements
-  unsigned p = 5;   // number of processors (tiles)
+  unsigned n = 100000;  // number of elements
+  unsigned p = 50;   // number of processors (tiles)
   unsigned local_list_size = n / p;
   const char *dev = "model-ipu2";
   srand (time(NULL));
@@ -118,7 +118,7 @@ int main() {
   auto input_list = std::vector<int>(n);
   auto processor_list = std::vector<unsigned>(n);
   for (unsigned idx = 0; idx < n; ++idx) {
-    input_list[idx] = rand() % 100;
+    input_list[idx] = rand();
   }
 
 
