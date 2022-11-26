@@ -179,13 +179,18 @@ int main() {
     indexes[processor_list[i]].push_back(i);
   }
 
+  cout << "here" << endl;
+
   std::vector<Tensor> all_processor_lists (p);
   for (unsigned i = 0; i < p; i++) {
-    std::vector<unsigned> p_index = indexes[i];
-    std::vector<Tensor> tensors = initial_list.slices(p_index);
-    Tensor final_tensor = concat(tensors);
-    quick_sort(local_sort, graph, final_tensor, i);
-    all_processor_lists[i] = final_tensor;
+    if (indexes[i].size() == 0) {
+        std::vector<unsigned> p_index = indexes[i];
+        std::vector<Tensor> tensors = initial_list.slices(p_index);
+        Tensor final_tensor = concat(tensors);
+        quick_sort(local_sort, graph, final_tensor, i);
+        all_processor_lists[i] = final_tensor;
+    }
+   
   } 
   
   Sequence prog2;
