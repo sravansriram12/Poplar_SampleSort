@@ -175,7 +175,7 @@ int main() {
   engine.readTensor("processor-mapping-read", processor_list.data(), processor_list.data() + processor_list.size());
 
   initial_list = initial_list.flatten();
-  std::vector<std::vector<std::size_t>> indexes (p, std::vector<int> (0, 0));
+  std::vector<std::vector<std::size_t>> indexes (p, std::vector<std::size_t> (0, 0));
   for (unsigned i = 0; i < n; i++) {
     graph.setTileMapping(initial_list[i], processor_list[i]);
     indexes[processor_list[i]].push_back(std::size_t(i));
