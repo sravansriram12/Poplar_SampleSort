@@ -196,10 +196,6 @@ int main() {
   for (unsigned i = 0; i < p; i++) {
     ArrayRef<Tensor> tensor = final_processor_sort(local_sort, graph, initial_list, indexes[i], i);
     cout << tensor.size() << endl;
-    for (unsigned k = 0; k < tensor.size(); k++) {
-        Tensor j = tensor[k];
-         //prog2.add(PrintTensor(tensor[k]));
-    }
    
   }
   
@@ -207,10 +203,10 @@ int main() {
   prog2.add(PrintTensor(initial_list));
   //prog2.add(Execute(local_sort));
   prog2.add(PrintTensor(initial_list)); */
-  Engine engine2(graph, prog2);
+  /*Engine engine2(graph, prog2);
   engine2.load(device);
   engine2.writeTensor("list-write", input_list.data(), input_list.data() + input_list.size());
-  engine2.run(0); 
+  engine2.run(0);  */
 
 
 
