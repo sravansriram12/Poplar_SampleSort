@@ -66,7 +66,7 @@ void find_processor(ComputeSet& computeSet, Graph& graph, Tensor input_list, Ten
 int main() {
   // Create the IPU model device
 
-  unsigned n = 50;  // number of elements
+  unsigned n = 10000;  // number of elements
   unsigned p = 5;   // number of processors (tiles)
   unsigned local_list_size = n / p;
   const char *dev = "model-ipu2";
@@ -184,9 +184,6 @@ int main() {
     indexes[processor_list[i]].push_back(i);
   }
 
-
-   
-
   std::vector<Tensor> all_processor_lists (p);
   for (unsigned i = 0; i < p; i++) {
     std::vector<unsigned> p_index = indexes[i];
@@ -196,11 +193,10 @@ int main() {
     all_processor_lists[i] = final_tensor;
   } 
   
-  
   Sequence prog2;
   prog2.add(Execute(local_sort));
   for (unsigned i = 0; i < p; i++) {
-    prog2.add(PrintTensor(all_processor_lists[i]));
+    prog2.add(PrintTensor("[Proc " + to_string(i) + ":]", all_processor_lists[i]));
   }
   Engine engine2(graph, prog2);
   engine2.load(device);
