@@ -139,13 +139,15 @@ int main() {
     find_processor(determine_processors, graph, initial_list[i], global_samples, processor_mapping[i], i);
   }
 
-  std::vector<Tensor> final_unsorted_lists (p);
-  unsigned idx = 0;
+  std::vector<Tensor> final_unsorted_lists(p);
   for (unsigned i = 0; i < p; i++) {
     for (unsigned j = 0; j < local_list_size; j++) {
         //graph.setTileMapping(initial_list[i][j], processor_list[idx]);
-        final_unsorted_lists[processor_list[idx]] = concat(final_unsorted_lists[processor_list[idx]], initial_list[i][j]);
-        idx++;
+        if (final_unsorted_lists[processor_list[i][j]].numElements() == 0) {
+             final_unsorted_lists[processor_list[i][j]] = initial_list[i][j].reshape({1});
+        } else {
+            final_unsorted_lists[processor_list[i][j]] = concat(final_unsorted_lists[processor_list[i][j]], initial_list[i][j].reshape({1}));
+        }
     }
   }
 
