@@ -45,7 +45,7 @@ void find_processor(ComputeSet& computeSet, Graph& graph, Tensor input_list, Ten
     VertexRef processor_vtx = graph.addVertex(computeSet, "DetermineProcessor");
     graph.connect(processor_vtx["local_list"], input_list);
     graph.connect(processor_vtx["global_samples"], global_samples);
-    graph.connect(processor_vtx["processor"], output_list);
+    graph.connect(processor_vtx["processor"], concat(output_list.index()));
     graph.setTileMapping(processor_vtx, processorId);
     graph.setPerfEstimate(processor_vtx, 20);
 }
@@ -164,30 +164,10 @@ int main() {
   engine.run(0);
 
   engine.readTensor("processor-mapping-read", processor_list.data(), processor_list.data() + processor_list.size());
+
+  initial_list = initial_list.flatten();
   
-  std::vector<Tensor> final_unsorted_lists (p);
-  unsigned idx = 0;
-  for (unsigned i = 0; i < p; i++) {
-    Tensor current_processor_list;
-    for (unsigned j = 0; j < local_list_size; j++) {
-        graph.setTileMapping(initial_list[i][j], processor_list[idx]);
-        cout << "here" << endl;
-        if (j == 0) {
-            current_processor_list = initial_list[i][j];
-        } else {
-            current_processor_list = append(current_processor_list, initial_list[i][j]);
-        }
-        cout << "here" << endl;
-        idx++;
-    }
-  }
-
-  for (int i = 0; i < p; i++) {
-    quick_sort(local_sort, graph, final_unsorted_lists[i], i);
-  }
-
   Sequence prog2;
-  prog2.add(Execute(local_sort));
   prog2.add(PrintTensor(initial_list));
   Engine engine2(graph, prog2);
   engine2.load(device);
