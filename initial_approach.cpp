@@ -41,17 +41,8 @@ void sampling(ComputeSet& computeSet, Graph& graph, Tensor input_list, Tensor ou
     graph.setPerfEstimate(sample_vtx, 20);
 }
 
-void bin_buckets(ComputeSet& computeSet, Graph& graph, Tensor input_list, Tensor global_samples, Tensor output_list, unsigned processorId) {
-    VertexRef boundaries_vtx = graph.addVertex(computeSet, "DetermineBuckets");
-    graph.connect(boundaries_vtx["local_sorted_list"], input_list);
-    graph.connect(boundaries_vtx["global_samples"], global_samples);
-    graph.connect(boundaries_vtx["index_boundaries"], output_list);
-    graph.setTileMapping(boundaries_vtx, processorId);
-    graph.setPerfEstimate(boundaries_vtx, 20);
-}
-
 void find_processor(ComputeSet& computeSet, Graph& graph, Tensor input_list, Tensor global_samples, Tensor output_list, unsigned processorId) {
-    VertexRef processor_vtx = graph.addVertex(computeSet, "DetermineBuckets");
+    VertexRef processor_vtx = graph.addVertex(computeSet, "DetermineProcessor");
     graph.connect(processor_vtx["local_list"], input_list);
     graph.connect(processor_vtx["global_samples"], global_samples);
     graph.connect(processor_vtx["processor"], output_list);
