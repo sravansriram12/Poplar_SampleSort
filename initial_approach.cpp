@@ -188,7 +188,7 @@ int main() {
     Sequence prog2;
     prog2.add(PrintTensor(initial_list));
 
-    std::vector<unsigned> indices = {1, 2};
+    /*std::vector<unsigned> indices = {1, 2};
     std::vector<Tensor> tensors = initial_list.slices(indices);
     prog2.add(PrintTensor(tensors[0]));
     ArrayRef<Tensor> sub_tensor(tensors);
@@ -196,30 +196,20 @@ int main() {
     cout << "here" << endl;
     Tensor final_tensor = concat(sub_tensor);
     cout << "here" << endl;
-    prog2.add(PrintTensor(final_tensor));
+    prog2.add(PrintTensor(final_tensor)); */
   
-  /*for (unsigned i = 0; i < p; i++) {
-    for (unsigned j = 0; j < indexes[i].size(); i++) {
-        cout << indexes[i][j] << endl;
-    }
-    ArrayRef<unsigned> indices(indexes[i]);
-    for (unsigned j = 0; j < indices.size(); i++) {
-        cout << indices[j] << endl;
-    }
-    cout << "here" << endl;
-    ArrayRef<Tensor> sub_tensor = initial_list.slices(indices);
+  for (unsigned i = 0; i < p; i++) {
+    std::vector<unsigned> p_index = indexes[i];
+    std::vector<Tensor> sub_tensor = initial_list.slices(p_index);
+    ArrayRef<Tensor> sub_tensor(tensors);
     Tensor final_tensor = concat(sub_tensor);
-
-    for (int i = 0; i < sub_tensor.size(); i++) {
-        prog2.add(PrintTensor(sub_tensor[i]));
-    }
-    //final_processor_sort(local_sort, graph, initial_list, indexes[i], i, prog2);
-  } */
+    quick_sort(local_sort, graph, final_tensor, i)
+  } 
   
   
   
-  //prog2.add(Execute(local_sort));
-  //prog2.add(PrintTensor(initial_list)); 
+  prog2.add(Execute(local_sort));
+  prog2.add(PrintTensor(initial_list)); 
   Engine engine2(graph, prog2);
   engine2.load(device);
   engine2.writeTensor("list-write", input_list.data(), input_list.data() + input_list.size());
