@@ -118,7 +118,7 @@ int main() {
   auto input_list = std::vector<int>(n);
   auto processor_list = std::vector<unsigned>(n);
   for (unsigned idx = 0; idx < n; ++idx) {
-    input_list[idx] = rand();
+    input_list[idx] = rand() % 100000;
   }
 
 
