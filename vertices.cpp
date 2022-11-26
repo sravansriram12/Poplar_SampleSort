@@ -42,14 +42,14 @@ class Samples : public MultiVertex {
     public: 
     // Fields
     Input<Vector<int>> local_sorted_list;
-    Input<int> k;
+    Input<int> factor;
     Output<Vector<int>> local_samples;
 
     bool compute(unsigned workerId) {
-      unsigned starting_position = (local_sorted_list.size() / k) * (workerId + 1);
-      unsigned increment_by = MultiVertex::numWorkers() * (local_sorted_list.size() / k);
+      unsigned starting_position = (local_sorted_list.size() / factor) * (workerId + 1);
+      unsigned increment_by = MultiVertex::numWorkers() * (local_sorted_list.size() / factor);
       for (unsigned i = starting_position; i < local_sorted_list.size(); i += increment_by) {
-        unsigned output_index = (starting_position / (local_sorted_list.size() / k)) - 1;
+        unsigned output_index = (starting_position / (local_sorted_list.size() / factor)) - 1;
         local_samples[output_index] = local_sorted_list[i];
       }
       return true;
