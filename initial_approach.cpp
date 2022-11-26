@@ -24,10 +24,11 @@ using namespace popops;
 using std::cout, std::endl;
 using std::to_string;
 
-void final_processor_sort(ComputeSet& computeSet, Graph& graph, Tensor initial_list, std::vector<std::size_t>& indexes, unsigned processorId) {
+void final_processor_sort(ComputeSet& computeSet, Graph& graph, Tensor initial_list, std::vector<unsigned>& indexes, unsigned processorId) {
     VertexRef quickSort_vtx = graph.addVertex(computeSet, "QuickSort");
-    ArrayRef<std::size_t> indices(indexes);
-    graph.connect(quickSort_vtx["local_list"], initial_list.index(indices));
+    ArrayRef<unsigned> indices(indexes);
+    ArrayRef<Tensor> sub_tensor = initial_list.slices(indices);
+    graph.connect(quickSort_vtx["local_list"], concat(sub_tensor));
     graph.setTileMapping(quickSort_vtx, processorId);
     graph.setPerfEstimate(quickSort_vtx, 20);
 
@@ -177,10 +178,10 @@ int main() {
   initial_list = initial_list.flatten();
   Tensor a = initial_list.index({1, 2});
   cout << a << endl;
-  std::vector<std::vector<std::size_t>> indexes (p, std::vector<std::size_t> (0, 0));
+  std::vector<std::vector<unsigned>> indexes (p, std::vector<unsigned> (0, 0));
   for (unsigned i = 0; i < n; i++) {
     graph.setTileMapping(initial_list[i], processor_list[i]);
-    indexes[processor_list[i]].push_back(std::size_t(i));
+    indexes[processor_list[i]].push_back(i);
   }
 
   cout << "here" << endl;
