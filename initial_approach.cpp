@@ -188,13 +188,16 @@ int main() {
     indexes[processor_list[i]].push_back(i);
   }
 
+
+    Sequence prog2;
+    prog2.add(PrintTensor(initial_list));
   
   for (unsigned i = 0; i < p; i++) {
-    final_processor_sort(local_sort, graph, initial_list, indexes[i], i);
+    final_processor_sort(local_sort, graph, initial_list, indexes[i], i, prog2);
   } 
   
-  Sequence prog2;
-  prog2.add(PrintTensor(initial_list));
+  
+  
   //prog2.add(Execute(local_sort));
   //prog2.add(PrintTensor(initial_list)); 
   Engine engine2(graph, prog2);
