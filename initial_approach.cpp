@@ -176,7 +176,7 @@ int main() {
   engine.readTensor("processor-mapping-read", processor_list.data(), processor_list.data() + processor_list.size());
 
   initial_list = initial_list.flatten();
-  Tensor a = initial_list.index({1, 2});
+  //Tensor a = initial_list.index({1, 2});
   cout << a << endl;
   std::vector<std::vector<unsigned>> indexes (p, std::vector<unsigned> (0, 0));
   for (unsigned i = 0; i < n; i++) {
