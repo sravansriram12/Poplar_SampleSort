@@ -68,7 +68,7 @@ int main() {
 
   unsigned n = 1000;  // number of elements
   unsigned p = 10;   // number of processors (tiles)
-  unsigned k = p - 1;
+  unsigned k = 25;
   unsigned local_list_size = n / p;
   const char *dev = "model-ipu2";
   srand (time(NULL));
