@@ -24,13 +24,9 @@ using namespace popops;
 using std::cout, std::endl;
 using std::to_string;
 
-void final_processor_sort(ComputeSet& computeSet, Graph& graph, Tensor& initial_list, std::vector<unsigned>& indexes, unsigned processorId, Sequence prog2) {
+void final_processor_sort(ComputeSet& computeSet, Graph& graph, Tensor initial_list, std::vector<unsigned> indexes, unsigned processorId, Sequence prog2) {
     //VertexRef quickSort_vtx = graph.addVertex(computeSet, "QuickSort");
-    ArrayRef<unsigned> indices(indexes);
-    ArrayRef<Tensor> sub_tensor = initial_list.slices(indices);
-    for (int i = 0; i < sub_tensor.size(); i++) {
-        prog2.add(PrintTensor(sub_tensor[i]));
-    }
+  
     
     /*graph.connect(quickSort_vtx["local_list"], concat(sub_tensor));
     graph.setTileMapping(quickSort_vtx, processorId);
@@ -40,7 +36,7 @@ void final_processor_sort(ComputeSet& computeSet, Graph& graph, Tensor& initial_
 
 }
 
-void quick_sort(ComputeSet& computeSet, Graph& graph, Tensor& input_list, unsigned processorId) {
+void quick_sort(ComputeSet& computeSet, Graph& graph, Tensor input_list, unsigned processorId) {
     VertexRef quickSort_vtx = graph.addVertex(computeSet, "QuickSort");
     graph.connect(quickSort_vtx["local_list"], input_list);
     graph.setTileMapping(quickSort_vtx, processorId);
@@ -48,7 +44,7 @@ void quick_sort(ComputeSet& computeSet, Graph& graph, Tensor& input_list, unsign
 
 }
 
-void sampling(ComputeSet& computeSet, Graph& graph, Tensor& input_list, Tensor output_list, unsigned p, unsigned processorId) {
+void sampling(ComputeSet& computeSet, Graph& graph, Tensor input_list, Tensor output_list, unsigned p, unsigned processorId) {
     VertexRef sample_vtx = graph.addVertex(computeSet, "Samples");
     graph.connect(sample_vtx["local_sorted_list"], input_list);
     graph.connect(sample_vtx["num_processors"], p);
@@ -57,7 +53,7 @@ void sampling(ComputeSet& computeSet, Graph& graph, Tensor& input_list, Tensor o
     graph.setPerfEstimate(sample_vtx, 20);
 }
 
-void find_processor(ComputeSet& computeSet, Graph& graph, Tensor& input_list, Tensor& global_samples, Tensor& output_list, unsigned processorId) {
+void find_processor(ComputeSet& computeSet, Graph& graph, Tensor input_list, Tensor global_samples, Tensor output_list, unsigned processorId) {
     VertexRef processor_vtx = graph.addVertex(computeSet, "DetermineProcessor");
     graph.connect(processor_vtx["local_list"], input_list);
     graph.connect(processor_vtx["global_samples"], global_samples);
@@ -194,7 +190,12 @@ int main() {
   
   for (unsigned i = 0; i < p; i++) {
     cout << indexes[i].size() << endl;
-    final_processor_sort(local_sort, graph, initial_list, indexes[i], i, prog2);
+    ArrayRef<unsigned> indices(indexes[i]);
+    ArrayRef<Tensor> sub_tensor = initial_list.slices(indices);
+    for (int i = 0; i < sub_tensor.size(); i++) {
+        prog2.add(PrintTensor(sub_tensor[i]));
+    }
+    //final_processor_sort(local_sort, graph, initial_list, indexes[i], i, prog2);
   } 
   
   
