@@ -173,9 +173,10 @@ int main() {
         graph.setTileMapping(initial_list[i][j], processor_list[idx]);
         cout << "here" << endl;
         if (j == 0) {
-            current_processor_list = initial_list.slice({i, j}, {i, j + 1}).reshape({1});
+            current_processor_list = initial_list[i][j].reshape({1});
         } else {
-            current_processor_list = concat(current_processor_list, initial_list.slice({i, j}, {i, j + 1}).reshape({1}));
+            Tensor subTensor = initial_list[i][j].reshape({1});
+            current_processor_list = concat(current_processor_list, subTensor);
         }
         cout << "here" << endl;
         idx++;
