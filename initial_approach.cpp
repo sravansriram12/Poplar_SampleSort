@@ -188,8 +188,10 @@ int main() {
     Sequence prog2;
     prog2.add(PrintTensor(initial_list));
 
-
-    ArrayRef<Tensor> sub_tensor(initial_list.slices({1 , 2}));
+    std::vector<Tensor> tensors = initial_list.slices({1 , 2});
+    prog2.add(PrintTensor(tensors[0]));
+    ArrayRef<Tensor> sub_tensor(tensors);
+    prog2.add(PrintTensor(sub_tensor[0]));
     cout << "here" << endl;
     Tensor final_tensor = concat(sub_tensor);
     cout << "here" << endl;
