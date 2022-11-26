@@ -209,10 +209,6 @@ int main() {
     quick_sort(local_sort, graph, final_tensor, i);
     all_processor_lists[i] = final_tensor;
   } 
-
-    for (unsigned i = 0; i < p; i++) {
-        p_lists[i] = graph.addVariable(INT, {0}, "p_lists" + to_string(i));
-    }
   
   
   
