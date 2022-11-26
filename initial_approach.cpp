@@ -192,9 +192,9 @@ int main() {
     Sequence prog2;
     prog2.add(PrintTensor(initial_list));
   
-  for (unsigned i = 0; i < p; i++) {
+  /*for (unsigned i = 0; i < p; i++) {
     final_processor_sort(local_sort, graph, initial_list, indexes[i], i, prog2);
-  } 
+  } */
   
   
   
