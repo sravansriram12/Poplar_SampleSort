@@ -189,8 +189,8 @@ int main() {
     final_processor_sort(local_sort, graph, initial_list, indexes[i], i);
   } 
   
-  //Sequence prog2;
-  //prog2.add(PrintTensor(initial_list));
+  Sequence prog2;
+  prog2.add(PrintTensor(initial_list));
   //prog2.add(Execute(local_sort));
   //prog2.add(PrintTensor(initial_list)); 
   Engine engine2(graph, prog2);
