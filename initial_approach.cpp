@@ -175,7 +175,7 @@ int main() {
         if (j == 0) {
             current_processor_list = initial_list[i][j];
         } else {
-            current_processor_list = concat(current_processor_list, initial_list[i][j]);
+            current_processor_list = append(current_processor_list, initial_list[i][j]);
         }
         cout << "here" << endl;
         idx++;
