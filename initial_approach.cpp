@@ -188,7 +188,8 @@ int main() {
     Sequence prog2;
     prog2.add(PrintTensor(initial_list));
 
-    std::vector<Tensor> tensors = initial_list.slices({1 , 2});
+    std::vector<unsigned> indices = {1, 2};
+    std::vector<Tensor> tensors = initial_list.slices(indices);
     prog2.add(PrintTensor(tensors[0]));
     ArrayRef<Tensor> sub_tensor(tensors);
     prog2.add(PrintTensor(sub_tensor[0]));
