@@ -24,14 +24,13 @@ using namespace popops;
 using std::cout, std::endl;
 using std::to_string;
 
-ArrayRef<Tensor> final_processor_sort(ComputeSet& computeSet, Graph& graph, Tensor initial_list, std::vector<unsigned>& indexes, unsigned processorId) {
+ArrayRef<Tensor> final_processor_sort(ComputeSet& computeSet, Graph& graph, Tensor& initial_list, std::vector<unsigned>& indexes, unsigned processorId) {
     VertexRef quickSort_vtx = graph.addVertex(computeSet, "QuickSort");
     ArrayRef<unsigned> indices(indexes);
     ArrayRef<Tensor> sub_tensor = initial_list.slices(indices);
-    /*cout << "here" << endl;
-    Tensor final_tensor = concat(sub_tensor, 0);
+    Tensor final_tensor = concat(, 0);
     cout << "here" << endl;
-    graph.connect(quickSort_vtx["local_list"], final_tensor);
+    graph.connect(quickSort_vtx["local_list"], concat(initial_list.slices());
     cout << "here" << endl;
     graph.setTileMapping(quickSort_vtx, processorId);
     graph.setPerfEstimate(quickSort_vtx, 20); */
@@ -182,7 +181,11 @@ int main() {
   engine.readTensor("processor-mapping-read", processor_list.data(), processor_list.data() + processor_list.size());
 
   initial_list = initial_list.flatten();
-  //Tensor a = initial_list.index({1, 2});
+  vector<Tensor> a = initial_list.slices({1, 2});
+  Sequence prog2;
+  for (unsigned i = 0; i < a.size(); i++) {
+    prog2.add(PrintTensor(a[i]));
+  }
   //cout << a << endl;
   std::vector<std::vector<unsigned>> indexes (p, std::vector<unsigned> (0, 0));
   for (unsigned i = 0; i < n; i++) {
@@ -190,23 +193,23 @@ int main() {
     indexes[processor_list[i]].push_back(i);
   }
 
-  Sequence prog2;
-
+  
+/*
   cout << "here" << endl;
   for (unsigned i = 0; i < p; i++) {
     ArrayRef<Tensor> tensor = final_processor_sort(local_sort, graph, initial_list, indexes[i], i);
-    cout << tensor[0]->numElements() << endl;
+    cout << tensor.front()->numElements() << endl;
    
-  }
+  } */
   
-  /*Sequence prog2;
-  prog2.add(PrintTensor(initial_list));
+  //Sequence prog2;
+  //prog2.add(PrintTensor(initial_list));
   //prog2.add(Execute(local_sort));
-  prog2.add(PrintTensor(initial_list)); */
-  /*Engine engine2(graph, prog2);
+  //prog2.add(PrintTensor(initial_list)); 
+  Engine engine2(graph, prog2);
   engine2.load(device);
   engine2.writeTensor("list-write", input_list.data(), input_list.data() + input_list.size());
-  engine2.run(0);  */
+  engine2.run(0);  
 
 
 
