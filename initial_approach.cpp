@@ -47,7 +47,7 @@ void quick_sort(ComputeSet& computeSet, Graph& graph, Tensor input_list, unsigne
 void sampling(ComputeSet& computeSet, Graph& graph, Tensor input_list, Tensor output_list, unsigned k, unsigned processorId) {
     VertexRef sample_vtx = graph.addVertex(computeSet, "Samples");
     graph.connect(sample_vtx["local_sorted_list"], input_list);
-    graph.connect(sample_vtx["num_processors"], k);
+    graph.connect(sample_vtx["k"], k);
     graph.connect(sample_vtx["local_samples"], output_list);
     graph.setTileMapping(sample_vtx, processorId);
     graph.setPerfEstimate(sample_vtx, 20);
