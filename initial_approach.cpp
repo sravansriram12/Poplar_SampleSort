@@ -173,9 +173,9 @@ int main() {
         graph.setTileMapping(initial_list[i][j], processor_list[idx]);
         cout << "here" << endl;
         if (j == 0) {
-            current_processor_list = initial_list[i][j].reshape({1});
+            current_processor_list = initial_list[i][j];
         } else {
-            current_processor_list = concat(current_processor_list, initial_list[i][j].reshape({1}));
+            current_processor_list = concat(current_processor_list, initial_list[i][j]);
         }
         cout << "here" << endl;
         idx++;
