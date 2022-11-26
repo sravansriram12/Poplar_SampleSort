@@ -175,8 +175,7 @@ int main() {
         if (j == 0) {
             current_processor_list = initial_list[i][j].reshape({1});
         } else {
-            Tensor subTensor = initial_list[i][j].reshape({1});
-            current_processor_list = concat(current_processor_list, subTensor);
+            current_processor_list = concat(current_processor_list, initial_list[i][j].reshape({1}));
         }
         cout << "here" << endl;
         idx++;
