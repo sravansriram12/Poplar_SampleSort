@@ -133,8 +133,9 @@ int main() {
 
 
   // Third computation phase - finding buckets belonging to different processor based on global samples
-  Tensor processor_mapping = graph.addVariable(INT, {p, local_list_size}, "global_samples");
+  Tensor processor_mapping = graph.addVariable(INT, {p, local_list_size}, "processor_mapping");
   for (unsigned i = 0; i < p; i++) {
+    graph.setTileMapping(processor_mapping, i);
     find_processor(determine_processors, graph, initial_list[i], global_samples, processor_mapping[i], i);
   }
   
