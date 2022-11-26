@@ -178,12 +178,6 @@ int main() {
   engine.readTensor("processor-mapping-read", processor_list.data(), processor_list.data() + processor_list.size());
 
   initial_list = initial_list.flatten();
-  std::vector<Tensor> a = initial_list.slices({1, 2});
-  Sequence prog2;
-  for (unsigned i = 0; i < a.size(); i++) {
-    prog2.add(PrintTensor(a[i]));
-  }
-  //cout << a << endl;
   std::vector<std::vector<unsigned>> indexes (p, std::vector<unsigned> (0, 0));
   for (unsigned i = 0; i < n; i++) {
     graph.setTileMapping(initial_list[i], processor_list[i]);
@@ -191,13 +185,9 @@ int main() {
   }
 
   
-/*
-  cout << "here" << endl;
   for (unsigned i = 0; i < p; i++) {
-    ArrayRef<Tensor> tensor = final_processor_sort(local_sort, graph, initial_list, indexes[i], i);
-    cout << tensor.front()->numElements() << endl;
-   
-  } */
+    final_processor_sort(local_sort, graph, initial_list, indexes[i], i);
+  } 
   
   //Sequence prog2;
   //prog2.add(PrintTensor(initial_list));
