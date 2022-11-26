@@ -177,7 +177,7 @@ int main() {
 
   initial_list = initial_list.flatten();
   //Tensor a = initial_list.index({1, 2});
-  cout << a << endl;
+  //cout << a << endl;
   std::vector<std::vector<unsigned>> indexes (p, std::vector<unsigned> (0, 0));
   for (unsigned i = 0; i < n; i++) {
     graph.setTileMapping(initial_list[i], processor_list[i]);
