@@ -197,19 +197,29 @@ int main() {
     Tensor final_tensor = concat(sub_tensor);
     cout << "here" << endl;
     prog2.add(PrintTensor(final_tensor)); */
+
+  std::vector<Tensor> all_processor_lists (p);
   
   for (unsigned i = 0; i < p; i++) {
     std::vector<unsigned> p_index = indexes[i];
     std::vector<Tensor> tensors = initial_list.slices(p_index);
     ArrayRef<Tensor> sub_tensor(tensors);
     Tensor final_tensor = concat(sub_tensor);
+    
     quick_sort(local_sort, graph, final_tensor, i);
+    all_processor_lists[i] = final_tensor;
   } 
+
+    for (unsigned i = 0; i < p; i++) {
+        p_lists[i] = graph.addVariable(INT, {0}, "p_lists" + to_string(i));
+    }
   
   
   
   prog2.add(Execute(local_sort));
-  prog2.add(PrintTensor(initial_list)); 
+  for (unsigned i = 0; i < p; i++) {
+    prog2.add(PrintTensor(all_processor_lists[i]));
+  }
   Engine engine2(graph, prog2);
   engine2.load(device);
   engine2.writeTensor("list-write", input_list.data(), input_list.data() + input_list.size());
