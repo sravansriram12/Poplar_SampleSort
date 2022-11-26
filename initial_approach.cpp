@@ -68,6 +68,7 @@ int main() {
 
   unsigned n = 1000;  // number of elements
   unsigned p = 10;   // number of processors (tiles)
+  unsigned k = p - 1;
   unsigned local_list_size = n / p;
   const char *dev = "model-ipu2";
   srand (time(NULL));
@@ -125,7 +126,7 @@ int main() {
   // 2D tensor where each inner tensor at index i represents the initial list at processor i
   Tensor initial_list = graph.addVariable(INT, {p, local_list_size}, "initial_list");
   // Compilation of samples from each processor's local list
-  Tensor compiled_samples = graph.addVariable(INT, {p * (p - 1)}, "compiled_samples");
+  Tensor compiled_samples = graph.addVariable(INT, {p * k}, "compiled_samples");
   graph.setTileMapping(compiled_samples, p);
 
   // First computation phase - local sorting and sampling
@@ -133,13 +134,13 @@ int main() {
     graph.setTileMapping(initial_list[processor], processor);
     //quick_sort(local_sort, graph, initial_list[processor], processor); 
     sampling(local_sample, graph, initial_list[processor], 
-        compiled_samples.slice(processor * (p - 1), (processor + 1) * (p - 1)), p, processor);
+        compiled_samples.slice(processor * k, (processor + 1) * k, p, processor);
   }
 
 
   // Second computation phase - sorting the compilation of the local samples and picking global samples
   quick_sort(sort_compiled_samples, graph, compiled_samples, p);
-  Tensor global_samples = graph.addVariable(INT, {p - 1}, "global_samples");
+  Tensor global_samples = graph.addVariable(INT, {k}, "global_samples");
   graph.setTileMapping(global_samples, p);
   sampling(sample_compiled_samples, graph, compiled_samples, global_samples, p, p);
 
@@ -159,6 +160,7 @@ int main() {
   // Add sequence of compute sets to program
   prog.add(Execute(local_sample));
   prog.add(Execute(sort_compiled_samples));
+  prog.add(PrintTensor(compiled_samples));
   prog.add(Execute(sample_compiled_samples));
   prog.add(Execute(determine_processors));
   //prog.add(WriteUndef(global_samples));
