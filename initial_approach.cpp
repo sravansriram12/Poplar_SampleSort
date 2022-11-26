@@ -193,7 +193,11 @@ int main() {
         cout << indexes[i][j] << endl;
     }
     ArrayRef<unsigned> indices(indexes[i]);
+    for (unsigned j = 0; j < indices.size(); i++) {
+        cout << indices[j] << endl;
+    }
     ArrayRef<Tensor> sub_tensor = initial_list.slices(indices);
+
     for (int i = 0; i < sub_tensor.size(); i++) {
         prog2.add(PrintTensor(sub_tensor[i]));
     }
