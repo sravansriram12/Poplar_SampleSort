@@ -88,8 +88,7 @@ class DetermineProcessor: public Vertex {
        
         return true;
     }
-}
-
+};
 
 class DetermineBuckets : public Vertex {
     public: 
@@ -127,6 +126,7 @@ class DetermineBuckets : public Vertex {
     }
 };
 
+/*
 class MergeLists : public MultiVertex {
     public:
     InOut<Vector<int>> sorted_sub_lists;
@@ -207,4 +207,4 @@ class MergeLists : public MultiVertex {
         
         return true;
     }
-};
+}; */
