@@ -191,9 +191,9 @@ int main() {
 
     ArrayRef<Tensor> sub_tensor = initial_list.slices({1 , 2});
     Tensor final_tensor = concat(sub_tensor);
-    cout << final_tensor[0].getTileMapping();
+    TileToTensorMapping mapping = getTileMapping(final_tensor[0]);
   
-  for (unsigned i = 0; i < p; i++) {
+  f/*or (unsigned i = 0; i < p; i++) {
     for (unsigned j = 0; j < indexes[i].size(); i++) {
         cout << indexes[i][j] << endl;
     }
@@ -209,7 +209,7 @@ int main() {
         prog2.add(PrintTensor(sub_tensor[i]));
     }
     //final_processor_sort(local_sort, graph, initial_list, indexes[i], i, prog2);
-  } 
+  } */
   
   
   
