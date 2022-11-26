@@ -140,7 +140,7 @@ int main() {
 
   // Second computation phase - sorting the compilation of the local samples and picking global samples
   quick_sort(sort_compiled_samples, graph, compiled_samples, p);
-  Tensor global_samples = graph.addVariable(INT, {k}, "global_samples");
+  Tensor global_samples = graph.addVariable(INT, {p - 1}, "global_samples");
   graph.setTileMapping(global_samples, p);
   sampling(sample_compiled_samples, graph, compiled_samples, global_samples, p, p);
 
