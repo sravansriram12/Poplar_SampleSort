@@ -67,7 +67,7 @@ int main() {
   // Create the IPU model device
 
   unsigned n = 10000000;  // number of elements
-  unsigned p = 20;   // number of processors (tiles)
+  unsigned p = 100;   // number of processors (tiles)
   unsigned local_list_size = n / p;
   const char *dev = "model-ipu2";
   srand (time(NULL));
