@@ -29,7 +29,9 @@ void final_processor_sort(ComputeSet& computeSet, Graph& graph, Tensor initial_l
     ArrayRef<unsigned> indices(indexes);
     ArrayRef<Tensor> sub_tensor = initial_list.slices(indices);
     cout << "here" << endl;
-    graph.connect(quickSort_vtx["local_list"], concat(sub_tensor));
+    Tensor final_tensor = concat(sub_tensor, 0);
+    cout << "here" << endl;
+    graph.connect(quickSort_vtx["local_list"], final_tensor);
     cout << "here" << endl;
     graph.setTileMapping(quickSort_vtx, processorId);
     graph.setPerfEstimate(quickSort_vtx, 20);
@@ -191,14 +193,14 @@ int main() {
     final_processor_sort(local_sort, graph, initial_list, indexes[i], i);
   }
   
-  Sequence prog2;
+  /*equence prog2;
   prog2.add(PrintTensor(initial_list));
   //prog2.add(Execute(local_sort));
   prog2.add(PrintTensor(initial_list));
   Engine engine2(graph, prog2);
   engine2.load(device);
   engine2.writeTensor("list-write", input_list.data(), input_list.data() + input_list.size());
-  engine2.run(0);
+  engine2.run(0); */
 
 
 
