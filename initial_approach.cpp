@@ -190,7 +190,9 @@ int main() {
 
 
     ArrayRef<Tensor> sub_tensor(initial_list.slices({1 , 2}));
+    cout << "here" << endl;
     Tensor final_tensor = concat(sub_tensor);
+    cout << "here" << endl;
     prog2.add(PrintTensor(final_tensor));
   
   /*for (unsigned i = 0; i < p; i++) {
