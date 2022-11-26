@@ -28,12 +28,9 @@ ArrayRef<Tensor> final_processor_sort(ComputeSet& computeSet, Graph& graph, Tens
     VertexRef quickSort_vtx = graph.addVertex(computeSet, "QuickSort");
     ArrayRef<unsigned> indices(indexes);
     ArrayRef<Tensor> sub_tensor = initial_list.slices(indices);
-    Tensor final_tensor = concat(, 0);
-    cout << "here" << endl;
-    graph.connect(quickSort_vtx["local_list"], concat(initial_list.slices());
-    cout << "here" << endl;
+    graph.connect(quickSort_vtx["local_list"], concat(sub_tensor));
     graph.setTileMapping(quickSort_vtx, processorId);
-    graph.setPerfEstimate(quickSort_vtx, 20); */
+    graph.setPerfEstimate(quickSort_vtx, 20); 
 
     return sub_tensor;
 
@@ -181,7 +178,7 @@ int main() {
   engine.readTensor("processor-mapping-read", processor_list.data(), processor_list.data() + processor_list.size());
 
   initial_list = initial_list.flatten();
-  vector<Tensor> a = initial_list.slices({1, 2});
+  std::vector<Tensor> a = initial_list.slices({1, 2});
   Sequence prog2;
   for (unsigned i = 0; i < a.size(); i++) {
     prog2.add(PrintTensor(a[i]));
