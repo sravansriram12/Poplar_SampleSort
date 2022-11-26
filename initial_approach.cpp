@@ -189,7 +189,9 @@ int main() {
     prog2.add(PrintTensor(initial_list));
   
   for (unsigned i = 0; i < p; i++) {
-    cout << indexes[i].size() << endl;
+    for (unsigned j = 0; j < indexes[i].size(); i++) {
+        cout << indexes[i][j] << endl;
+    }
     ArrayRef<unsigned> indices(indexes[i]);
     ArrayRef<Tensor> sub_tensor = initial_list.slices(indices);
     for (int i = 0; i < sub_tensor.size(); i++) {
