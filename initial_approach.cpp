@@ -24,7 +24,7 @@ using namespace popops;
 using std::cout, std::endl;
 using std::to_string;
 
-void final_processor_sort(ComputeSet& computeSet, Graph& graph, Tensor initial_list, vector<std::size_t>& indexes, unsigned processorId) {
+void final_processor_sort(ComputeSet& computeSet, Graph& graph, Tensor initial_list, std::vector<std::size_t>& indexes, unsigned processorId) {
     VertexRef quickSort_vtx = graph.addVertex(computeSet, "QuickSort");
     graph.connect(quickSort_vtx["local_list"], initial_list.index(ArrayRef(indexes)));
     graph.setTileMapping(quickSort_vtx, processorId);
