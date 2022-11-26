@@ -134,7 +134,7 @@ int main() {
     graph.setTileMapping(initial_list[processor], processor);
     //quick_sort(local_sort, graph, initial_list[processor], processor); 
     sampling(local_sample, graph, initial_list[processor], 
-        compiled_samples.slice(processor * k, (processor + 1) * k, p, processor);
+        compiled_samples.slice(processor * k, (processor + 1) * k), p, processor);
   }
 
 
