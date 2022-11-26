@@ -168,13 +168,14 @@ int main() {
   std::vector<Tensor> final_unsorted_lists (p);
   unsigned idx = 0;
   for (unsigned i = 0; i < p; i++) {
+    Tensor current_processor_list;
     for (unsigned j = 0; j < local_list_size; j++) {
         graph.setTileMapping(initial_list[i][j], processor_list[idx]);
         cout << "here" << endl;
         if (j == 0) {
-            final_unsorted_lists[processor_list[idx]] = initial_list[i][j].reshape({1});
+            current_processor_list = initial_list.slice({i, i}, {j, j}).reshape({1});
         } else {
-            final_unsorted_lists[processor_list[idx]] = concat(final_unsorted_lists[processor_list[idx]], initial_list[i][j].reshape({1}));
+            current_processor_list = concat(current_processor_list, initial_list.slice({i, i}, {j, j}).reshape({1}));
         }
         cout << "here" << endl;
         idx++;
