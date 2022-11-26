@@ -200,10 +200,10 @@ int main() {
   
   for (unsigned i = 0; i < p; i++) {
     std::vector<unsigned> p_index = indexes[i];
-    std::vector<Tensor> sub_tensor = initial_list.slices(p_index);
+    std::vector<Tensor> tensors = initial_list.slices(p_index);
     ArrayRef<Tensor> sub_tensor(tensors);
     Tensor final_tensor = concat(sub_tensor);
-    quick_sort(local_sort, graph, final_tensor, i)
+    quick_sort(local_sort, graph, final_tensor, i);
   } 
   
   
