@@ -189,7 +189,7 @@ int main() {
     prog2.add(PrintTensor(initial_list));
 
 
-    ArrayRef<Tensor> sub_tensor = initial_list.slices({1 , 2});
+    ArrayRef<Tensor> sub_tensor(initial_list.slices({1 , 2}));
     Tensor final_tensor = concat(sub_tensor);
     prog2.add(PrintTensor(final_tensor));
   
