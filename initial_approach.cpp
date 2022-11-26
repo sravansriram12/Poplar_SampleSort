@@ -24,17 +24,19 @@ using namespace popops;
 using std::cout, std::endl;
 using std::to_string;
 
-void final_processor_sort(ComputeSet& computeSet, Graph& graph, Tensor initial_list, std::vector<unsigned>& indexes, unsigned processorId) {
+ArrayRef<Tensor> final_processor_sort(ComputeSet& computeSet, Graph& graph, Tensor initial_list, std::vector<unsigned>& indexes, unsigned processorId) {
     VertexRef quickSort_vtx = graph.addVertex(computeSet, "QuickSort");
     ArrayRef<unsigned> indices(indexes);
     ArrayRef<Tensor> sub_tensor = initial_list.slices(indices);
-    cout << "here" << endl;
+    /*cout << "here" << endl;
     Tensor final_tensor = concat(sub_tensor, 0);
     cout << "here" << endl;
     graph.connect(quickSort_vtx["local_list"], final_tensor);
     cout << "here" << endl;
     graph.setTileMapping(quickSort_vtx, processorId);
-    graph.setPerfEstimate(quickSort_vtx, 20);
+    graph.setPerfEstimate(quickSort_vtx, 20); */
+
+    return sub_tensor;
 
 }
 
@@ -188,19 +190,25 @@ int main() {
     indexes[processor_list[i]].push_back(i);
   }
 
+  Sequence prog2;
+
   cout << "here" << endl;
   for (unsigned i = 0; i < p; i++) {
-    final_processor_sort(local_sort, graph, initial_list, indexes[i], i);
+    ArrayRef<Tensor> tensor = final_processor_sort(local_sort, graph, initial_list, indexes[i], i);
+    for (unsigned i = 0; i < tensor.size(); i++) {
+         prog2.add(PrintTensor(tensor[i]));
+    }
+   
   }
   
-  /*equence prog2;
+  /*Sequence prog2;
   prog2.add(PrintTensor(initial_list));
   //prog2.add(Execute(local_sort));
-  prog2.add(PrintTensor(initial_list));
+  prog2.add(PrintTensor(initial_list)); */
   Engine engine2(graph, prog2);
   engine2.load(device);
   engine2.writeTensor("list-write", input_list.data(), input_list.data() + input_list.size());
-  engine2.run(0); */
+  engine2.run(0); 
 
 
 
