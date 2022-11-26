@@ -196,7 +196,7 @@ int main() {
   for (unsigned i = 0; i < p; i++) {
     ArrayRef<Tensor> tensor = final_processor_sort(local_sort, graph, initial_list, indexes[i], i);
     cout << tensor.size() << endl;
-    for (unsigned i = 0; i < tensor.size(); i++) {
+    for (unsigned k = 0; k < tensor.size(); k++) {
          prog2.add(PrintTensor(tensor[i]));
     }
    
