@@ -66,9 +66,9 @@ void find_processor(ComputeSet& computeSet, Graph& graph, Tensor input_list, Ten
 int main() {
   // Create the IPU model device
 
-  unsigned n = 1000;  // number of elements
-  unsigned p = 10;   // number of processors (tiles)
-  unsigned k = 10;
+  unsigned n = 50;  // number of elements
+  unsigned p = 5;   // number of processors (tiles)
+  unsigned k = 4;
   unsigned local_list_size = n / p;
   const char *dev = "model-ipu2";
   srand (time(NULL));
@@ -158,7 +158,9 @@ int main() {
   graph.createHostRead("processor-mapping-read", processor_mapping);
   
   // Add sequence of compute sets to program
+  prog.add(PrintTensor(initial_list));
   prog.add(Execute(local_sample));
+  prog.add(PrintTensor(compiled_samples));
   prog.add(Execute(sort_compiled_samples));
   prog.add(PrintTensor(compiled_samples));
   prog.add(Execute(sample_compiled_samples));
