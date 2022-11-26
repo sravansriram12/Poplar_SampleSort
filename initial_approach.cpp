@@ -24,15 +24,19 @@ using namespace popops;
 using std::cout, std::endl;
 using std::to_string;
 
-ArrayRef<Tensor> final_processor_sort(ComputeSet& computeSet, Graph& graph, Tensor& initial_list, std::vector<unsigned>& indexes, unsigned processorId) {
-    VertexRef quickSort_vtx = graph.addVertex(computeSet, "QuickSort");
+void final_processor_sort(ComputeSet& computeSet, Graph& graph, Tensor& initial_list, std::vector<unsigned>& indexes, unsigned processorId, Sequence prog2) {
+    //VertexRef quickSort_vtx = graph.addVertex(computeSet, "QuickSort");
     ArrayRef<unsigned> indices(indexes);
     ArrayRef<Tensor> sub_tensor = initial_list.slices(indices);
-    graph.connect(quickSort_vtx["local_list"], concat(sub_tensor));
+    for (int i = 0; i < sub_tensor.size(); i++) {
+        prog2.add(PrintTensor(sub_tensor[i]));
+    }
+    
+    /*graph.connect(quickSort_vtx["local_list"], concat(sub_tensor));
     graph.setTileMapping(quickSort_vtx, processorId);
-    graph.setPerfEstimate(quickSort_vtx, 20); 
+    graph.setPerfEstimate(quickSort_vtx, 20); */
 
-    return sub_tensor;
+    //return sub_tensor;
 
 }
 
