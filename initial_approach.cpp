@@ -188,7 +188,7 @@ int main() {
   
   Sequence prog2;
   prog2.add(PrintTensor(initial_list));
-  prog2.add(Execute(local_sort));
+  //prog2.add(Execute(local_sort));
   prog2.add(PrintTensor(initial_list));
   Engine engine2(graph, prog2);
   engine2.load(device);
