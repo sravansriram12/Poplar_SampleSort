@@ -196,7 +196,7 @@ int main() {
   Sequence prog2;
   prog2.add(Execute(local_sort));
   for (unsigned i = 0; i < p; i++) {
-    if (all_processor_lists[i].numElements() > 0) {
+    if (indexes[i].size() > 0) {
         prog2.add(PrintTensor("[Proc " + to_string(i) + ":]", all_processor_lists[i]));
     }
   }
