@@ -44,10 +44,10 @@ void quick_sort(ComputeSet& computeSet, Graph& graph, Tensor input_list, unsigne
 
 }
 
-void sampling(ComputeSet& computeSet, Graph& graph, Tensor input_list, Tensor output_list, unsigned p, unsigned processorId) {
+void sampling(ComputeSet& computeSet, Graph& graph, Tensor input_list, Tensor output_list, unsigned k, unsigned processorId) {
     VertexRef sample_vtx = graph.addVertex(computeSet, "Samples");
     graph.connect(sample_vtx["local_sorted_list"], input_list);
-    graph.connect(sample_vtx["num_processors"], p);
+    graph.connect(sample_vtx["num_processors"], k);
     graph.connect(sample_vtx["local_samples"], output_list);
     graph.setTileMapping(sample_vtx, processorId);
     graph.setPerfEstimate(sample_vtx, 20);
@@ -68,7 +68,7 @@ int main() {
 
   unsigned n = 1000;  // number of elements
   unsigned p = 10;   // number of processors (tiles)
-  unsigned k = 25;
+  unsigned k = 10;
   unsigned local_list_size = n / p;
   const char *dev = "model-ipu2";
   srand (time(NULL));
@@ -134,7 +134,7 @@ int main() {
     graph.setTileMapping(initial_list[processor], processor);
     //quick_sort(local_sort, graph, initial_list[processor], processor); 
     sampling(local_sample, graph, initial_list[processor], 
-        compiled_samples.slice(processor * k, (processor + 1) * k), p, processor);
+        compiled_samples.slice(processor * k, (processor + 1) * k), k, processor);
   }
 
 
@@ -142,7 +142,7 @@ int main() {
   quick_sort(sort_compiled_samples, graph, compiled_samples, p);
   Tensor global_samples = graph.addVariable(INT, {k}, "global_samples");
   graph.setTileMapping(global_samples, p);
-  sampling(sample_compiled_samples, graph, compiled_samples, global_samples, p, p);
+  sampling(sample_compiled_samples, graph, compiled_samples, global_samples, k, p);
 
 
   // Third computation phase - finding buckets belonging to different processor based on global samples
