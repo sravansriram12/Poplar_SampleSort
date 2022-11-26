@@ -178,7 +178,7 @@ int main() {
   for (unsigned i = 0; i < p; i++) {
     for (unsigned j = 0; j < local_list_size; j++) {
         graph.setTileMapping(initial_list[i][j], processor_list[idx]);
-        final_unsorted_lists[processor_list[idx]] = concat(final_unsorted_lists[processor_list[idx]], initial_list[i][j])
+        final_unsorted_lists[processor_list[idx]] = concat(final_unsorted_lists[processor_list[idx]], initial_list[i][j]);
         idx++;
     }
   }
