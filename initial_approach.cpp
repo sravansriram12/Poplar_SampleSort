@@ -45,7 +45,7 @@ void find_processor(ComputeSet& computeSet, Graph& graph, Tensor input_list, Ten
     VertexRef processor_vtx = graph.addVertex(computeSet, "DetermineProcessor");
     graph.connect(processor_vtx["local_list"], input_list);
     graph.connect(processor_vtx["global_samples"], global_samples);
-    graph.connect(processor_vtx["processor"], concat(output_list.index()));
+    graph.connect(processor_vtx["processor"], output_list);
     graph.setTileMapping(processor_vtx, processorId);
     graph.setPerfEstimate(processor_vtx, 20);
 }
