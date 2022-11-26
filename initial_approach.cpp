@@ -185,33 +185,19 @@ int main() {
   }
 
 
-    Sequence prog2;
-    prog2.add(PrintTensor(initial_list));
-
-    /*std::vector<unsigned> indices = {1, 2};
-    std::vector<Tensor> tensors = initial_list.slices(indices);
-    prog2.add(PrintTensor(tensors[0]));
-    ArrayRef<Tensor> sub_tensor(tensors);
-    prog2.add(PrintTensor(sub_tensor[0]));
-    cout << "here" << endl;
-    Tensor final_tensor = concat(sub_tensor);
-    cout << "here" << endl;
-    prog2.add(PrintTensor(final_tensor)); */
+   
 
   std::vector<Tensor> all_processor_lists (p);
-  
   for (unsigned i = 0; i < p; i++) {
     std::vector<unsigned> p_index = indexes[i];
     std::vector<Tensor> tensors = initial_list.slices(p_index);
-    ArrayRef<Tensor> sub_tensor(tensors);
-    Tensor final_tensor = concat(sub_tensor);
-    
+    Tensor final_tensor = concat(tensors);
     quick_sort(local_sort, graph, final_tensor, i);
     all_processor_lists[i] = final_tensor;
   } 
   
   
-  
+  Sequence prog2;
   prog2.add(Execute(local_sort));
   for (unsigned i = 0; i < p; i++) {
     prog2.add(PrintTensor(all_processor_lists[i]));
