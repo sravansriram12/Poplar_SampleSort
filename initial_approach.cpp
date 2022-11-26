@@ -28,6 +28,7 @@ void final_processor_sort(ComputeSet& computeSet, Graph& graph, Tensor initial_l
     VertexRef quickSort_vtx = graph.addVertex(computeSet, "QuickSort");
     ArrayRef<unsigned> indices(indexes);
     ArrayRef<Tensor> sub_tensor = initial_list.slices(indices);
+    cout << "here" << endl;
     graph.connect(quickSort_vtx["local_list"], concat(sub_tensor));
     graph.setTileMapping(quickSort_vtx, processorId);
     graph.setPerfEstimate(quickSort_vtx, 20);
