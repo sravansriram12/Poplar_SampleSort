@@ -150,7 +150,6 @@ int main() {
 
   graph.createHostWrite("list-write", initial_list);
   graph.createHostRead("list-read", initial_list);
-  graph.createHostRead("bucket-read", buckets);
   
   // Add sequence of compute sets to program
   prog.add(PrintTensor("initial lists", initial_list));
@@ -174,7 +173,7 @@ int main() {
 
   engine.readTensor("processor-mapping-read", processor_list.data(), processor_list.data() + processor_list.size());
   
-  vector<Tensor> final_unsorted_lists (p);
+  std::vector<Tensor> final_unsorted_lists (p);
   unsigned idx = 0;
   for (unsigned i = 0; i < p; i++) {
     for (unsigned j = 0; j < local_list_size; j++) {
