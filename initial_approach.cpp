@@ -66,7 +66,7 @@ void find_processor(ComputeSet& computeSet, Graph& graph, Tensor input_list, Ten
 int main() {
   // Create the IPU model device
 
-  unsigned n = pow(2, 10);  // number of elements
+  unsigned n = 100000;  // number of elements
   unsigned p = 150;   // number of processors (tiles)
   unsigned k = 200;
   unsigned local_list_size = n / p;
