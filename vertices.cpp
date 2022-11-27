@@ -5,7 +5,7 @@ class QuickSort : public Vertex {
     public:
     // Fields
     InOut<Vector<int>> local_list;
-    Input<Vector<int>> stack;
+    InOut<Vector<int>> stack;
 
     int partition(int low, int high) {
         int pivot = local_list[high]; // pivot
