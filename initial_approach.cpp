@@ -165,7 +165,6 @@ int main() {
   //prog.add(PrintTensor(compiled_samples));
   prog.add(Execute(sample_compiled_samples));
   //prog.add(PrintTensor(global_samples));
-  prog.add(WriteUndef(compiled_samples));
   prog.add(Execute(determine_processors));
   //prog.add(WriteUndef(global_samples));
 
