@@ -101,6 +101,9 @@ int main() {
     device = ipuModel.createDevice();
   }
 
+  struct timespec start, stop, stop_qsort;
+  double total_time, time_res, total_time_qsort;
+  clock_gettime(CLOCK_REALTIME, &start);
   // Create the Graph object
   Graph graph(device);
   Sequence prog;
@@ -209,6 +212,12 @@ int main() {
   engine2.load(device);
   engine2.writeTensor("list-write", input_list.data(), input_list.data() + input_list.size());
   engine2.run(0);  
+
+  clock_gettime(CLOCK_REALTIME, &stop);
+  total_time = (stop.tv_sec-start.tv_sec)
+  +0.000000001*(stop.tv_nsec-start.tv_nsec);
+
+  cout << "Total time (s): " total_time << endl;
 
 
 
