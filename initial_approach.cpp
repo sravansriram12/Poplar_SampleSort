@@ -24,18 +24,6 @@ using namespace popops;
 using std::cout, std::endl;
 using std::to_string;
 
-void final_processor_sort(ComputeSet& computeSet, Graph& graph, Tensor initial_list, std::vector<unsigned> indexes, unsigned processorId, Sequence prog2) {
-    //VertexRef quickSort_vtx = graph.addVertex(computeSet, "QuickSort");
-  
-    
-    /*graph.connect(quickSort_vtx["local_list"], concat(sub_tensor));
-    graph.setTileMapping(quickSort_vtx, processorId);
-    graph.setPerfEstimate(quickSort_vtx, 20); */
-
-    //return sub_tensor;
-
-}
-
 void quick_sort(ComputeSet& computeSet, Graph& graph, Tensor input_list, unsigned processorId) {
     VertexRef quickSort_vtx = graph.addVertex(computeSet, "QuickSort");
     Tensor stack = graph.addVariable(INT, {input_list.numElements()}, "stack" + to_string(processorId));
@@ -70,7 +58,7 @@ int main() {
   // Create the IPU model device
 
   unsigned n = 20000;  // number of elements
-  unsigned p = 500;   // number of processors (tiles)
+  unsigned p = 1000;   // number of processors (tiles)
   unsigned k = 1000;
   unsigned local_list_size = n / p;
   const char *dev = "ipu";
