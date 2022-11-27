@@ -72,15 +72,15 @@ class Samples : public MultiVertex {
     }
 }; 
 
-class DetermineProcessor: public Vertex {
+class DetermineProcessor: public MultiVertex {
     public:
     Input<Vector<int>> local_list;
     Input<Vector<int>> global_samples;
     Output<Vector<int>> processor;
 
-     bool compute() {
+     bool compute(unsigned workerId) {
         
-        for (unsigned i = 0; i < local_list.size(); i++) {
+        for (unsigned i = workerId; i < local_list.size(); i += MultiVertex::numWorkers()) {
             int end = global_samples.size();
             int target = local_list[i];
             int start = 0;
