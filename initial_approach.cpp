@@ -66,7 +66,7 @@ void find_processor(ComputeSet& computeSet, Graph& graph, Tensor input_list, Ten
 int main() {
   // Create the IPU model device
 
-  unsigned n = 2 ** 20;  // number of elements
+  unsigned n = exp(2, 20);  // number of elements
   unsigned p = 150;   // number of processors (tiles)
   unsigned k = 200;
   unsigned local_list_size = n / p;
@@ -119,7 +119,7 @@ int main() {
   auto input_list = std::vector<int>(n);
   auto processor_list = std::vector<unsigned>(n);
   for (unsigned idx = 0; idx < n; ++idx) {
-    input_list[idx] = rand() % 1000 + 2;
+    input_list[idx] = rand() % 100000 + 2;
   }
 
 
@@ -158,7 +158,7 @@ int main() {
   graph.createHostRead("processor-mapping-read", processor_mapping);
   
   // Add sequence of compute sets to program
-  prog.add(PrintTensor(initial_list));
+  //prog.add(PrintTensor(initial_list));
   prog.add(Execute(local_sample));
   prog.add(PrintTensor(compiled_samples));
   prog.add(Execute(sort_compiled_samples));
