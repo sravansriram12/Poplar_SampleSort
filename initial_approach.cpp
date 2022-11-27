@@ -57,9 +57,9 @@ void find_processor(ComputeSet& computeSet, Graph& graph, Tensor input_list, Ten
 int main() {
   // Create the IPU model device
 
-  unsigned n = 200000;  // number of elements
-  unsigned p = 500;   // number of processors (tiles)
-  unsigned k = 1000;
+  unsigned n = 50;  // number of elements
+  unsigned p = 5;   // number of processors (tiles)
+  unsigned k = 4;
   unsigned local_list_size = n / p;
   const char *dev = "model-ipu2";
   srand (time(NULL));
