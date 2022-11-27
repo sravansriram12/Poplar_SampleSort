@@ -41,7 +41,7 @@ void quick_sort(ComputeSet& computeSet, Graph& graph, Tensor input_list, unsigne
     Tensor stack = graph.addVariable(INT, {input_list.numElements()}, "stack" + to_string(processorId));
     graph.setTileMapping(stack, processorId);
     graph.connect(quickSort_vtx["local_list"], input_list);
-    graph.connect(quickSort_vtx["stack"], stack)
+    graph.connect(quickSort_vtx["stack"], stack);
     graph.setTileMapping(quickSort_vtx, processorId);
     graph.setPerfEstimate(quickSort_vtx, 20);
 
