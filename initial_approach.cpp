@@ -73,7 +73,7 @@ int main() {
   unsigned p = 500;   // number of processors (tiles)
   unsigned k = 1000;
   unsigned local_list_size = n / p;
-  const char *dev = "model-ipu2";
+  const char *dev = "ipu";
   srand (time(NULL));
   
   Device device;
