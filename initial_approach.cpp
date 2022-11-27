@@ -69,9 +69,9 @@ void find_processor(ComputeSet& computeSet, Graph& graph, Tensor input_list, Ten
 int main() {
   // Create the IPU model device
 
-  unsigned n = 2000000;  // number of elements
-  unsigned p = 500;   // number of processors (tiles)
-  unsigned k = 100;
+  unsigned n = 4000000;  // number of elements
+  unsigned p = 300;   // number of processors (tiles)
+  unsigned k = 200;
   unsigned local_list_size = n / p;
   const char *dev = "model-ipu2";
   srand (time(NULL));
@@ -106,7 +106,7 @@ int main() {
 
   struct timespec start, stop, stop_qsort;
   double total_time, time_res, total_time_qsort;
-  clock_gettime(CLOCK_REALTIME, &start);
+  
   // Create the Graph object
   Graph graph(device);
   Sequence prog;
@@ -179,6 +179,7 @@ int main() {
   engine.load(device);
   engine.writeTensor("list-write", input_list.data(), input_list.data() + input_list.size());
 
+  clock_gettime(CLOCK_REALTIME, &start);
   engine.run(0);
 
   engine.readTensor("processor-mapping-read", processor_list.data(), processor_list.data() + processor_list.size());
