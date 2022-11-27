@@ -57,11 +57,11 @@ void find_processor(ComputeSet& computeSet, Graph& graph, Tensor input_list, Ten
 int main() {
   // Create the IPU model device
 
-  unsigned n = 50;  // number of elements
-  unsigned p = 5;   // number of processors (tiles)
-  unsigned k = 4;
+  unsigned n = 200000000;  // number of elements
+  unsigned p = 500;   // number of processors (tiles)
+  unsigned k = 1000;
   unsigned local_list_size = n / p;
-  const char *dev = "ipu";
+  const char *dev = "model-ipu2";
   srand (time(NULL));
   
   Device device;
@@ -71,7 +71,7 @@ int main() {
     auto manager = DeviceManager::createDeviceManager();
 
     // Attempt to attach to a single IPU:
-    auto devices = manager.getDevices(poplar::TargetType::IPU, 10);
+    auto devices = manager.getDevices(poplar::TargetType::IPU, 1);
     std::cout << "Trying to attach to IPU\n";
     auto it = std::find_if(devices.begin(), devices.end(),
                            [](Device &device) { return device.attach(); });
