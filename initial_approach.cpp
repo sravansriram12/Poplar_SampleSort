@@ -217,7 +217,7 @@ int main() {
   total_time = (stop.tv_sec-start.tv_sec)
   +0.000000001*(stop.tv_nsec-start.tv_nsec);
 
-  cout << "Total time (s): " total_time << endl;
+  cout << "Total time (s): " << total_time << endl;
 
 
 
