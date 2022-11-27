@@ -5,6 +5,7 @@ class QuickSort : public Vertex {
     public:
     // Fields
     InOut<Vector<int>> local_list;
+    Input<Vector<int>> stack;
 
     int partition(int low, int high) {
         int pivot = local_list[high]; // pivot
@@ -24,11 +25,26 @@ class QuickSort : public Vertex {
         return (i + 1);
     }
   
-    void quickSort(int low, int high) {
-        if (low < high) {
-            int pi = partition(low, high);
-            quickSort(low, pi - 1);
-            quickSort(pi + 1, high);
+    void quickSort(int l, int h) {
+
+        int top = -1;
+        stack[++top] = l;
+        stack[++top] = h;
+    
+        while (top >= 0) {
+            h = stack[top--];
+            l = stack[top--];
+
+            int p = partition(arr, l, h);
+    
+            if (p - 1 > l) {
+                stack[++top] = l;
+                stack[++top] = p - 1;
+            }
+            if (p + 1 < h) {
+                stack[++top] = p + 1;
+                stack[++top] = h;
+            }
         }
     }
 
