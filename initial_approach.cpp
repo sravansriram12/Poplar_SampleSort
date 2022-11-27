@@ -71,7 +71,7 @@ int main() {
     auto manager = DeviceManager::createDeviceManager();
 
     // Attempt to attach to a single IPU:
-    auto devices = manager.getDevices(poplar::TargetType::IPU, 1);
+    auto devices = manager.getDevices(poplar::TargetType::IPU, 10);
     std::cout << "Trying to attach to IPU\n";
     auto it = std::find_if(devices.begin(), devices.end(),
                            [](Device &device) { return device.attach(); });
@@ -92,7 +92,7 @@ int main() {
     device = ipuModel.createDevice();
   }
 
-  struct timespec start, stop, stop_qsort;
+  struct timespec start, start_qstart, stop, stop_qsort;
   double total_time, time_res, total_time_qsort;
   
   // Create the Graph object
