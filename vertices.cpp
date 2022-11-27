@@ -35,7 +35,7 @@ class QuickSort : public Vertex {
             h = stack[top--];
             l = stack[top--];
 
-            int p = partition(arr, l, h);
+            int p = partition(l, h);
     
             if (p - 1 > l) {
                 stack[++top] = l;
