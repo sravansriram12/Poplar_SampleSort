@@ -187,8 +187,6 @@ int main() {
     indexes[processor_list[i]].push_back(i);
   }
 
-  cout << "here" << endl;
-
   std::vector<Tensor> all_processor_lists (p);
   for (unsigned i = 0; i < p; i++) {
     if (indexes[i].size() > 0) {
@@ -200,14 +198,13 @@ int main() {
     }
   } 
    
-  cout << "here" << endl;
   Sequence prog2;
   prog2.add(Execute(local_sort));
-  for (unsigned i = 0; i < p; i++) {
+  /*for (unsigned i = 0; i < p; i++) {
     if (indexes[i].size() > 0) {
         prog2.add(PrintTensor("[Proc " + to_string(i) + "]", all_processor_lists[i]));
     }
-  }
+  } */
   Engine engine2(graph, prog2);
   engine2.load(device);
   engine2.writeTensor("list-write", input_list.data(), input_list.data() + input_list.size());
