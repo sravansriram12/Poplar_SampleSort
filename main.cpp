@@ -188,6 +188,7 @@ int main() {
         Tensor final_tensor = concat(tensors);
         quick_sort(local_sort, graph, final_tensor, i);
         all_processor_lists[i] = final_tensor;
+        
     }
   } 
    
