@@ -80,9 +80,9 @@ int main(int argc, char *argv[]) {
   Tensor initial_list = graph.addVariable(INT, {n}, "initial_list");
 
   // First computation phase - local sorting and sampling
-  /*for (unsigned processor = 0; processor < p; processor++) {
-    graph.setTileMapping(initial_list.slice(p * local_list_size, (p + 1) * local_list_size), processor);
-  } */
+  for (unsigned processor = 0; processor < p; processor++) {
+    graph.setTileMapping(initial_list.slice(processor * local_list_size, (processor + 1) * local_list_size), processor);
+  } 
   
   // Create the Graph object
 
