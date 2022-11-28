@@ -24,46 +24,42 @@ using namespace popops;
 using std::cout, std::endl;
 using std::to_string;
 
-void quick_sort(ComputeSet& computeSet, Graph& graph, Tensor local_list, unsigned processorId) {
+void quick_sort(ComputeSet& computeSet, Graph& graph, Tensor input_list, unsigned processorId) {
     VertexRef quickSort_vtx = graph.addVertex(computeSet, "QuickSort");
-    graph.connect(quickSort_vtx["local_list"], local_list);
+    Tensor stack = graph.addVariable(INT, {input_list.numElements()}, "stack" + to_string(processorId));
+    graph.setTileMapping(stack, processorId);
+    graph.connect(quickSort_vtx["local_list"], input_list);
+    graph.connect(quickSort_vtx["stack"], stack);
     graph.setTileMapping(quickSort_vtx, processorId);
     graph.setPerfEstimate(quickSort_vtx, 20);
 
 }
 
-void sampling(ComputeSet& computeSet, Graph& graph, Tensor input_list, Tensor output_list, unsigned p, unsigned processorId) {
+void sampling(ComputeSet& computeSet, Graph& graph, Tensor input_list, Tensor output_list, unsigned factor, unsigned processorId) {
     VertexRef sample_vtx = graph.addVertex(computeSet, "Samples");
     graph.connect(sample_vtx["local_sorted_list"], input_list);
-    graph.connect(sample_vtx["num_processors"], p);
+    graph.connect(sample_vtx["factor"], factor);
     graph.connect(sample_vtx["local_samples"], output_list);
     graph.setTileMapping(sample_vtx, processorId);
     graph.setPerfEstimate(sample_vtx, 20);
 }
 
-void bin_buckets(ComputeSet& computeSet, Graph& graph, Tensor input_list, Tensor global_samples, Tensor output_list, unsigned processorId) {
-    VertexRef boundaries_vtx = graph.addVertex(computeSet, "DetermineBuckets");
-    graph.connect(boundaries_vtx["local_sorted_list"], input_list);
-    graph.connect(boundaries_vtx["global_samples"], global_samples);
-    graph.connect(boundaries_vtx["index_boundaries"], output_list);
-    graph.setTileMapping(boundaries_vtx, processorId);
-    graph.setPerfEstimate(boundaries_vtx, 20);
+void find_processor(ComputeSet& computeSet, Graph& graph, Tensor input_list, Tensor global_samples, Tensor output_list, unsigned processorId) {
+    VertexRef processor_vtx = graph.addVertex(computeSet, "DetermineProcessor");
+    graph.connect(processor_vtx["local_list"], input_list);
+    graph.connect(processor_vtx["global_samples"], global_samples);
+    graph.connect(processor_vtx["processor"], output_list);
+    graph.setTileMapping(processor_vtx, processorId);
+    graph.setPerfEstimate(processor_vtx, 20);
 }
 
-void merge_lists(ComputeSet& computeSet, Graph& graph, Tensor input_list, vector<int> indexes, Tensor output_list, unsigned processorId) {
-    VertexRef merge_vtx = graph.addVertex(computeSet, "DetermineBuckets");
-    graph.connect(merge_vtx["sorted_sub_lists"], input_list);
-    graph.connect(merge_vtx["indexes"], ArrayRef(indexes));
-    graph.connect(merge_vtx["sorted_final_list"], output_list);
-    graph.setTileMapping(merge_vtx, processorId);
-    graph.setPerfEstimate(merge_vtx, 20);
-}
 
 int main() {
   // Create the IPU model device
 
-  unsigned n = 50;  // number of elements
-  unsigned p = 5;   // number of processors (tiles)
+  unsigned n = 500000;  // number of elements
+  unsigned p = 50;   // number of processors (tiles)
+  unsigned k = 100;
   unsigned local_list_size = n / p;
   const char *dev = "model-ipu2";
   srand (time(NULL));
@@ -96,6 +92,9 @@ int main() {
     device = ipuModel.createDevice();
   }
 
+  struct timespec start, start_qstart, stop, stop_qsort;
+  double total_time, time_res, total_time_qsort;
+  
   // Create the Graph object
   Graph graph(device);
   Sequence prog;
@@ -103,38 +102,33 @@ int main() {
   // Add codelets to the graph
   graph.addCodelets("vertices.cpp");
   // Determine compute sets
-  ComputeSet local_sort = graph.addComputeSet("Local sort");
+  
   ComputeSet local_sample = graph.addComputeSet("Local samples");
   ComputeSet sort_compiled_samples = graph.addComputeSet("Sort compiled samples");
   ComputeSet sample_compiled_samples = graph.addComputeSet("Sample compiled samples");
-  ComputeSet determine_buckets = graph.addComputeSet("Determine buckets");
-
-  vector<ComputeSet> merge_sub_lists (ceil(log2(p)));
-
-  for (unsigned merge_set = 0; merge_set < merge_sub_lists.size(); merge_set++) {
-    merge_sub_lists[merge_set] = graph.addComputeSet("Merge sub lists" + to_string(merge_set));
-  }
+  ComputeSet determine_processors = graph.addComputeSet("Determine processors");
+  ComputeSet local_sort = graph.addComputeSet("Local sort");
 
   // initial list of data that is copied from host to device
   auto input_list = std::vector<int>(n);
-  auto bucket_list = std::vector<unsigned int>(p * (p - 1));
+  auto processor_list = std::vector<unsigned>(n);
   for (unsigned idx = 0; idx < n; ++idx) {
-    input_list[idx] = rand() % 100;
+    input_list[idx] = rand() % 100000 + 2;
   }
 
 
   // 2D tensor where each inner tensor at index i represents the initial list at processor i
   Tensor initial_list = graph.addVariable(INT, {p, local_list_size}, "initial_list");
   // Compilation of samples from each processor's local list
-  Tensor compiled_samples = graph.addVariable(INT, {p * (p - 1)}, "compiled_samples");
+  Tensor compiled_samples = graph.addVariable(INT, {p * k}, "compiled_samples");
   graph.setTileMapping(compiled_samples, p);
 
   // First computation phase - local sorting and sampling
   for (unsigned processor = 0; processor < p; processor++) {
     graph.setTileMapping(initial_list[processor], processor);
-    quick_sort(local_sort, graph, initial_list[processor], processor); 
+    //quick_sort(local_sort, graph, initial_list[processor], processor); 
     sampling(local_sample, graph, initial_list[processor], 
-        compiled_samples.slice(processor * (p - 1), (processor + 1) * (p - 1)), p, processor);
+        compiled_samples.slice(processor * k, (processor + 1) * k), k + 1, processor);
   }
 
 
@@ -146,111 +140,75 @@ int main() {
 
 
   // Third computation phase - finding buckets belonging to different processor based on global samples
-  Tensor buckets = graph.addVariable(INT, {p, p - 1}, "buckets");
-
-  for (unsigned processor = 0; processor < p; processor++) {
-    graph.setTileMapping(buckets[processor], processor);
-    bin_buckets(determine_buckets, graph, initial_list[processor], global_samples, buckets[processor], processor);
+  Tensor processor_mapping = graph.addVariable(INT, {p, local_list_size}, "processor_mapping");
+  for (unsigned i = 0; i < p; i++) {
+    graph.setTileMapping(processor_mapping, i);
+    find_processor(determine_processors, graph, initial_list[i], global_samples, processor_mapping[i], i);
   }
+  
 
   graph.createHostWrite("list-write", initial_list);
   graph.createHostRead("list-read", initial_list);
-  graph.createHostRead("bucket-read", buckets);
+  graph.createHostRead("processor-mapping-read", processor_mapping);
   
   // Add sequence of compute sets to program
-  prog.add(PrintTensor("initial lists", initial_list));
-  prog.add(Execute(local_sort));
-  prog.add(PrintTensor("locally sorted lists", initial_list));
+  //prog.add(PrintTensor(initial_list));
   prog.add(Execute(local_sample));
-  prog.add(PrintTensor("initially compiled samples", compiled_samples));
+  //prog.add(PrintTensor(compiled_samples));
   prog.add(Execute(sort_compiled_samples));
-  prog.add(PrintTensor("sorted compiled samples", compiled_samples));
+  //prog.add(PrintTensor(compiled_samples));
   prog.add(Execute(sample_compiled_samples));
-  //prog.add(WriteUndef(compiled_samples));
-  prog.add(PrintTensor("global samples", global_samples));
-  prog.add(Execute(determine_buckets));
-  //prog.add(WriteUndef(global_samples));
-  prog.add(PrintTensor("bucket boundaries of each processor", buckets));
- 
+  //prog.add(PrintTensor(global_samples));
+  prog.add(Execute(determine_processors));
+  prog.add(WriteUndef(global_samples));
+  prog.add(WriteUndef(compiled_samples));
 
   // Run graph and associated prog on engine and device a way to communicate host list to device initial list
   Engine engine(graph, prog);
   engine.load(device);
   engine.writeTensor("list-write", input_list.data(), input_list.data() + input_list.size());
 
+  clock_gettime(CLOCK_REALTIME, &start);
   engine.run(0);
 
-  engine.readTensor("list-read", input_list.data(), input_list.data() + input_list.size());
-  engine.readTensor("bucket-read", bucket_list.data(), bucket_list.data() + bucket_list.size());
+  engine.readTensor("processor-mapping-read", processor_list.data(), processor_list.data() + processor_list.size());
 
-  vector<Tensor> processor_lists;
-  vector<vector<int>> processor_indexes(p);
-  for (int i = 0; i < p; i++) {
-    int current_processor = 0;
-    Tensor processor_merge_lists;
-    bool seen = false;
-    for (int j = i; j < bucket_list.size(); j += (p - 1)) {
-      unsigned first = 0;
-      unsigned last = 0;
-      if (i == 0) {
-        unsigned temp_last = bucket_list[j] + 1;
-        last = std::min(local_list_size, temp_last);
-      } else if (i == p - 1) {
-        first = bucket_list[j - 1] + 1;
-        last = local_list_size;
-      } else {
-        unsigned temp_last = bucket_list[j] + 1;
-        last = std::min(local_list_size, temp_last);
-        first = bucket_list[j - 1] + 1;
-      }
-      if (first < local_list_size && last - first > 0) {
-         graph.setTileMapping(initial_list[current_processor].slice(first, last), i);
-         if (!seen) {
-          processor_merge_lists = initial_list[current_processor].slice(first, last).reshape({last - first});
-          seen = true;
-         } else {
-            Tensor append_list = initial_list[current_processor].slice(first, last).reshape({last - first});
-            processor_merge_lists = concat(processor_merge_lists, append_list);
-         }
-         processor_index[current_processor].push_back(last - 1);
-      }
-      current_processor++;
-    }
-    if (i == p - 1) {
-      unsigned first = bucket_list[bucket_list.size() - 1] + 1;
-      unsigned last = local_list_size;
-      if (first < local_list_size && last - first > 0) {
-          graph.setTileMapping(initial_list[p - 1].slice(first, last), p - 1);
-          Tensor append_list = initial_list[p - 1].slice(first, last).reshape({last - first});
-          processor_merge_lists = concat(processor_merge_lists, append_list);
-          processor_index[p - 1].push_back(last - 1);
-      }
-    }
-    processor_lists.push_back(processor_merge_lists);
+  initial_list = initial_list.flatten();
+  std::vector<std::vector<unsigned>> indexes (p, std::vector<unsigned> (0, 0));
+  for (unsigned i = 0; i < n; i++) {
+    graph.setTileMapping(initial_list[i], processor_list[i]);
+    indexes[processor_list[i]].push_back(i);
   }
 
-  for (unsigned pId = 0; i < p; i++) {
-    unsigned levels = floor(processor_index[pId].size() / 2);
-    unsigned count_level = 0;
-    while (count_level != levels) {
-      merge_lists(merge_sub_lists[count_level], graph, processor_lists[pId], processor_index[pId], processor_lists[pId], pId);
-      vector<int> new_indexes;
-      if (processor_index[pId].size() % 2 == 0) {
-        for (unsigned j = 1; j < processor_index[pId].size(); j += 2) {
-          new_indexes.push_back(processor_index[pId][j]);
-        }
-      } else {
-        for (unsigned j = 1; j < processor_index[pId].size() - 1; j += 2) {
-          new_indexes.push_back(processor_index[pId][j]);
-        }
-        new_indexes.push_back(processor_index[pId][procesoor_index[pId].size() - 1]);
-      }
-      processor_index[pId] = new_indexes;
-      count_level++;
+  std::vector<Tensor> all_processor_lists (p);
+  for (unsigned i = 0; i < p; i++) {
+    if (indexes[i].size() > 0) {
+        std::vector<unsigned> p_index = indexes[i];
+        std::vector<Tensor> tensors = initial_list.slices(p_index);
+        Tensor final_tensor = concat(tensors);
+        quick_sort(local_sort, graph, final_tensor, i);
+        all_processor_lists[i] = final_tensor;
     }
-  }
+  } 
+   
+  Sequence prog2;
+  prog2.add(Execute(local_sort));
+  /*for (unsigned i = 0; i < p; i++) {
+    if (indexes[i].size() > 0) {
+        prog2.add(PrintTensor("[Proc " + to_string(i) + "]", all_processor_lists[i]));
+    }
+  } */
+  Engine engine2(graph, prog2);
+  engine2.load(device);
+  engine2.writeTensor("list-write", input_list.data(), input_list.data() + input_list.size());
+  engine2.run(0);  
 
- 
+  clock_gettime(CLOCK_REALTIME, &stop);
+  total_time = (stop.tv_sec-start.tv_sec)
+  +0.000000001*(stop.tv_nsec-start.tv_nsec);
+
+  cout << "Total time (s): " << total_time << endl;
+
 
 
   return 0;
