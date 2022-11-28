@@ -85,7 +85,7 @@ int main(int argc, char *argv[]) {
     graph.setTileMapping(initial_list[processor], processor);
   }
 
-  //initial_list = initial_list.flatten();
+  initial_list = initial_list.flatten();
   
   // Create the Graph object
 
