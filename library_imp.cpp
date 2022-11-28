@@ -34,7 +34,7 @@ int main(int argc, char *argv[]) {
   unsigned p = atoi(argv[argc - 1]);   // number of processors (tiles)
   unsigned local_list_size = n / p;
   const char *dev = "model-ipu2";
-  srand48(0);
+  srand(time(NULL));
   
   Device device;
 
@@ -69,7 +69,7 @@ int main(int argc, char *argv[]) {
 
   auto input_list = std::vector<int>(n);
   for (unsigned idx = 0; idx < n; ++idx) {
-    input_list[idx] = (int) lrand48();
+    input_list[idx] = rand() % 100 + 1;
   }
 
   Graph graph(device);
