@@ -196,6 +196,7 @@ int main(int argc, char *argv[]) {
   } 
    
   Sequence prog2;
+  prog.add(WriteUndef(processor_mapping));
   prog2.add(Execute(local_sort));
   /*for (unsigned i = 0; i < p; i++) {
     if (indexes[i].size() > 0) {
