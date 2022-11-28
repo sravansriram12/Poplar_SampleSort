@@ -7,8 +7,17 @@ class QuickSort : public Vertex {
     InOut<Vector<int>> local_list;
     InOut<Vector<int>> stack;
 
+    int median_three(int a, int b, int c) {
+        if ((a > b) ^ (a > c)) 
+            return a;
+        else if ((b < a) ^ (b < c)) 
+            return b;
+        else
+            return c;
+    }
+
     int partition(int low, int high) {
-        int pivot = local_list[high]; // pivot
+        int pivot = median_three(local_list[low], local_list[(low + high) / 2], local_list[high]); // pivot
         int i = (low - 1);
     
         for (int j = low; j <= high - 1; j++) {

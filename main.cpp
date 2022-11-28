@@ -54,12 +54,15 @@ void find_processor(ComputeSet& computeSet, Graph& graph, Tensor input_list, Ten
 }
 
 
-int main() {
+int main(int argc, char *argv[]) {
   // Create the IPU model device
+  if (argc != 4) {
+    cout << "Error in number of arguments" << endl;
+  }
 
-  unsigned n = 500000;  // number of elements
-  unsigned p = 50;   // number of processors (tiles)
-  unsigned k = 100;
+  unsigned n = argv[argc - 3];  // number of elements
+  unsigned p = argv[argc - 2];   // number of processors (tiles)
+  unsigned k = argv[argc - 1];
   unsigned local_list_size = n / p;
   const char *dev = "model-ipu2";
   srand (time(NULL));
@@ -188,7 +191,7 @@ int main() {
         Tensor final_tensor = concat(tensors);
         quick_sort(local_sort, graph, final_tensor, i);
         all_processor_lists[i] = final_tensor;
-        
+
     }
   } 
    
