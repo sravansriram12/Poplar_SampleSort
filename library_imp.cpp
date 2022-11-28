@@ -91,10 +91,10 @@ int main(int argc, char *argv[]) {
 
   prog.add(PrintTensor("initial_list", initial_list));
  
- // popops::TopKParams params(n, false, SortOrder::ASCENDING, false);
-  //initial_list = popops::topK(graph, prog, initial_list, params, "TopK");
+  TopKParams params(n, false, SortOrder::ASCENDING, false);
+  Tensor final_list = popops::topK(graph, prog, initial_list, params, "TopK");
 
-  //prog.add(PrintTensor("sorted list", initial_list));
+  prog.add(PrintTensor("sorted list", final_list));
 
   graph.createHostWrite("list-write", initial_list);
 
