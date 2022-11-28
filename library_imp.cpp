@@ -77,7 +77,7 @@ int main(int argc, char *argv[]) {
   Sequence prog;
 
   // 2D tensor where each inner tensor at index i represents the initial list at processor i
-  Tensor initial_list = graph.addVariable(INT, {n}, "initial_list");
+  Tensor initial_list = graph.addVariable(INT, {n});
 
   // First computation phase - local sorting and sampling
   for (unsigned processor = 0; processor < p; processor++) {
