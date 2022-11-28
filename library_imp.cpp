@@ -72,6 +72,9 @@ int main(int argc, char *argv[]) {
     input_list[idx] = (int) lrand48();
   }
 
+  Graph graph(device);
+  Sequence prog;
+
 
   // 2D tensor where each inner tensor at index i represents the initial list at processor i
   Tensor initial_list = graph.addVariable(INT, {p, local_list_size}, "initial_list");
@@ -80,13 +83,9 @@ int main(int argc, char *argv[]) {
   for (unsigned processor = 0; processor < p; processor++) {
     graph.setTileMapping(initial_list[processor], processor);
   }
-
-  struct timespec start, start_qstart, stop, stop_qsort;
-  double total_time, time_res, total_time_qsort;
   
   // Create the Graph object
-  Graph graph(device);
-  Sequence prog;
+ 
   popops::TopKParams params(n, false, SortOrder::ASCENDING, false);
   popops::topK(graph, prog, initial_list, params);
 
