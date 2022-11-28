@@ -76,7 +76,6 @@ int main(int argc, char *argv[]) {
   popops::addCodelets(graph);
   Sequence prog;
 
-
   // 2D tensor where each inner tensor at index i represents the initial list at processor i
   Tensor initial_list = graph.addVariable(INT, {p, local_list_size}, "initial_list");
 
@@ -92,6 +91,7 @@ int main(int argc, char *argv[]) {
   //prog.add(PrintTensor("initial_list", initial_list));
  
   TopKParams params(n, false, SortOrder::ASCENDING, false);
+  cout << "Before TopK call" << endl;
   Tensor final_list = popops::topK(graph, prog, initial_list, params, "TopK");
 
   //prog.add(PrintTensor("sorted list", final_list));
