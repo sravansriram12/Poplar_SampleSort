@@ -83,6 +83,8 @@ int main(int argc, char *argv[]) {
   for (unsigned processor = 0; processor < p; processor++) {
     graph.setTileMapping(initial_list[processor], processor);
   }
+
+  initial_list = initial_list.flatten();
   
   // Create the Graph object
  
