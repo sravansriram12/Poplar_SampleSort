@@ -88,6 +88,8 @@ int main(int argc, char *argv[]) {
   initial_list = initial_list.flatten();
   
   // Create the Graph object
+
+  prog.add(PrintTensor("initial_list", initial_list));
  
   popops::TopKParams params(n, false, SortOrder::ASCENDING, false);
   initial_list = popops::topK(graph, prog, initial_list, params, "TopK");
