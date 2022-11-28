@@ -77,14 +77,12 @@ int main(int argc, char *argv[]) {
   Sequence prog;
 
   // 2D tensor where each inner tensor at index i represents the initial list at processor i
-  Tensor initial_list = graph.addVariable(INT, {p, local_list_size}, "initial_list");
+  Tensor initial_list = graph.addVariable(INT, {n}, "initial_list");
 
   // First computation phase - local sorting and sampling
-  for (unsigned processor = 0; processor < p; processor++) {
-    graph.setTileMapping(initial_list[processor], processor);
-  }
-
-  initial_list = initial_list.flatten();
+  /*for (unsigned processor = 0; processor < p; processor++) {
+    graph.setTileMapping(initial_list.slice(p * local_list_size, (p + 1) * local_list_size), processor);
+  } */
   
   // Create the Graph object
 
@@ -99,8 +97,9 @@ int main(int argc, char *argv[]) {
   graph.createHostWrite("list-write", initial_list);
 
   Engine engine(graph, prog);
-  engine.load(device);
   cout << "Starting the program" << endl;
+  engine.load(device);
+  
   engine.writeTensor("list-write", input_list.data(), input_list.data() + input_list.size());
   clock_gettime(CLOCK_REALTIME, &start);
   cout << "Copied input tensor" << endl;
