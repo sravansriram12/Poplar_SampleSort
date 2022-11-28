@@ -3,8 +3,6 @@
 #include <poplar/Graph.hpp>
 #include <poplar/IPUModel.hpp>
 #include <poplar/DeviceManager.hpp>
-#include <popops/TopK.hpp>
-#include <popops/SortOrder.hpp>
 #include <popops/codelets.hpp>
 #include <algorithm>
 #include <cmath>
@@ -65,7 +63,7 @@ int main(int argc, char *argv[]) {
   unsigned k = atoi(argv[argc - 1]);
   unsigned local_list_size = n / p;
   const char *dev = "model-ipu2";
-  srand (time(NULL));
+  srand48(0);
   
   Device device;
 
@@ -116,7 +114,7 @@ int main(int argc, char *argv[]) {
   auto input_list = std::vector<int>(n);
   auto processor_list = std::vector<unsigned>(n);
   for (unsigned idx = 0; idx < n; ++idx) {
-    input_list[idx] = rand() % 100000 + 2;
+    input_list[idx] = (int) lrand48();
   }
 
 
