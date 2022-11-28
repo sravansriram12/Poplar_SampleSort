@@ -73,6 +73,7 @@ int main(int argc, char *argv[]) {
   }
 
   Graph graph(device);
+  popops::addCodelets(graph);
   Sequence prog;
 
 
