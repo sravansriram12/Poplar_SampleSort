@@ -60,9 +60,9 @@ int main(int argc, char *argv[]) {
     cout << "Error in number of arguments" << endl;
   }
 
-  unsigned n = argv[argc - 3];  // number of elements
-  unsigned p = argv[argc - 2];   // number of processors (tiles)
-  unsigned k = argv[argc - 1];
+  unsigned n = atoi(argv[argc - 3]);  // number of elements
+  unsigned p = atoi(argv[argc - 2]);   // number of processors (tiles)
+  unsigned k = atoi(argv[argc - 1]);
   unsigned local_list_size = n / p;
   const char *dev = "model-ipu2";
   srand (time(NULL));
