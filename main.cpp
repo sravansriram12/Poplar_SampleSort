@@ -115,6 +115,7 @@ int main(int argc, char *argv[]) {
   clock_gettime(CLOCK_REALTIME, &start);
   // Create the Graph object
   Graph graph(device);
+  popops::addCodelets(graph);
   Sequence prog;
 
   // Add codelets to the graph

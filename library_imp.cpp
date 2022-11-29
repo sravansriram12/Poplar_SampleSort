@@ -91,23 +91,16 @@ int main(int argc, char *argv[]) {
   //prog.add(PrintTensor("initial_list", initial_list));
  
   TopKParams params(n, false, SortOrder::ASCENDING, false);
-  cout << "Before TopK call" << endl;
   Tensor final_list = popops::topK(graph, prog, initial_list, params);
-  cout << "After TopK call" << endl;
 
   //prog.add(PrintTensor("sorted list", final_list));
   graph.createHostWrite("list-write", initial_list);
 
-  cout << "Before engine is defined" << endl;
   Engine engine(graph, prog);
-  cout << "After engine is defined" << endl;
   engine.load(device);
-  cout << "After engine is loaded" << endl;
   
   engine.writeTensor("list-write", input_list.data(), input_list.data() + input_list.size());
-  cout << "Before engine runs" << endl;
   engine.run(0);  
-  cout << "After engine runs" << endl;
 
   clock_gettime(CLOCK_REALTIME, &stop);
   total_time = (stop.tv_sec-start.tv_sec)
