@@ -68,8 +68,9 @@ int main(int argc, char *argv[]) {
   double total_time, time_res, total_time_qsort;
 
   auto input_list = std::vector<int>(n);
+  srand48(0);
   for (unsigned idx = 0; idx < n; ++idx) {
-    input_list[idx] = rand() % 100 + 1;
+    input_list[idx] = (int) lrand48();
   }
 
   clock_gettime(CLOCK_REALTIME, &start);
