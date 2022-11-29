@@ -3,7 +3,6 @@
 #include <poplar/Graph.hpp>
 #include <poplar/IPUModel.hpp>
 #include <poplar/DeviceManager.hpp>
-#include <popops/codelets.hpp>
 #include <algorithm>
 #include <cmath>
 #include <fstream>
@@ -18,7 +17,6 @@
 
 using namespace poplar;
 using namespace poplar::program;
-using namespace popops;
 using std::cout, std::endl;
 using std::to_string;
 
@@ -72,7 +70,6 @@ int main(int argc, char *argv[]) {
   }
   unsigned local_list_size = n / p;
   const char *dev = "model-ipu2";
-  srand48(0);
   
   Device device;
 
@@ -102,17 +99,13 @@ int main(int argc, char *argv[]) {
     device = ipuModel.createDevice();
   }
 
-  struct timespec start, start_qstart, stop, stop_qsort;
-  double total_time, time_res, total_time_qsort;
-
   // initial list of data that is copied from host to device
+  srand48(0);
   auto input_list = std::vector<int>(n);
   auto processor_list = std::vector<unsigned>(n);
   for (unsigned idx = 0; idx < n; ++idx) {
     input_list[idx] = (int) lrand48();
   }
-
-  clock_gettime(CLOCK_REALTIME, &start);
   // Create the Graph object
   Graph graph(device);
   popops::addCodelets(graph);
@@ -120,6 +113,10 @@ int main(int argc, char *argv[]) {
 
   // Add codelets to the graph
   graph.addCodelets("vertices.cpp");
+
+  struct timespec start, stop;
+  double total_time;
+  clock_gettime(CLOCK_REALTIME, &start);
 
   // Determine compute sets
   ComputeSet local_sample = graph.addComputeSet("Local samples");

@@ -64,20 +64,19 @@ int main(int argc, char *argv[]) {
     device = ipuModel.createDevice();
   }
 
-  struct timespec start, start_qstart, stop, stop_qsort;
-  double total_time, time_res, total_time_qsort;
-
   auto input_list = std::vector<int>(n);
   srand48(0);
   for (unsigned idx = 0; idx < n; ++idx) {
     input_list[idx] = (int) lrand48();
   }
 
-  clock_gettime(CLOCK_REALTIME, &start);
   Graph graph(device);
   popops::addCodelets(graph);
   Sequence prog;
 
+  struct timespec start, stop, engine_start, engine_stop;
+  double total_time, subtract_time;
+  clock_gettime(CLOCK_REALTIME, &start);
   // 2D tensor where each inner tensor at index i represents the initial list at processor i
   Tensor initial_list = graph.addVariable(INT, {n});
 
@@ -95,8 +94,12 @@ int main(int argc, char *argv[]) {
 
   //prog.add(PrintTensor("sorted list", final_list));
   graph.createHostWrite("list-write", initial_list);
-
+  
+  clock_gettime(CLOCK_REALTIME, &engine_start);
   Engine engine(graph, prog);
+  clock_gettime(CLOCK_REALTIME, &engine_stop);
+  subtract_time = (engine_stop.tv_sec-engine_start.tv_sec)
+  +0.000000001*(engine_stop.tv_nsec-engine_start.tv_nsec);
   engine.load(device);
   
   engine.writeTensor("list-write", input_list.data(), input_list.data() + input_list.size());
@@ -107,6 +110,7 @@ int main(int argc, char *argv[]) {
   +0.000000001*(stop.tv_nsec-start.tv_nsec);
 
   cout << "Total time (s): " << total_time << endl;
+  cout << "Engine definition time (s): " << subtract_time << endl;
 
   return 0;
 }
