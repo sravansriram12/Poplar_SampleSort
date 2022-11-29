@@ -91,6 +91,7 @@ int main(int argc, char *argv[]) {
   TopKParams params(n, false, SortOrder::ASCENDING, false);
   cout << "Before TopK call" << endl;
   Tensor final_list = popops::topK(graph, prog, initial_list, params);
+  cout << "After TopK call" << endl;
 
   //prog.add(PrintTensor("sorted list", final_list));
 

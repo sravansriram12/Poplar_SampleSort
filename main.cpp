@@ -119,16 +119,16 @@ int main(int argc, char *argv[]) {
 
 
   // 2D tensor where each inner tensor at index i represents the initial list at processor i
-  Tensor initial_list = graph.addVariable(INT, {p, local_list_size}, "initial_list");
+  Tensor initial_list = graph.addVariable(INT, {n}, "initial_list");
   // Compilation of samples from each processor's local list
   Tensor compiled_samples = graph.addVariable(INT, {p * k}, "compiled_samples");
   graph.setTileMapping(compiled_samples, p);
 
   // First computation phase - local sorting and sampling
   for (unsigned processor = 0; processor < p; processor++) {
-    graph.setTileMapping(initial_list[processor], processor);
+    graph.setTileMapping(initial_list.slice(processor * local_list_size, (processor + 1) * local_list_size), processor);
     //quick_sort(local_sort, graph, initial_list[processor], processor); 
-    sampling(local_sample, graph, initial_list[processor], 
+    sampling(local_sample, graph, initial_list.slice(processor * local_list_size, (processor + 1) * local_list_size), 
         compiled_samples.slice(processor * k, (processor + 1) * k), k + 1, processor);
   }
 
@@ -144,7 +144,8 @@ int main(int argc, char *argv[]) {
   Tensor processor_mapping = graph.addVariable(INT, {p, local_list_size}, "processor_mapping");
   for (unsigned i = 0; i < p; i++) {
     graph.setTileMapping(processor_mapping, i);
-    find_processor(determine_processors, graph, initial_list[i], global_samples, processor_mapping[i], i);
+    find_processor(determine_processors, graph, initial_list.slice(i * local_list_size, (i + 1) * local_list_size), 
+        global_samples, processor_mapping[i], i);
   }
   
 
@@ -174,7 +175,6 @@ int main(int argc, char *argv[]) {
 
   engine.readTensor("processor-mapping-read", processor_list.data(), processor_list.data() + processor_list.size());
 
-  initial_list = initial_list.flatten();
   std::vector<std::vector<unsigned>> indexes (p, std::vector<unsigned> (0, 0));
   for (unsigned i = 0; i < n; i++) {
     graph.setTileMapping(initial_list[i], processor_list[i]);
@@ -184,9 +184,7 @@ int main(int argc, char *argv[]) {
   std::vector<Tensor> all_processor_lists (p);
   for (unsigned i = 0; i < p; i++) {
     if (indexes[i].size() > 0) {
-        std::vector<unsigned> p_index = indexes[i];
-        std::vector<Tensor> tensors = initial_list.slices(p_index);
-        Tensor final_tensor = concat(tensors);
+        Tensor final_tensor = concat(initial_list.slices(indexes[i]));
         quick_sort(local_sort, graph, final_tensor, i);
         all_processor_lists[i] = final_tensor;
 
