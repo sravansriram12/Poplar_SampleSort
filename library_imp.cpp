@@ -96,11 +96,13 @@ int main(int argc, char *argv[]) {
   cout << "After TopK call" << endl;
 
   //prog.add(PrintTensor("sorted list", final_list));
-
   graph.createHostWrite("list-write", initial_list);
 
+  cout << "Before engine is defined" << endl;
   Engine engine(graph, prog);
+  cout << "After engine is defined" << endl;
   engine.load(device);
+  cout << "After engine is loaded" << endl;
   
   engine.writeTensor("list-write", input_list.data(), input_list.data() + input_list.size());
   cout << "Before engine runs" << endl;
