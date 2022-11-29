@@ -111,6 +111,7 @@ int main(int argc, char *argv[]) {
 
   cout << "Total time (s): " << total_time << endl;
   cout << "Engine definition time (s): " << subtract_time << endl;
+  cout << "Effective time (s): " << total_time - subtract_time << endl;
 
   return 0;
 }
