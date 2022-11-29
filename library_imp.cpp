@@ -103,8 +103,9 @@ int main(int argc, char *argv[]) {
   engine.load(device);
   
   engine.writeTensor("list-write", input_list.data(), input_list.data() + input_list.size());
-  
+  cout << "Before engine runs" << endl;
   engine.run(0);  
+  cout << "After engine runs" << endl;
 
   clock_gettime(CLOCK_REALTIME, &stop);
   total_time = (stop.tv_sec-start.tv_sec)
