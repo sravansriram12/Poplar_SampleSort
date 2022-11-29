@@ -72,6 +72,7 @@ int main(int argc, char *argv[]) {
     input_list[idx] = rand() % 100 + 1;
   }
 
+  clock_gettime(CLOCK_REALTIME, &start);
   Graph graph(device);
   popops::addCodelets(graph);
   Sequence prog;
@@ -98,14 +99,12 @@ int main(int argc, char *argv[]) {
   graph.createHostWrite("list-write", initial_list);
 
   Engine engine(graph, prog);
-  cout << "Starting the program" << endl;
   engine.load(device);
   
   engine.writeTensor("list-write", input_list.data(), input_list.data() + input_list.size());
-  clock_gettime(CLOCK_REALTIME, &start);
-  cout << "Copied input tensor" << endl;
+  
   engine.run(0);  
-  cout << "Ended program" << endl;
+
   clock_gettime(CLOCK_REALTIME, &stop);
   total_time = (stop.tv_sec-start.tv_sec)
   +0.000000001*(stop.tv_nsec-start.tv_nsec);

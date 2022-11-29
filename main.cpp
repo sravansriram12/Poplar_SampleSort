@@ -56,11 +56,20 @@ int main(int argc, char *argv[]) {
   // Create the IPU model device
   if (argc != 4) {
     cout << "Error in number of arguments" << endl;
+    return 0;
   }
 
   unsigned n = atoi(argv[argc - 3]);  // number of elements
   unsigned p = atoi(argv[argc - 2]);   // number of processors (tiles)
+  if (p < 2) {
+    cout << "Error in number of processors; number of processors must be greater than 1" << endl;
+    return 0;
+  }
   unsigned k = atoi(argv[argc - 1]);
+  if (k < p - 1) {
+    cout << "Error in oversampling factor; must be atleast equal to one less than the number of processors" << endl;
+    return 0;
+  }
   unsigned local_list_size = n / p;
   const char *dev = "model-ipu2";
   srand48(0);
@@ -95,20 +104,6 @@ int main(int argc, char *argv[]) {
 
   struct timespec start, start_qstart, stop, stop_qsort;
   double total_time, time_res, total_time_qsort;
-  
-  // Create the Graph object
-  Graph graph(device);
-  Sequence prog;
-
-  // Add codelets to the graph
-  graph.addCodelets("vertices.cpp");
-  // Determine compute sets
-  
-  ComputeSet local_sample = graph.addComputeSet("Local samples");
-  ComputeSet sort_compiled_samples = graph.addComputeSet("Sort compiled samples");
-  ComputeSet sample_compiled_samples = graph.addComputeSet("Sample compiled samples");
-  ComputeSet determine_processors = graph.addComputeSet("Determine processors");
-  ComputeSet local_sort = graph.addComputeSet("Local sort");
 
   // initial list of data that is copied from host to device
   auto input_list = std::vector<int>(n);
@@ -117,6 +112,20 @@ int main(int argc, char *argv[]) {
     input_list[idx] = (int) lrand48();
   }
 
+  clock_gettime(CLOCK_REALTIME, &start);
+  // Create the Graph object
+  Graph graph(device);
+  Sequence prog;
+
+  // Add codelets to the graph
+  graph.addCodelets("vertices.cpp");
+
+  // Determine compute sets
+  ComputeSet local_sample = graph.addComputeSet("Local samples");
+  ComputeSet sort_compiled_samples = graph.addComputeSet("Sort compiled samples");
+  ComputeSet sample_compiled_samples = graph.addComputeSet("Sample compiled samples");
+  ComputeSet determine_processors = graph.addComputeSet("Determine processors");
+  ComputeSet local_sort = graph.addComputeSet("Local sort");
 
   // 2D tensor where each inner tensor at index i represents the initial list at processor i
   Tensor initial_list = graph.addVariable(INT, {n}, "initial_list");
@@ -139,7 +148,6 @@ int main(int argc, char *argv[]) {
   graph.setTileMapping(global_samples, p);
   sampling(sample_compiled_samples, graph, compiled_samples, global_samples, p, p);
 
-
   // Third computation phase - finding buckets belonging to different processor based on global samples
   Tensor processor_mapping = graph.addVariable(INT, {p, local_list_size}, "processor_mapping");
   for (unsigned i = 0; i < p; i++) {
@@ -148,7 +156,6 @@ int main(int argc, char *argv[]) {
         global_samples, processor_mapping[i], i);
   }
   
-
   graph.createHostWrite("list-write", initial_list);
   graph.createHostRead("list-read", initial_list);
   graph.createHostRead("processor-mapping-read", processor_mapping);
@@ -170,7 +177,6 @@ int main(int argc, char *argv[]) {
   engine.load(device);
   engine.writeTensor("list-write", input_list.data(), input_list.data() + input_list.size());
 
-  clock_gettime(CLOCK_REALTIME, &start);
   engine.run(0);
 
   engine.readTensor("processor-mapping-read", processor_list.data(), processor_list.data() + processor_list.size());
@@ -209,8 +215,6 @@ int main(int argc, char *argv[]) {
   +0.000000001*(stop.tv_nsec-start.tv_nsec);
 
   cout << "Total time (s): " << total_time << endl;
-
-
 
   return 0;
 }
