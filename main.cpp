@@ -14,6 +14,7 @@
 #include <vector>
 #include <algorithm>
 
+#define DEBUG 1
 
 using namespace poplar;
 using namespace poplar::program;
@@ -158,13 +159,12 @@ int main(int argc, char *argv[]) {
   graph.createHostRead("processor-mapping-read", processor_mapping);
   
   // Add sequence of compute sets to program
-  //prog.add(PrintTensor(initial_list));
+  if (DEBUG == 1) {
+    prog.add(PrintTensor(initial_list));
+  }
   prog.add(Execute(local_sample));
-  //prog.add(PrintTensor(compiled_samples));
   prog.add(Execute(sort_compiled_samples));
-  //prog.add(PrintTensor(compiled_samples));
   prog.add(Execute(sample_compiled_samples));
-  //prog.add(PrintTensor(global_samples));
   prog.add(Execute(determine_processors));
   prog.add(WriteUndef(global_samples));
   prog.add(WriteUndef(compiled_samples));
@@ -197,11 +197,14 @@ int main(int argc, char *argv[]) {
   Sequence prog2;
   prog.add(WriteUndef(processor_mapping));
   prog2.add(Execute(local_sort));
-  /*for (unsigned i = 0; i < p; i++) {
-    if (indexes[i].size() > 0) {
-        prog2.add(PrintTensor("[Proc " + to_string(i) + "]", all_processor_lists[i]));
-    }
-  } */
+  if (DEBUG == 1) {
+     for (unsigned i = 0; i < p; i++) {
+        if (indexes[i].size() > 0) {
+            prog2.add(PrintTensor("[Proc " + to_string(i) + "]", all_processor_lists[i]));
+        }
+      } 
+  }
+ 
   Engine engine2(graph, prog2);
   engine2.load(device);
   engine2.writeTensor("list-write", input_list.data(), input_list.data() + input_list.size());

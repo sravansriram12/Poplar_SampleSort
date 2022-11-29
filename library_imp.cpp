@@ -17,6 +17,7 @@
 #include <vector>
 #include <algorithm>
 
+#define DEBUG 0
 
 using namespace poplar;
 using namespace poplar::program;
@@ -84,15 +85,18 @@ int main(int argc, char *argv[]) {
   for (unsigned processor = 0; processor < p; processor++) {
     graph.setTileMapping(initial_list.slice(processor * local_list_size, (processor + 1) * local_list_size), processor);
   } 
-  
-  // Create the Graph object
 
-  //prog.add(PrintTensor("initial_list", initial_list));
+  if (DEBUG == 1) {
+    prog.add(PrintTensor("initial_list", initial_list));
+  }
  
   TopKParams params(n, false, SortOrder::ASCENDING, false);
   Tensor final_list = popops::topK(graph, prog, initial_list, params);
 
-  //prog.add(PrintTensor("sorted list", final_list));
+  if (DEBUG == 1) {
+    prog.add(PrintTensor("sorted list", final_list));
+  }
+  
   graph.createHostWrite("list-write", initial_list);
   
   clock_gettime(CLOCK_REALTIME, &engine_start);
