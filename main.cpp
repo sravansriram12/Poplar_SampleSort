@@ -108,7 +108,6 @@ int main(int argc, char *argv[]) {
   }
   // Create the Graph object
   Graph graph(device);
-  popops::addCodelets(graph);
   Sequence prog;
 
   // Add codelets to the graph
