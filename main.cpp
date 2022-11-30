@@ -41,11 +41,10 @@ void sampling(ComputeSet& computeSet, Graph& graph, Tensor input_list, Tensor ou
     graph.setPerfEstimate(sample_vtx, 20);
 }
 
-void find_processor(ComputeSet& computeSet, Graph& graph, Tensor input_list, Tensor global_samples, Tensor output_list, unsigned processorId) {
+void find_processor(ComputeSet& computeSet, Graph& graph, Tensor input_list, Tensor global_samples, unsigned processorId) {
     VertexRef processor_vtx = graph.addVertex(computeSet, "DetermineProcessor");
     graph.connect(processor_vtx["local_list"], input_list);
     graph.connect(processor_vtx["global_samples"], global_samples);
-    graph.connect(processor_vtx["processor"], output_list);
     graph.setTileMapping(processor_vtx, processorId);
     graph.setPerfEstimate(processor_vtx, 20);
 }
@@ -147,16 +146,13 @@ int main(int argc, char *argv[]) {
   sampling(sample_compiled_samples, graph, compiled_samples, global_samples, p, p);
 
   // Third computation phase - finding buckets belonging to different processor based on global samples
-  Tensor processor_mapping = graph.addVariable(INT, {p, local_list_size}, "processor_mapping");
   for (unsigned i = 0; i < p; i++) {
-    graph.setTileMapping(processor_mapping, i);
     find_processor(determine_processors, graph, initial_list.slice(i * local_list_size, (i + 1) * local_list_size), 
-        global_samples, processor_mapping[i], i);
+        global_samples, i);
   }
   
   graph.createHostWrite("list-write", initial_list);
   graph.createHostRead("list-read", initial_list);
-  graph.createHostRead("processor-mapping-read", processor_mapping);
   
   // Add sequence of compute sets to program
   if (DEBUG == 1) {
@@ -176,7 +172,7 @@ int main(int argc, char *argv[]) {
 
   engine.run(0);
 
-  engine.readTensor("processor-mapping-read", processor_list.data(), processor_list.data() + processor_list.size());
+  engine.readTensor("list-read", processor_list.data(), processor_list.data() + processor_list.size());
 
   std::vector<std::vector<unsigned>> indexes (p, std::vector<unsigned> (0, 0));
   for (unsigned i = 0; i < n; i++) {
@@ -190,7 +186,6 @@ int main(int argc, char *argv[]) {
         Tensor final_tensor = concat(initial_list.slices(indexes[i]));
         quick_sort(local_sort, graph, final_tensor, i);
         all_processor_lists[i] = final_tensor;
-
     }
   } 
    

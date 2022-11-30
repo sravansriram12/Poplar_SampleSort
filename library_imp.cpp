@@ -90,6 +90,7 @@ int main(int argc, char *argv[]) {
     prog.add(PrintTensor("initial_list", initial_list));
   }
  
+ 
   TopKParams params(n, false, SortOrder::ASCENDING, false);
   Tensor final_list = popops::topK(graph, prog, initial_list, params);
 

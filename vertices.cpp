@@ -83,9 +83,8 @@ class Samples : public MultiVertex {
 
 class DetermineProcessor: public MultiVertex {
     public:
-    Input<Vector<int>> local_list;
+    InOut<Vector<int>> local_list;
     Input<Vector<int>> global_samples;
-    Output<Vector<int>> processor;
 
      bool compute(unsigned workerId) {
         
@@ -110,7 +109,7 @@ class DetermineProcessor: public MultiVertex {
                     start = mid + 1;
                 }
             }
-            processor[i] = ans + 1;
+            local_list[i] = ans + 1;
         } 
        
         return true;
