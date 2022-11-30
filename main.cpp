@@ -14,8 +14,6 @@
 #include <vector>
 #include <algorithm>
 
-#define DEBUG 1
-
 using namespace poplar;
 using namespace poplar::program;
 using std::cout, std::endl;
@@ -52,23 +50,24 @@ void find_processor(ComputeSet& computeSet, Graph& graph, Tensor input_list, Ten
 
 int main(int argc, char *argv[]) {
   // Create the IPU model device
-  if (argc != 4) {
+  if (argc != 5) {
     cout << "Error in number of arguments" << endl;
     return 0;
   }
-
-  unsigned n = atoi(argv[argc - 3]);  // number of elements
-  unsigned p = atoi(argv[argc - 2]);   // number of processors (tiles)
+  
+  unsigned n = atoi(argv[argc - 4]);  // number of elements
+  unsigned p = atoi(argv[argc - 3]);   // number of processors (tiles)
   if (p < 2) {
     cout << "Error in number of processors; number of processors must be greater than 1" << endl;
     return 0;
   }
-  unsigned k = atoi(argv[argc - 1]);
+  unsigned k = atoi(argv[argc - 2]);
   if (k < p - 1 || k >= n/p) {
     cout << "Error in oversampling factor; must be atleast equal to one less than the number of processors and must be lesser than local list size of each processor" << endl;
     return 0;
   }
   unsigned local_list_size = n / p;
+  unsigned DEBUG = atoi(argv[argc - 1]);
   const char *dev = "model-ipu2";
   
   Device device;
