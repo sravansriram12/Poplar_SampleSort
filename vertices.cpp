@@ -94,7 +94,7 @@ class DetermineProcessor: public MultiVertex {
             int start = 0;
            
             if (target > global_samples[end - 1]) {
-                processor[i] = end;
+                local_list[i] = end;
                 continue;
             }
         
