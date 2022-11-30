@@ -65,8 +65,7 @@ int main(int argc, char *argv[]) {
   }
   unsigned k = atoi(argv[argc - 1]);
   if (k < p - 1 || k >= local_list_size) {
-    cout << "Error in oversampling factor; must be atleast equal to one less than the number of processors
-    and must be lesser than local list size of each processor" << endl;
+    cout << "Error in oversampling factor; must be atleast equal to one less than the number of processors and must be lesser than local list size of each processor" << endl;
     return 0;
   }
   unsigned local_list_size = n / p;
