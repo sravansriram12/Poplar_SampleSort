@@ -64,8 +64,9 @@ int main(int argc, char *argv[]) {
     return 0;
   }
   unsigned k = atoi(argv[argc - 1]);
-  if (k < p - 1) {
-    cout << "Error in oversampling factor; must be atleast equal to one less than the number of processors" << endl;
+  if (k < p - 1 || k >= local_list_size) {
+    cout << "Error in oversampling factor; must be atleast equal to one less than the number of processors
+    and must be lesser than local list size of each processor" << endl;
     return 0;
   }
   unsigned local_list_size = n / p;
@@ -104,7 +105,7 @@ int main(int argc, char *argv[]) {
   auto input_list = std::vector<int>(n);
   auto processor_list = std::vector<unsigned>(n);
   for (unsigned idx = 0; idx < n; ++idx) {
-    input_list[idx] = (int) lrand48();
+    input_list[idx] = (int) lrand48() % 100000;
   }
   // Create the Graph object
   Graph graph(device);
