@@ -5,7 +5,6 @@ class QuickSort : public Vertex {
     public:
     // Fields
     InOut<Vector<int>> local_list;
-    InOut<Vector<int>> stack;
 
     int median_three(int a, int b, int c) {
         if ((a > b) ^ (a > c)) 
@@ -34,26 +33,12 @@ class QuickSort : public Vertex {
         return (i + 1);
     }
   
-    void quickSort(int l, int h) {
+    void quickSort(int low, int high) {
 
-        int top = -1;
-        stack[++top] = l;
-        stack[++top] = h;
-    
-        while (top >= 0) {
-            h = stack[top--];
-            l = stack[top--];
-
-            int p = partition(l, h);
-    
-            if (p - 1 > l) {
-                stack[++top] = l;
-                stack[++top] = p - 1;
-            }
-            if (p + 1 < h) {
-                stack[++top] = p + 1;
-                stack[++top] = h;
-            }
+        if (low < high) {
+            unsigned pi = partition(low, high);
+            quickSort(low, pi - 1);
+            quickSort(pi + 1, high);
         }
     }
 
