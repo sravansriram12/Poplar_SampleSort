@@ -6,6 +6,44 @@ class QuickSort : public Vertex {
     // Fields
     InOut<Vector<int>> local_list;
 
+    int partition(int low, int high) {
+        int pivot = local_list[high]; // pivot
+        int i = (low - 1);
+    
+        for (int j = low; j <= high - 1; j++) {
+            if (local_list[j] < pivot) {
+                i++;
+                int temp = local_list[i];
+                local_list[i] = local_list[j];
+                local_list[j] = temp;
+            }
+        }
+        int temp = local_list[i + 1];
+        local_list[i + 1] = local_list[high];
+        local_list[high] = temp;
+        return (i + 1);
+    }
+  
+    void quickSort(int low, int high) {
+        if (low < high) {
+            int pi = partition(low, high);
+            quickSort(low, pi - 1);
+            quickSort(pi + 1, high);
+        }
+    }
+
+    bool compute() {
+      quickSort(0, local_list.size() - 1);
+      return true;
+    }
+};
+
+/*
+class QuickSort : public Vertex {
+    public:
+    // Fields
+    InOut<Vector<int>> local_list;
+
     void exchange(unsigned A, unsigned B) {
         int temp = local_list[A];
         local_list[A] = local_list[B];
@@ -78,7 +116,7 @@ class QuickSort : public Vertex {
       quickSort(0, local_list.size() - 1);
       return true;
     }
-};
+}; */
 
 class Samples : public MultiVertex {
     public: 
