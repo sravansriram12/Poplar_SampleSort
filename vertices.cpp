@@ -13,19 +13,19 @@ class QuickSort : public Vertex {
     }
 
     int median_three(unsigned low, unsigned high) {
-        unsigned mid = (left + right) / 2;
+        unsigned mid = (low + high) / 2;
 
-        if (local_list[left] > local_list[center])
-            exchange(left, mid);
+        if (local_list[low] > local_list[mid])
+            exchange(low, mid);
 
-        if (local_list[left] > local_list[right])
-            exchange(left, right);
+        if (local_list[low] > local_list[mid])
+            exchange(low, high);
 
-        if (local_list[mid] > local_list[right])
-            exchange(mid, right);
+        if (local_list[mid] > local_list[high])
+            exchange(mid, high);
 
-        exchange(mid, right - 1);
-        return local_list[right - 1];
+        exchange(mid, high - 1);
+        return local_list[high - 1];
     }
 
     int partition(unsigned low, unsigned high, int pivot) {
