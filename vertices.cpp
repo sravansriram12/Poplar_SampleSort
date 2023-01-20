@@ -14,9 +14,9 @@ class QuickSort : public Vertex {
 
     int median_three(unsigned low, unsigned high) {
        unsigned mid = low + (high - low) / 2;
-       if (a[high] < a[low]) exchange(low, high);
-       if (a[mid] < a[low]) exchange(low, mid);
-       if (a[high] < a[mid]) exchange(mid, high);
+       if (local_list[high] < local_list[low]) exchange(low, high);
+       if (local_list[mid] < local_list[low]) exchange(low, mid);
+       if (local_list[high] < local_list[mid]) exchange(mid, high);
        return mid;
     }
 
@@ -24,10 +24,10 @@ class QuickSort : public Vertex {
         unsigned i = low, j = high + 1;
         int pivot = local_list[low];
         while(1) {
-            while (a[++i] < pivot) {
+            while (local_list[++i] < pivot) {
                 if (i == high) break;
             }
-            while (pivot < a[--j]) {
+            while (pivot < local_list[--j]) {
                 if (j == low) break;
             }
             if (i >= j) break;
