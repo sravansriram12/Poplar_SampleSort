@@ -14,7 +14,7 @@ class QuickSort : public Vertex {
 
     int median_three(unsigned low, unsigned high) {
         unsigned mid = (left + right) / 2;
-        
+
         if (local_list[left] > local_list[center])
             exchange(left, mid);
 
@@ -40,7 +40,7 @@ class QuickSort : public Vertex {
                 exchange(i, j);
             }
         }
-        exchange(i, right - 1);
+        exchange(i, high - 1);
         return i;
     }
   
