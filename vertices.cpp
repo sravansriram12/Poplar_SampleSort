@@ -56,9 +56,9 @@ class QuickSort : public Vertex {
         int mid = (low + high) / 2;
         if (local_list[mid] < local_list[low]) 
             swap(&local_list[mid], &local_list[low]);
-        if (array[high] < array[low])
+        if (local_list[high] < local_list[low])
             swap(&local_list[high], &local_list[low]);
-        if (array[high] < array[mid])
+        if (local_list[high] < local_list[mid])
             swap(&local_list[high], &local_list[mid]);
         swap(&local_list[mid], &local_list[high-1]);
         
