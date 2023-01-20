@@ -157,7 +157,6 @@ int main(int argc, char *argv[]) {
   prog.add(Execute(sort_compiled_samples));
   prog.add(Execute(sample_compiled_samples));
   prog.add(Execute(determine_processors));
-  prog.add(PrintTensor(initial_list, "PROCESSOR_MAPPING"));
   prog.add(WriteUndef(global_samples));
   prog.add(WriteUndef(compiled_samples));
 
@@ -184,7 +183,15 @@ int main(int argc, char *argv[]) {
         all_processor_lists[i] = final_tensor;
     }
   } 
-   
+  
+  if (DEBUG == 1) {
+     for (unsigned i = 0; i < p; i++) {
+        if (indexes[i].size() > 0) {
+            prog2.add(PrintTensor("[Proc " + to_string(i) + "]", all_processor_lists[i]));
+        }
+      } 
+  }
+  
   Sequence prog2;
   prog2.add(Execute(local_sort));
   if (DEBUG == 1) {
