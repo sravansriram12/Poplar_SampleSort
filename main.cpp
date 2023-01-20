@@ -155,10 +155,9 @@ int main(int argc, char *argv[]) {
   }
   prog.add(Execute(local_sample));
   prog.add(Execute(sort_compiled_samples));
-  prog.add(PrintTensor(compiled_samples, "COMPILED_SAMPLES"));
   prog.add(Execute(sample_compiled_samples));
-  prog.add(PrintTensor(global_samples, "GLOBAL_SAMPLES"));
   prog.add(Execute(determine_processors));
+  prog.add(PrintTensor(initial_list, "PROCESSOR_MAPPING"));
   prog.add(WriteUndef(global_samples));
   prog.add(WriteUndef(compiled_samples));
 
