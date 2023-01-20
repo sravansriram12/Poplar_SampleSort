@@ -1,6 +1,7 @@
 #include <poplar/Vertex.hpp>
 using namespace poplar;
 
+/*
 class QuickSort : public Vertex {
     public:
     // Fields
@@ -36,87 +37,65 @@ class QuickSort : public Vertex {
       quickSort(0, local_list.size() - 1);
       return true;
     }
-};
+}; */
 
-/*
+
 class QuickSort : public Vertex {
     public:
     // Fields
     InOut<Vector<int>> local_list;
 
-    void exchange(unsigned A, unsigned B) {
-        int temp = local_list[A];
-        local_list[A] = local_list[B];
-        local_list[B] = temp;
-    }
-
-    void trivialSort(int low, int high) {
-        int size = high - low + 1;
-        if (size <= 1)
-            return; 
-        if (size == 2) {
-            if (local_list[low] > local_list[high])
-                exchange(low, high);
-            return;
-        } else { 
-            if (local_list[low] > local_list[high - 1])
-                exchange(low, high - 1); 
-            if (local_list[low] > local_list[high])
-                exchange(low, high); 
-            if (local_list[high - 1] > local_list[high])
-                exchange(high - 1, high); 
-        }
+    void swap(int *a, int *b) {
+        int t = *a;
+        *a = *b;
+        *b = t;
     }
 
     int median_three(unsigned low, unsigned high) {
-        unsigned mid = (low + high) / 2;
-
-        if (local_list[low] > local_list[mid])
-            exchange(low, mid);
-
-        if (local_list[low] > local_list[mid])
-            exchange(low, high);
-
-        if (local_list[mid] > local_list[high])
-            exchange(mid, high);
-
-        exchange(mid, high - 1);
-        return local_list[high - 1];
+        int pivot;
+        int mid = (low + high) / 2;
+        if (local_list[mid] < local_list[low]) 
+            swap(&local_list[mid], &local_list[low]);
+        if (array[high] < array[low])
+            swap(&local_list[high], &local_list[low]);
+        if (array[high] < array[mid])
+            swap(&local_list[high], &local_list[mid]);
+        swap(&local_list[mid], &local_list[high-1]);
+        
+        pivot = local_list[high-1];
+    
+        return partition(low, high);
     }
 
-    int partition(unsigned low, unsigned high, int pivot) {
-        unsigned i = low, j = high - 1;
-
-        while(1) {
-            while (local_list[++i] < pivot);
-            while (local_list[--j] > pivot);
-            if (i >= j) {
-                break;
-            } else {
-                exchange(i, j);
+    int partition(unsigned low, unsigned high) {
+        int pivot = local_list[high];
+        int i = (low - 1);
+    
+        for (int j = low; j < high; j++) {
+            if (local_list[j] < pivot) {
+                swap(&local_list[++i], &local_list[j]);
             }
         }
-        exchange(i, high - 1);
-        return i;
+    
+        swap(&local_list[i + 1], &local_list[high]);
+        return (i + 1);
     }
   
     void quickSort(unsigned low, unsigned high) {
-        int size = high - low + 1;
-        if (size <= 3) {
-            trivialSort(low, high);
-        } else {
-            int median = median_three(low, high);
-            unsigned pi = partition(low, high, median);
+        if (low < high) {
+            int pi = median_three(low, high);
+    
             quickSort(low, pi - 1);
+
             quickSort(pi + 1, high);
-        }
+	    }
     }
 
     bool compute() {
       quickSort(0, local_list.size() - 1);
       return true;
     }
-}; */
+}; 
 
 class Samples : public MultiVertex {
     public: 
