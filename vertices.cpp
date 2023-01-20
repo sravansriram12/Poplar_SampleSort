@@ -91,7 +91,7 @@ class Samples : public MultiVertex {
       unsigned starting_position = (local_sorted_list.size() / factor) * (workerId + 1) - 1;
       unsigned increment_by = MultiVertex::numWorkers() * (local_sorted_list.size() / factor);
       for (unsigned i = starting_position; i < local_sorted_list.size(); i += increment_by) {
-        unsigned output_index = (i / (local_sorted_list.size() / factor)) - 1;
+        unsigned output_index = ((i + 1) / (local_sorted_list.size() / factor)) - 1;
         local_samples[output_index] = local_sorted_list[i];
       }
       return true;
