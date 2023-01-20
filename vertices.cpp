@@ -12,7 +12,7 @@ class QuickSort : public Vertex {
         local_list[B] = temp;
     }
 
-    int median_three(int low, int high) {
+    int median_three(unsigned low, unsigned high) {
        unsigned mid = low + (high - low) / 2;
        if (a[high] < a[low]) exchange(low, high);
        if (a[mid] < a[low]) exchange(low, mid);
@@ -20,7 +20,7 @@ class QuickSort : public Vertex {
        return mid;
     }
 
-    int partition(int low, int high) {
+    int partition(unsigned low, unsigned high) {
         unsigned i = low, j = high + 1;
         int pivot = local_list[low];
         while(1) {
@@ -37,9 +37,9 @@ class QuickSort : public Vertex {
         return j;
     }
   
-    void quickSort(int low, int high) {
+    void quickSort(unsigned low, unsigned high) {
         if (low < high) {
-            int median = median_three(local_list[low], local_list[(low + high) / 2], local_list[high]);
+            int median = median_three(low, high);
             exchange(low, median);
             unsigned pi = partition(low, high);
             quickSort(low, pi - 1);
