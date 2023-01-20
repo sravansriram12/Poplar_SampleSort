@@ -6,42 +6,48 @@ class QuickSort : public Vertex {
     // Fields
     InOut<Vector<int>> local_list;
 
-    void exchange(int A, int B) {
+    void exchange(unsigned A, unsigned B) {
         int temp = local_list[A];
         local_list[A] = local_list[B];
         local_list[B] = temp;
     }
 
     int median_three(unsigned low, unsigned high) {
-       unsigned mid = low + (high - low) / 2;
-       if (local_list[high] < local_list[low]) exchange(low, high);
-       if (local_list[mid] < local_list[low]) exchange(low, mid);
-       if (local_list[high] < local_list[mid]) exchange(mid, high);
-       return mid;
+        unsigned mid = (left + right) / 2;
+        
+        if (local_list[left] > local_list[center])
+            exchange(left, mid);
+
+        if (local_list[left] > local_list[right])
+            exchange(left, right);
+
+        if (local_list[mid] > local_list[right])
+            exchange(mid, right);
+
+        exchange(mid, right - 1);
+        return local_list[right - 1];
     }
 
-    int partition(unsigned low, unsigned high) {
-        unsigned i = low, j = high + 1;
-        int pivot = local_list[low];
+    int partition(unsigned low, unsigned high, int pivot) {
+        unsigned i = low, j = high - 1;
+
         while(1) {
-            while (local_list[++i] < pivot) {
-                if (i == high) break;
+            while (local_list[++i] < pivot);
+            while (local_list[--j] > pivot);
+            if (i >= j) {
+                break;
+            } else {
+                exchange(i, j);
             }
-            while (pivot < local_list[--j]) {
-                if (j == low) break;
-            }
-            if (i >= j) break;
-            exchange(i, j);
         }
-        exchange(low, j);
-        return j;
+        exchange(i, right - 1);
+        return i;
     }
   
     void quickSort(unsigned low, unsigned high) {
         if (low < high) {
             int median = median_three(low, high);
-            exchange(low, median);
-            unsigned pi = partition(low, high);
+            unsigned pi = partition(low, high, median);
             quickSort(low, pi - 1);
             quickSort(pi + 1, high);
         }
