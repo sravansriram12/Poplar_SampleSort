@@ -126,10 +126,9 @@ int main(int argc, char *argv[]) {
   Tensor compiled_samples = graph.addVariable(INT, {p * k}, "compiled_samples");
   graph.setTileMapping(compiled_samples, p);
 
-  // First computation phase - local sorting and sampling
+  // First computation phase - local sampling
   for (unsigned processor = 0; processor < p; processor++) {
     graph.setTileMapping(initial_list.slice(processor * local_list_size, (processor + 1) * local_list_size), processor);
-    //quick_sort(local_sort, graph, initial_list[processor], processor); 
     sampling(local_sample, graph, initial_list.slice(processor * local_list_size, (processor + 1) * local_list_size), 
         compiled_samples.slice(processor * k, (processor + 1) * k), k + 1, processor);
   }
@@ -155,6 +154,7 @@ int main(int argc, char *argv[]) {
     prog.add(PrintTensor(initial_list));
   }
   prog.add(Execute(local_sample));
+  prog.add(PrintTensor(compiled_samples, "COMPILED_SAMPLES"));
   prog.add(Execute(sort_compiled_samples));
   prog.add(Execute(sample_compiled_samples));
   prog.add(Execute(determine_processors));
