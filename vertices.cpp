@@ -17,9 +17,9 @@ class QuickSort : public Vertex {
         } else { 
             if (local_list[low] > local_list[high - 1])
                 swap(low, high - 1); 
-            if (data[low] > data[high])
+            if (local_list[low] > local_list[high])
                 swap(low, high); 
-            if (data[high - 1] > data[high])
+            if (local_list[high - 1] > local_list[high])
                 swap(high - 1, high); 
         }
     }
