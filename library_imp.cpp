@@ -17,8 +17,6 @@
 #include <vector>
 #include <algorithm>
 
-#define DEBUG 0
-
 using namespace poplar;
 using namespace poplar::program;
 using namespace popops;
@@ -31,8 +29,9 @@ int main(int argc, char *argv[]) {
     cout << "Error in number of arguments" << endl;
   }
 
-  unsigned n = atoi(argv[argc - 2]);  // number of elements
-  unsigned p = atoi(argv[argc - 1]);   // number of processors (tiles)
+  unsigned n = atoi(argv[argc - 3]);  // number of elements
+  unsigned p = atoi(argv[argc - 2]);   // number of processors (tiles)
+  unsigned DEBUG = atoi(argv[argc - 1]);
   unsigned local_list_size = n / p;
   const char *dev = "model-ipu2";
   srand(time(NULL));
