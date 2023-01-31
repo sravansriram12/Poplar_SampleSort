@@ -100,7 +100,7 @@ int main(int argc, char *argv[]) {
   auto input_list = std::vector<int>(n);
   auto processor_list = std::vector<unsigned>(n);
   for (unsigned idx = 0; idx < n; ++idx) {
-    input_list[idx] = (int) lrand48();
+    input_list[idx] = (int) mrand48();
   }
   // Create the Graph object
   Graph graph(device);
