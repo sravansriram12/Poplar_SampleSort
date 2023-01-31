@@ -54,8 +54,8 @@ int main(int argc, char *argv[]) {
   
   unsigned n = atoi(argv[argc - 4]);  // number of elements
   unsigned p = atoi(argv[argc - 3]);   // number of processors (tiles)
-  if (p < 2) {
-    cout << "Error in number of processors; number of processors must be greater than 1" << endl;
+  if (p < 2 || n % p != 0) {
+    cout << "Error in number of processors; number of processors must be greater than 1 and divisible by size of list" << endl;
     return 0;
   }
   unsigned k = atoi(argv[argc - 2]);
