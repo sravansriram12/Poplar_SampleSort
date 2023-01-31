@@ -68,7 +68,7 @@ int main(int argc, char *argv[]) {
   auto input_list = std::vector<int>(n);
   srand48(0);
   for (unsigned idx = 0; idx < n; ++idx) {
-    input_list[idx] = (int) lrand48();
+    input_list[idx] = (int) mrand48();
   }
 
   Graph graph(device);
