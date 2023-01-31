@@ -189,14 +189,14 @@ int main(int argc, char *argv[]) {
   
   
   Sequence prog2;
-  prog2.add(Execute(local_sort));
-  /*if (DEBUG == 1) {
+  //prog2.add(Execute(local_sort));
+  if (DEBUG == 1) {
      for (unsigned i = 0; i < p; i++) {
         if (indexes[i].size() > 0) {
             prog2.add(PrintTensor("[Proc " + to_string(i) + "]", all_processor_lists[i]));
         }
       } 
-  } */
+  } 
  
   Engine engine2(graph, prog2);
   engine2.load(device);
