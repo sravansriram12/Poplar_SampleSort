@@ -169,14 +169,16 @@ int main(int argc, char *argv[]) {
 
   engine.readTensor("list-read", processor_list.data(), processor_list.data() + processor_list.size());
 
-  if (DEBUG == 1) {
-    cout << "Crossed segmentation fault" << endl;
-  }
 
   std::vector<std::vector<unsigned>> indexes (p, std::vector<unsigned> (0, 0));
   for (unsigned i = 0; i < n; i++) {
     graph.setTileMapping(initial_list[i], processor_list[i]);
     indexes[processor_list[i]].push_back(i);
+  }
+
+
+  if (DEBUG == 1) {
+    cout << "Crossed segmentation fault" << endl;
   }
 
   std::vector<Tensor> all_processor_lists (p);
@@ -187,6 +189,11 @@ int main(int argc, char *argv[]) {
         all_processor_lists[i] = final_tensor;
     }
   } 
+
+
+  if (DEBUG == 1) {
+    cout << "Crossed segmentation fault" << endl;
+  }
   
   Sequence prog2;
   prog2.add(Execute(local_sort));
