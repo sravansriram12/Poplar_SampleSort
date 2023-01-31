@@ -25,7 +25,7 @@ using std::to_string;
 
 int main(int argc, char *argv[]) {
   // Create the IPU model device
-  if (argc != 3) {
+  if (argc != 4) {
     cout << "Error in number of arguments" << endl;
   }
 
