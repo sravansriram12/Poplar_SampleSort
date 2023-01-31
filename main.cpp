@@ -189,7 +189,7 @@ int main(int argc, char *argv[]) {
   
   
   Sequence prog2;
-  //prog2.add(Execute(local_sort));
+  prog2.add(Execute(local_sort));
   if (DEBUG == 1) {
      for (unsigned i = 0; i < p; i++) {
         if (indexes[i].size() > 0) {
