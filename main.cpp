@@ -59,8 +59,8 @@ int main(int argc, char *argv[]) {
     return 0;
   }
   unsigned k = atoi(argv[argc - 2]);
-  if (k < p - 1 || k >= n/p) {
-    cout << "Error in oversampling factor; must be atleast equal to one less than the number of processors and must be lesser than local list size of each processor" << endl;
+  if ((k * p) < p - 1 || k >= n/p) {
+    cout << "Error in oversampling factor; (factor * number of processors) be atleast equal to one less than the number of processors and factor must be lesser than local list size of each processor" << endl;
     return 0;
   }
   unsigned local_list_size = n / p;
@@ -184,8 +184,6 @@ int main(int argc, char *argv[]) {
     }
   } 
   
- 
-
   Sequence prog2;
   prog2.add(Execute(local_sort));
   if (DEBUG == 1) {
