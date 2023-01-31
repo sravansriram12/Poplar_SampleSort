@@ -197,15 +197,17 @@ int main(int argc, char *argv[]) {
         }
       } 
   }
-
-  if (DEBUG == 1) {
-    cout << "Crossed segmentation fault" << endl;
-  }
  
   Engine engine2(graph, prog2);
   engine2.load(device);
   engine2.writeTensor("list-write", input_list.data(), input_list.data() + input_list.size());
+   if (DEBUG == 1) {
+    cout << "Crossed segmentation fault" << endl;
+  }
   engine2.run(0);  
+   if (DEBUG == 1) {
+    cout << "Crossed segmentation fault" << endl;
+  }
 
   clock_gettime(CLOCK_REALTIME, &stop);
   total_time = (stop.tv_sec-start.tv_sec)
