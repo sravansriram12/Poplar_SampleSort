@@ -176,11 +176,6 @@ int main(int argc, char *argv[]) {
     indexes[processor_list[i]].push_back(i);
   }
 
-
-  if (DEBUG == 1) {
-    cout << "Crossed segmentation fault" << endl;
-  }
-
   std::vector<Tensor> all_processor_lists (p);
   for (unsigned i = 0; i < p; i++) {
     if (indexes[i].size() > 0) {
@@ -191,9 +186,7 @@ int main(int argc, char *argv[]) {
   } 
 
 
-  if (DEBUG == 1) {
-    cout << "Crossed segmentation fault" << endl;
-  }
+  
   
   Sequence prog2;
   prog2.add(Execute(local_sort));
@@ -203,6 +196,10 @@ int main(int argc, char *argv[]) {
             prog2.add(PrintTensor("[Proc " + to_string(i) + "]", all_processor_lists[i]));
         }
       } 
+  }
+
+  if (DEBUG == 1) {
+    cout << "Crossed segmentation fault" << endl;
   }
  
   Engine engine2(graph, prog2);
