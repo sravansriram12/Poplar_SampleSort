@@ -190,24 +190,18 @@ int main(int argc, char *argv[]) {
   
   Sequence prog2;
   prog2.add(Execute(local_sort));
-  if (DEBUG == 1) {
+  /*if (DEBUG == 1) {
      for (unsigned i = 0; i < p; i++) {
         if (indexes[i].size() > 0) {
             prog2.add(PrintTensor("[Proc " + to_string(i) + "]", all_processor_lists[i]));
         }
       } 
-  }
+  } */
  
   Engine engine2(graph, prog2);
   engine2.load(device);
   engine2.writeTensor("list-write", input_list.data(), input_list.data() + input_list.size());
-   if (DEBUG == 1) {
-    cout << "Crossed segmentation fault" << endl;
-  }
   engine2.run(0);  
-   if (DEBUG == 1) {
-    cout << "Crossed segmentation fault" << endl;
-  }
 
   clock_gettime(CLOCK_REALTIME, &stop);
   total_time = (stop.tv_sec-start.tv_sec)
