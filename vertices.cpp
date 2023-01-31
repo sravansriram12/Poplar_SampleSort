@@ -1,63 +1,6 @@
 #include <poplar/Vertex.hpp>
 using namespace poplar;
 
-/*class QuickSort : public Vertex {
-    public:
-    // Fields
-    InOut<Vector<int>> local_list;
-
-    void swap(int *a, int *b) {
-        int t = *a;
-        *a = *b;
-        *b = t;
-    }
-
-    int median_three(unsigned low, unsigned high) {
-        int pivot;
-        int mid = (low + high) / 2;
-        if (local_list[mid] < local_list[low]) 
-            swap(&local_list[mid], &local_list[low]);
-        if (local_list[high] < local_list[low])
-            swap(&local_list[high], &local_list[low]);
-        if (local_list[high] < local_list[mid])
-            swap(&local_list[high], &local_list[mid]);
-        swap(&local_list[mid], &local_list[high-1]);
-        
-        pivot = local_list[high-1];
-    
-        return partition(low, high);
-    }
-
-    int partition(unsigned low, unsigned high) {
-        int pivot = local_list[high];
-        int i = (low - 1);
-    
-        for (int j = low; j < high; j++) {
-            if (local_list[j] < pivot) {
-                swap(&local_list[++i], &local_list[j]);
-            }
-        }
-    
-        swap(&local_list[i + 1], &local_list[high]);
-        return (i + 1);
-    }
-  
-    void quickSort(unsigned low, unsigned high) {
-        if (low < high) {
-            int pi = median_three(low, high);
-    
-            quickSort(low, pi - 1);
-
-            quickSort(pi + 1, high);
-	    }
-    }
-
-    bool compute() {
-      quickSort(0, local_list.size() - 1);
-      return true;
-    }
-}; */
-
 class QuickSort : public Vertex {
     public:
     // Fields
