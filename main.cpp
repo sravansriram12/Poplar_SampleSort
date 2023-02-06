@@ -181,7 +181,7 @@ int main(int argc, char *argv[]) {
   for (unsigned i = 0; i < p; i++) {
     if (indexes[i].size() > 0) {
         Tensor final_tensor = concat(initial_list.slices(indexes[i]));
-        sorted_tensor = concat(sorted_tensor, final_tensor)
+        sorted_tensor = concat(sorted_tensor, final_tensor);
         quick_sort(local_sort, graph, final_tensor, i);
         all_processor_lists[i] = final_tensor;
     }
