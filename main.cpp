@@ -177,14 +177,17 @@ int main(int argc, char *argv[]) {
   }
 
   std::vector<Tensor> all_processor_lists (p);
+  Tensor sorted_tensor;
   for (unsigned i = 0; i < p; i++) {
     if (indexes[i].size() > 0) {
         Tensor final_tensor = concat(initial_list.slices(indexes[i]));
+        sorted_tensor = concat(sorted_tensor, final_tensor)
         quick_sort(local_sort, graph, final_tensor, i);
         all_processor_lists[i] = final_tensor;
     }
   } 
 
+  graph.createHostRead("sorted-list-read", sorted_tensor);
 
   Sequence prog2;
   prog2.add(Execute(local_sort));
@@ -200,6 +203,7 @@ int main(int argc, char *argv[]) {
   engine2.load(device);
   engine2.writeTensor("list-write", input_list.data(), input_list.data() + input_list.size());
   engine2.run(0);  
+  engine.readTensor("sorted-list-read", input_list.data(), input_list.data() + input_list.size());
 
   clock_gettime(CLOCK_REALTIME, &stop);
   total_time = (stop.tv_sec-start.tv_sec)
