@@ -52,7 +52,7 @@ void print_host_list(std::vector<int> list) {
   for (unsigned idx = 0; idx < list.size(); ++idx) {
     if (DEBUG == 1) {
       cout << list[idx];
-      if (idx < n -1) {
+      if (idx < list.size() - 1) {
         cout << ", ";
       }
     }
