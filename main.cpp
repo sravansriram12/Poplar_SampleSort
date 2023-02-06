@@ -45,7 +45,7 @@ void find_processor(ComputeSet& computeSet, Graph& graph, Tensor input_list, Ten
 }
 
 void print_host_list(std::vector<int> list) {
-  cout << "[ ";
+  cout << "[";
   
   for (unsigned idx = 0; idx < list.size(); ++idx) {
       cout << list[idx];
@@ -54,7 +54,7 @@ void print_host_list(std::vector<int> list) {
       }
   }
 
-  cout << " ]" << endl;
+  cout << "]" << endl;
 }
 
 
@@ -120,6 +120,7 @@ int main(int argc, char *argv[]) {
   if (DEBUG == 1) {
     cout << "Initial unsorted list: " << endl;
     print_host_list(input_list);
+    cout << endl;
   }
   
   // Create the Graph object
@@ -222,9 +223,9 @@ int main(int argc, char *argv[]) {
   total_time = (stop.tv_sec-start.tv_sec)
   +0.000000001*(stop.tv_nsec-start.tv_nsec);
 
-  cout << "FINISHED EXECUTING IPU SAMPLE SORT ALGORITHM" << endl;
-
   if (DEBUG == 1) {
+    cout << "FINISHED EXECUTING IPU SAMPLE SORT ALGORITHM" << endl;
+    cout << endl;
     cout << "Final sorted list: " << endl;
     print_host_list(input_list);
   }
