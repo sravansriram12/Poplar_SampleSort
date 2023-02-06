@@ -119,9 +119,3 @@ int main(int argc, char *argv[]) {
 
   return 0;
 }
-
-/* ./library_imp 5000 1
-Total time (s): 41.0288
-Engine definition time (s): 39.2724
-Effective time (s): 1.75638 
-*/

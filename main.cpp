@@ -90,6 +90,7 @@ int main(int argc, char *argv[]) {
     char ipuVersion[] = "ipu1";
     strncpy(ipuVersion, &dev[6], strlen(ipuVersion));
     IPUModel ipuModel(ipuVersion);
+    ipuModel.compileIPUCode = true;
     ipuModel.minIPUSyncDelay = 0;
     ipuModel.relativeSyncDelay = IPUModel::RelativeSyncDelayType::NO_DELAY;
     device = ipuModel.createDevice();
@@ -161,7 +162,10 @@ int main(int argc, char *argv[]) {
   prog.add(WriteUndef(compiled_samples));
 
   // Run graph and associated prog on engine and device a way to communicate host list to device initial list
-  Engine engine(graph, prog);
+  Engine engine(graph, prog, OptionFlags({{"debug.instrumentCompute", "true"},
+                           {"debug.instrumentExternalExchange", "false"},
+                           {"debug.computeInstrumentationLevel", "tile"}
+                           {"debug.retainDebugInformation", "true"}));
   engine.load(device);
   engine.writeTensor("list-write", input_list.data(), input_list.data() + input_list.size());
 
@@ -186,8 +190,6 @@ int main(int argc, char *argv[]) {
   } 
 
 
-  
-  
   Sequence prog2;
   prog2.add(Execute(local_sort));
   if (DEBUG == 1) {
