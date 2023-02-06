@@ -177,15 +177,18 @@ int main(int argc, char *argv[]) {
   }
 
   std::vector<Tensor> all_processor_lists (p);
-  Tensor sorted_tensor;
   for (unsigned i = 0; i < p; i++) {
     if (indexes[i].size() > 0) {
         Tensor final_tensor = concat(initial_list.slices(indexes[i]));
-        sorted_tensor = concat(sorted_tensor, final_tensor);
         quick_sort(local_sort, graph, final_tensor, i);
         all_processor_lists[i] = final_tensor;
     }
   } 
+
+  Tensor sorted_tensor = all_processor_lists[0];
+  for (unsigned i = 1; i < p; i++) {
+    sorted_tensor = concat(sorted_tensor, all_processor_lists[i]);
+  }
 
   graph.createHostRead("sorted-list-read", sorted_tensor);
 
@@ -197,6 +200,7 @@ int main(int argc, char *argv[]) {
             prog2.add(PrintTensor("[Proc " + to_string(i) + "]", all_processor_lists[i]));
         }
       } 
+      prog2.add(PrintTensor("Final sorted tensor", sorted_tensor));
   } 
  
   Engine engine2(graph, prog2,  OptionFlags{{"debug.retainDebugInformation", "true"}});
