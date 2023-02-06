@@ -90,7 +90,6 @@ int main(int argc, char *argv[]) {
     char ipuVersion[] = "ipu1";
     strncpy(ipuVersion, &dev[6], strlen(ipuVersion));
     IPUModel ipuModel(ipuVersion);
-    ipuModel.compileIPUCode = true;
     ipuModel.minIPUSyncDelay = 0;
     ipuModel.relativeSyncDelay = IPUModel::RelativeSyncDelayType::NO_DELAY;
     device = ipuModel.createDevice();
