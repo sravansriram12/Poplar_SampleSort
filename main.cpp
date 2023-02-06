@@ -207,7 +207,7 @@ int main(int argc, char *argv[]) {
   engine2.load(device);
   engine2.writeTensor("list-write", input_list.data(), input_list.data() + input_list.size());
   engine2.run(0);  
-  engine.readTensor("sorted-list-read", input_list.data(), input_list.data() + input_list.size());
+  engine2.readTensor("sorted-list-read", input_list.data(), input_list.data() + input_list.size());
 
   clock_gettime(CLOCK_REALTIME, &stop);
   total_time = (stop.tv_sec-start.tv_sec)
