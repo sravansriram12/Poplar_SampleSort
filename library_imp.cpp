@@ -100,7 +100,7 @@ int main(int argc, char *argv[]) {
   graph.createHostWrite("list-write", initial_list);
   
   clock_gettime(CLOCK_REALTIME, &engine_start);
-  Engine engine(graph, prog);
+  Engine engine(graph, prog, OptionFlags{{"debug.retainDebugInformation", "true"}});
   clock_gettime(CLOCK_REALTIME, &engine_stop);
   subtract_time = (engine_stop.tv_sec-engine_start.tv_sec)
   +0.000000001*(engine_stop.tv_nsec-engine_start.tv_nsec);
@@ -116,6 +116,8 @@ int main(int argc, char *argv[]) {
   cout << "Total time (s): " << total_time << endl;
   cout << "Engine definition time (s): " << subtract_time << endl;
   cout << "Effective time (s): " << total_time - subtract_time << endl;
+
+  engine.printProfileSummary(cout);
 
   return 0;
 }
