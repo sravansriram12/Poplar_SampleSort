@@ -196,7 +196,7 @@ int main(int argc, char *argv[]) {
       } 
   } 
  
-  Engine engine2(graph, prog2);
+  Engine engine2(graph, prog2,  OptionFlags{{"debug.retainDebugInformation", "true"}});
   engine2.load(device);
   engine2.writeTensor("list-write", input_list.data(), input_list.data() + input_list.size());
   engine2.run(0);  
@@ -206,6 +206,9 @@ int main(int argc, char *argv[]) {
   +0.000000001*(stop.tv_nsec-start.tv_nsec);
 
   cout << "Total time (s): " << total_time << endl;
+
+  engine.printProfileSummary(cout);
+  engine2.printProfileSummary(cout);
 
   return 0;
 }
