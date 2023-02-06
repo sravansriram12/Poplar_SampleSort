@@ -45,22 +45,16 @@ void find_processor(ComputeSet& computeSet, Graph& graph, Tensor input_list, Ten
 }
 
 void print_host_list(std::vector<int> list) {
-  if (DEBUG == 1) {
-    cout << "[ ";
-  }
+  cout << "[ ";
   
   for (unsigned idx = 0; idx < list.size(); ++idx) {
-    if (DEBUG == 1) {
       cout << list[idx];
       if (idx < list.size() - 1) {
         cout << ", ";
       }
-    }
   }
 
-  if (DEBUG == 1) {
-    cout << "]" << endl;
-  }
+  cout << " ]" << endl;
 }
 
 
@@ -125,8 +119,8 @@ int main(int argc, char *argv[]) {
 
   if (DEBUG == 1) {
     cout << "Initial unsorted list: " << endl;
+    print_host_list(input_list);
   }
-  print_host_list(input_list);
   
   // Create the Graph object
   Graph graph(device);
@@ -232,9 +226,9 @@ int main(int argc, char *argv[]) {
 
   if (DEBUG == 1) {
     cout << "Final sorted list: " << endl;
+    print_host_list(input_list);
   }
-  print_host_list(input_list);
-
+  
   cout << "Total time (s): " << total_time << endl;
 
   if (DEBUG == 1) {
