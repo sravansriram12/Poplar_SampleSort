@@ -208,8 +208,8 @@ int main(int argc, char *argv[]) {
   cout << "Total time (s): " << total_time << endl;
 
   if (DEBUG == 1) {
-    engine.printProfileSummary(cout);
-    engine2.printProfileSummary(cout);
+    engine.printProfileSummary(cout, {{"showExecutionSteps", "true"}});
+    engine2.printProfileSummary(cout, {{"showExecutionSteps", "true"}});
   }
 
 

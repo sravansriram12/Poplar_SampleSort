@@ -118,7 +118,7 @@ int main(int argc, char *argv[]) {
   cout << "Effective time (s): " << total_time - subtract_time << endl;
 
   if (DEBUG == 1) {
-    engine.printProfileSummary(cout);
+    engine.printProfileSummary(cout, {{"showExecutionSteps", "true"}});
   }
   
 
