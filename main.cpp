@@ -162,10 +162,7 @@ int main(int argc, char *argv[]) {
   prog.add(WriteUndef(compiled_samples));
 
   // Run graph and associated prog on engine and device a way to communicate host list to device initial list
-  Engine engine(graph, prog, OptionFlags({{"debug.instrumentCompute", "true"},
-                           {"debug.instrumentExternalExchange", "false"},
-                           {"debug.computeInstrumentationLevel", "tile"},
-                           {"debug.retainDebugInformation", "true"}}));
+  Engine engine(graph, prog, OptionFlags{{"debug.retainDebugInformation", "true"}});
   engine.load(device);
   engine.writeTensor("list-write", input_list.data(), input_list.data() + input_list.size());
 
