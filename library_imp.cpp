@@ -117,7 +117,10 @@ int main(int argc, char *argv[]) {
   cout << "Engine definition time (s): " << subtract_time << endl;
   cout << "Effective time (s): " << total_time - subtract_time << endl;
 
-  engine.printProfileSummary(cout);
+  if (DEBUG == 1) {
+    engine.printProfileSummary(cout);
+  }
+  
 
   return 0;
 }

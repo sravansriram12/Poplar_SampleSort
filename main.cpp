@@ -207,8 +207,11 @@ int main(int argc, char *argv[]) {
 
   cout << "Total time (s): " << total_time << endl;
 
-  engine.printProfileSummary(cout);
-  engine2.printProfileSummary(cout);
+  if (DEBUG == 1) {
+    engine.printProfileSummary(cout);
+    engine2.printProfileSummary(cout);
+  }
+
 
   return 0;
 }
