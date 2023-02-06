@@ -44,6 +44,25 @@ void find_processor(ComputeSet& computeSet, Graph& graph, Tensor input_list, Ten
     graph.setPerfEstimate(processor_vtx, 20);
 }
 
+void print_host_list(vector<int> list) {
+  if (DEBUG == 1) {
+    cout << "[ ";
+  }
+  
+  for (unsigned idx = 0; idx < n; ++idx) {
+    if (DEBUG == 1) {
+      cout << list[idx];
+      if (idx < n -1) {
+        cout << ", ";
+      }
+    }
+  }
+
+  if (DEBUG == 1) {
+    cout << "]" << endl;
+  }
+}
+
 
 int main(int argc, char *argv[]) {
   // Create the IPU model device
@@ -97,11 +116,18 @@ int main(int argc, char *argv[]) {
 
   // initial list of data that is copied from host to device
   srand48(0);
+  
   auto input_list = std::vector<int>(n);
   auto processor_list = std::vector<unsigned>(n);
   for (unsigned idx = 0; idx < n; ++idx) {
     input_list[idx] = (int) mrand48();
   }
+
+  if (DEBUG == 1) {
+    cout << "Initial unsorted list: " << endl;
+  }
+  print_host_list(input_list);
+  
   // Create the Graph object
   Graph graph(device);
   Sequence prog;
@@ -150,9 +176,6 @@ int main(int argc, char *argv[]) {
   graph.createHostRead("list-read", initial_list);
   
   // Add sequence of compute sets to program
-  if (DEBUG == 1) {
-    prog.add(PrintTensor(initial_list));
-  }
   prog.add(Execute(local_sample));
   prog.add(Execute(sort_compiled_samples));
   prog.add(Execute(sample_compiled_samples));
@@ -194,14 +217,6 @@ int main(int argc, char *argv[]) {
 
   Sequence prog2;
   prog2.add(Execute(local_sort));
-  if (DEBUG == 1) {
-     for (unsigned i = 0; i < p; i++) {
-        if (indexes[i].size() > 0) {
-            prog2.add(PrintTensor("[Proc " + to_string(i) + "]", all_processor_lists[i]));
-        }
-      } 
-      prog2.add(PrintTensor("Final sorted tensor", sorted_tensor));
-  } 
  
   Engine engine2(graph, prog2,  OptionFlags{{"debug.retainDebugInformation", "true"}});
   engine2.load(device);
@@ -212,6 +227,13 @@ int main(int argc, char *argv[]) {
   clock_gettime(CLOCK_REALTIME, &stop);
   total_time = (stop.tv_sec-start.tv_sec)
   +0.000000001*(stop.tv_nsec-start.tv_nsec);
+
+  cout << "FINISHED EXECUTING IPU SAMPLE SORT ALGORITHM" << endl;
+
+  if (DEBUG == 1) {
+    cout << "Final sorted list: " << endl;
+  }
+  print_host_list(input_list);
 
   cout << "Total time (s): " << total_time << endl;
 
