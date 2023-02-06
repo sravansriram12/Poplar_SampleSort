@@ -44,12 +44,12 @@ void find_processor(ComputeSet& computeSet, Graph& graph, Tensor input_list, Ten
     graph.setPerfEstimate(processor_vtx, 20);
 }
 
-void print_host_list(vector<int> list) {
+void print_host_list(std::vector<int> list) {
   if (DEBUG == 1) {
     cout << "[ ";
   }
   
-  for (unsigned idx = 0; idx < n; ++idx) {
+  for (unsigned idx = 0; idx < list.size(); ++idx) {
     if (DEBUG == 1) {
       cout << list[idx];
       if (idx < n -1) {
