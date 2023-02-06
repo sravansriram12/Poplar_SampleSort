@@ -165,7 +165,7 @@ int main(int argc, char *argv[]) {
   Engine engine(graph, prog, OptionFlags({{"debug.instrumentCompute", "true"},
                            {"debug.instrumentExternalExchange", "false"},
                            {"debug.computeInstrumentationLevel", "tile"}
-                           {"debug.retainDebugInformation", "true"}));
+                           {"debug.retainDebugInformation", "true"}}));
   engine.load(device);
   engine.writeTensor("list-write", input_list.data(), input_list.data() + input_list.size());
 
