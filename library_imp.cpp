@@ -74,6 +74,8 @@ int main(int argc, char *argv[]) {
   popops::addCodelets(graph);
   Sequence prog;
 
+  struct timespec engine_start, engine_stop;
+  double subtract_time;
   // 2D tensor where each inner tensor at index i represents the initial list at processor i
   Tensor initial_list = graph.addVariable(INT, {n});
 
