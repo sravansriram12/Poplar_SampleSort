@@ -5,7 +5,7 @@ class QuickSort : public Vertex {
     public:
     // Fields
     InOut<Vector<int>> local_list;
-    In<Vector<int>> stack;
+    Input<Vector<int>> stack;
 
     int median_three(int a, int b, int c) {
         if ((a > b) ^ (a > c)) 
