@@ -22,6 +22,7 @@ using std::to_string;
 void quick_sort(ComputeSet& computeSet, Graph& graph, Tensor input_list, unsigned processorId) {
     VertexRef quickSort_vtx = graph.addVertex(computeSet, "QuickSort");
     Tensor stack = graph.addVariable(INT, {input_list.numElements()}, "stack" + to_string(processorId));
+    graph.setTileMapping(stack, processorId);
     graph.connect(quickSort_vtx["stack"], stack);
     graph.connect(quickSort_vtx["local_list"], input_list);
     graph.setTileMapping(quickSort_vtx, processorId);
