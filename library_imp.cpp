@@ -74,9 +74,6 @@ int main(int argc, char *argv[]) {
   popops::addCodelets(graph);
   Sequence prog;
 
-  struct timespec start, stop, engine_start, engine_stop;
-  double total_time, subtract_time;
-  clock_gettime(CLOCK_REALTIME, &start);
   // 2D tensor where each inner tensor at index i represents the initial list at processor i
   Tensor initial_list = graph.addVariable(INT, {n});
 
@@ -91,7 +88,9 @@ int main(int argc, char *argv[]) {
  
  
   TopKParams params(n, false, SortOrder::ASCENDING, false);
+  clock_gettime(CLOCK_REALTIME, &engine_start);
   Tensor final_list = popops::topK(graph, prog, initial_list, params);
+  clock_gettime(CLOCK_REALTIME, &engine_stop);
 
   if (DEBUG == 1) {
     prog.add(PrintTensor("sorted list", final_list));
@@ -99,9 +98,9 @@ int main(int argc, char *argv[]) {
   
   graph.createHostWrite("list-write", initial_list);
   
-  clock_gettime(CLOCK_REALTIME, &engine_start);
+  
   Engine engine(graph, prog, OptionFlags{{"debug.retainDebugInformation", "true"}});
-  clock_gettime(CLOCK_REALTIME, &engine_stop);
+  
   subtract_time = (engine_stop.tv_sec-engine_start.tv_sec)
   +0.000000001*(engine_stop.tv_nsec-engine_start.tv_nsec);
   engine.load(device);
@@ -109,13 +108,7 @@ int main(int argc, char *argv[]) {
   engine.writeTensor("list-write", input_list.data(), input_list.data() + input_list.size());
   engine.run(0);  
 
-  clock_gettime(CLOCK_REALTIME, &stop);
-  total_time = (stop.tv_sec-start.tv_sec)
-  +0.000000001*(stop.tv_nsec-start.tv_nsec);
-
-  cout << "Total time (s): " << total_time << endl;
-  cout << "Engine definition time (s): " << subtract_time << endl;
-  cout << "Effective time (s): " << total_time - subtract_time << endl;
+  cout << "Setting up elements on tile time" << subtract_time << endl;
 
   if (DEBUG == 1) {
     engine.printProfileSummary(cout, {{"showExecutionSteps", "true"}});
