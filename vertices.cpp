@@ -5,9 +5,19 @@ class QuickSort : public Vertex {
     public:
     // Fields
     InOut<Vector<int>> local_list;
+    In<Vector<int>> stack;
+
+    int median_three(int a, int b, int c) {
+        if ((a > b) ^ (a > c)) 
+            return a;
+        else if ((b < a) ^ (b < c)) 
+            return b;
+        else
+            return c;
+    }
 
     int partition(int low, int high) {
-        int pivot = local_list[high]; // pivot
+        int pivot = median_three(local_list[low], local_list[(low + high) / 2], local_list[high]); // pivot
         int i = (low - 1);
     
         for (int j = low; j <= high - 1; j++) {
@@ -24,11 +34,26 @@ class QuickSort : public Vertex {
         return (i + 1);
     }
   
-    void quickSort(int low, int high) {
-        if (low < high) {
-            int pi = partition(low, high);
-            quickSort(low, pi - 1);
-            quickSort(pi + 1, high);
+    void quickSort(int l, int h) {
+
+        int top = -1;
+        stack[++top] = l;
+        stack[++top] = h;
+    
+        while (top >= 0) {
+            h = stack[top--];
+            l = stack[top--];
+
+            int p = partition(l, h);
+    
+            if (p - 1 > l) {
+                stack[++top] = l;
+                stack[++top] = p - 1;
+            }
+            if (p + 1 < h) {
+                stack[++top] = p + 1;
+                stack[++top] = h;
+            }
         }
     }
 
@@ -37,6 +62,7 @@ class QuickSort : public Vertex {
       return true;
     }
 };
+
 
 class Samples : public MultiVertex {
     public: 
