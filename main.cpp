@@ -118,9 +118,12 @@ int main(int argc, char *argv[]) {
   }
 
   if (DEBUG == 1) {
-    cout << "Initial unsorted list: " << endl;
-    print_host_list(input_list);
-    cout << endl;
+    if (n <= 500) {
+      cout << "Initial unsorted list: " << endl;
+      print_host_list(input_list);
+      cout << endl;
+    }
+   
   }
   
   // Create the Graph object
@@ -232,8 +235,11 @@ int main(int argc, char *argv[]) {
    if (DEBUG == 1) {
     cout << "FINISHED EXECUTING IPU SAMPLE SORT ALGORITHM" << endl;
     cout << endl;
-    cout << "Final sorted list: " << endl;
-    print_host_list(input_list);
+    if (n <= 500) {
+      cout << "Final sorted list: " << endl;
+      print_host_list(input_list);
+    }
+   
   }
 
    cout << "IPU-Host Interaction Time (s): " << total_time << endl;

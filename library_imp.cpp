@@ -85,7 +85,9 @@ int main(int argc, char *argv[]) {
   } 
 
   if (DEBUG == 1) {
-    prog.add(PrintTensor("initial_list", initial_list));
+    if (n <= 500) {
+      prog.add(PrintTensor("initial_list", initial_list));
+    }
   }
  
  
@@ -95,7 +97,9 @@ int main(int argc, char *argv[]) {
   clock_gettime(CLOCK_REALTIME, &engine_stop);
 
   if (DEBUG == 1) {
-    prog.add(PrintTensor("sorted list", final_list));
+     if (n <= 500) {
+       prog.add(PrintTensor("sorted list", final_list));
+     }
   }
   
   graph.createHostWrite("list-write", initial_list);
