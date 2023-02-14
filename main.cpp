@@ -130,10 +130,6 @@ int main(int argc, char *argv[]) {
   // Add codelets to the graph
   graph.addCodelets("vertices.cpp");
 
-  struct timespec start, stop;
-  double total_time;
-  clock_gettime(CLOCK_REALTIME, &start);
-
   // Determine compute sets
   ComputeSet local_sample = graph.addComputeSet("Local samples");
   ComputeSet sort_compiled_samples = graph.addComputeSet("Sort compiled samples");
@@ -185,8 +181,11 @@ int main(int argc, char *argv[]) {
 
   engine.run(0);
 
-  engine.readTensor("list-read", processor_list.data(), processor_list.data() + processor_list.size());
+  struct timespec start, stop;
+  double total_time;
+  clock_gettime(CLOCK_REALTIME, &start);
 
+  engine.readTensor("list-read", processor_list.data(), processor_list.data() + processor_list.size());
 
   std::vector<std::vector<unsigned>> indexes (p, std::vector<unsigned> (0, 0));
   for (unsigned i = 0; i < n; i++) {
@@ -216,26 +215,28 @@ int main(int argc, char *argv[]) {
   Engine engine2(graph, prog2,  OptionFlags{{"debug.retainDebugInformation", "true"}});
   engine2.load(device);
   engine2.writeTensor("list-write", input_list.data(), input_list.data() + input_list.size());
-  engine2.run(0);  
-  engine2.readTensor("sorted-list-read", input_list.data(), input_list.data() + input_list.size());
 
   clock_gettime(CLOCK_REALTIME, &stop);
   total_time = (stop.tv_sec-start.tv_sec)
   +0.000000001*(stop.tv_nsec-start.tv_nsec);
 
+  engine2.run(0);  
+  engine2.readTensor("sorted-list-read", input_list.data(), input_list.data() + input_list.size());
+
+ 
   if (DEBUG == 1) {
+    engine.printProfileSummary(cout, {{"showExecutionSteps", "true"}});
+    engine2.printProfileSummary(cout, {{"showExecutionSteps", "true"}});
+  }
+
+   if (DEBUG == 1) {
     cout << "FINISHED EXECUTING IPU SAMPLE SORT ALGORITHM" << endl;
     cout << endl;
     cout << "Final sorted list: " << endl;
     print_host_list(input_list);
   }
-  
-  cout << "Total time (s): " << total_time << endl;
 
-  if (DEBUG == 1) {
-    engine.printProfileSummary(cout, {{"showExecutionSteps", "true"}});
-    engine2.printProfileSummary(cout, {{"showExecutionSteps", "true"}});
-  }
+   cout << "IPU-Host Interaction Time (s): " << total_time << endl;
 
 
   return 0;
