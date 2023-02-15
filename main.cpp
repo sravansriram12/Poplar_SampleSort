@@ -215,7 +215,7 @@ int main(int argc, char *argv[]) {
   Sequence prog2;
   prog2.add(Execute(local_sort));
  
-  Engine engine2(graph, prog2,  OptionFlags{{"debug.retainDebugInformation", "true"}});
+  Engine engine2(graph, prog2);
   engine2.load(device);
   engine2.writeTensor("list-write", input_list.data(), input_list.data() + input_list.size());
 
