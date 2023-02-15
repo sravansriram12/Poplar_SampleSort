@@ -228,8 +228,8 @@ int main(int argc, char *argv[]) {
 
  
   if (DEBUG == 1) {
-    engine.printProfileSummary(cout, {{"showExecutionSteps", "true"}});
-    engine2.printProfileSummary(cout, {{"showExecutionSteps", "true"}});
+    //engine.printProfileSummary(cout, {{"showExecutionSteps", "true"}});
+    //engine2.printProfileSummary(cout, {{"showExecutionSteps", "true"}});
   }
 
    if (DEBUG == 1) {
