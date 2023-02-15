@@ -215,7 +215,7 @@ int main(int argc, char *argv[]) {
   Sequence prog2;
   prog2.add(Execute(local_sort));
  
-  Engine engine2(graph, prog2);
+  Engine engine2(graph, prog2,  OptionFlags{{"debug.retainDebugInformation", "true"}});
   engine2.load(device);
   engine2.writeTensor("list-write", input_list.data(), input_list.data() + input_list.size());
 
@@ -228,8 +228,8 @@ int main(int argc, char *argv[]) {
 
  
   if (DEBUG == 1) {
-    //engine.printProfileSummary(cout, {{"showExecutionSteps", "true"}});
-    //engine2.printProfileSummary(cout, {{"showExecutionSteps", "true"}});
+    engine.printProfileSummary(cout, {{"showExecutionSteps", "true"}});
+    engine2.printProfileSummary(cout, {{"showExecutionSteps", "true"}});
   }
 
    if (DEBUG == 1) {
@@ -239,8 +239,6 @@ int main(int argc, char *argv[]) {
       cout << "Final sorted list: " << endl;
       print_host_list(input_list);
     }
-    cout << endl;
-   
   }
 
    cout << "IPU-Host Interaction Time (s): " << total_time << endl;
