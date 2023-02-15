@@ -239,6 +239,7 @@ int main(int argc, char *argv[]) {
       cout << "Final sorted list: " << endl;
       print_host_list(input_list);
     }
+    cout << endl;
    
   }
 
