@@ -155,7 +155,7 @@ int main(int argc, char *argv[]) {
 
 
   // Second computation phase - sorting the compilation of the local samples and picking global samples
-  quick_sort(sort_compiled_samples, graph, compiled_samples, p);
+  heap_sort(sort_compiled_samples, graph, compiled_samples, p);
   Tensor global_samples = graph.addVariable(INT, {p - 1}, "global_samples");
   graph.setTileMapping(global_samples, p);
   sampling(sample_compiled_samples, graph, compiled_samples, global_samples, p, p);
@@ -200,7 +200,7 @@ int main(int argc, char *argv[]) {
   for (unsigned i = 0; i < p; i++) {
     if (indexes[i].size() > 0) {
         Tensor final_tensor = concat(initial_list.slices(indexes[i]));
-        quick_sort(local_sort, graph, final_tensor, i);
+        heap_sort(local_sort, graph, final_tensor, i);
         all_processor_lists[i] = final_tensor;
     }
   } 
