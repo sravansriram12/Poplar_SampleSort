@@ -12,8 +12,7 @@ class HeapSort: public Vertex {
         local_list[idx2] = temp;
     }
 
-    void buildMaxHeap()
-    {
+    void buildMaxHeap() {
         for (int i = 1; i < local_list.size(); i++)
         {
             // if child is bigger than parent
@@ -73,7 +72,7 @@ class HeapSort: public Vertex {
       return true;
     }
 
-}
+};
 
 /* class QuickSort : public Vertex {
     public:
