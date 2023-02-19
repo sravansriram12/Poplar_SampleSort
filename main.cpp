@@ -19,11 +19,11 @@ using namespace poplar::program;
 using std::cout, std::endl;
 using std::to_string;
 
-void quick_sort(ComputeSet& computeSet, Graph& graph, Tensor input_list, unsigned processorId) {
-    VertexRef quickSort_vtx = graph.addVertex(computeSet, "HeapSort");
-    graph.connect(quickSort_vtx["local_list"], input_list);
-    graph.setTileMapping(quickSort_vtx, processorId);
-    graph.setPerfEstimate(quickSort_vtx, 20);
+void heap_sort(ComputeSet& computeSet, Graph& graph, Tensor input_list, unsigned processorId) {
+    VertexRef heapSort_vtx = graph.addVertex(computeSet, "HeapSort");
+    graph.connect(heapSort_vtx["local_list"], input_list);
+    graph.setTileMapping(heapSort_vtx, processorId);
+    graph.setPerfEstimate(heapSort_vtx, 20);
 
 }
 
@@ -78,7 +78,7 @@ int main(int argc, char *argv[]) {
   }
   unsigned local_list_size = n / p;
   unsigned DEBUG = atoi(argv[argc - 1]);
-  const char *dev = "model-ipu2";
+  const char *dev = "ipu";
   
   Device device;
 
@@ -222,8 +222,6 @@ int main(int argc, char *argv[]) {
   Engine engine2(graph, prog2,  OptionFlags{{"debug.retainDebugInformation", "true"}});
   engine2.load(device);
   engine2.writeTensor("list-write", input_list.data(), input_list.data() + input_list.size());
-
-  
 
   engine2.run(0);  
   engine2.readTensor("sorted-list-read", input_list.data(), input_list.data() + input_list.size());
