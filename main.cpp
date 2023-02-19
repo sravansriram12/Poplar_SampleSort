@@ -20,7 +20,7 @@ using std::cout, std::endl;
 using std::to_string;
 
 void quick_sort(ComputeSet& computeSet, Graph& graph, Tensor input_list, unsigned processorId) {
-    VertexRef quickSort_vtx = graph.addVertex(computeSet, "QuickSort");
+    VertexRef quickSort_vtx = graph.addVertex(computeSet, "HeapSort");
     graph.connect(quickSort_vtx["local_list"], input_list);
     graph.setTileMapping(quickSort_vtx, processorId);
     graph.setPerfEstimate(quickSort_vtx, 20);

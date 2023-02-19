@@ -1,7 +1,75 @@
 #include <poplar/Vertex.hpp>
 using namespace poplar;
 
-class QuickSort : public Vertex {
+class HeapSort: public Vertex {
+    public:
+    // Fields
+    InOut<Vector<int>> local_list;
+
+    void buildMaxHeap()
+    {
+        for (int i = 1; i < local_list.size(); i++)
+        {
+            // if child is bigger than parent
+            if (local_list[i] > local_list[(i - 1) / 2])
+            {
+                int j = i;
+        
+                // swap child and parent until
+                // parent is smaller
+                while (local_list[j] > local_list[(j - 1) / 2])
+                {
+                    swap(local_list[j], local_list[(j - 1) / 2]);
+                    j = (j - 1) / 2;
+                }
+            }
+        }
+    }
+
+    void heapSort() {
+        buildMaxHeap();
+
+        for (int i = local_list.size() - 1; i > 0; i--)
+        {
+            // swap value of first indexed
+            // with last indexed
+            swap(local_list[0], local_list[i]);
+        
+            // maintaining heap property
+            // after each swapping
+            int j = 0, index;
+            
+            do
+            {
+                index = (2 * j + 1);
+                
+                // if left child is smaller than
+                // right child point index variable
+                // to right child
+                if (local_list[index] < local_list[index + 1] &&
+                                    index < (i - 1))
+                    index++;
+            
+                // if parent is smaller than child
+                // then swapping parent with child
+                // having higher value
+                if (local_list[j] < local_list[index] && index < i)
+                    swap(local_list[j], local_list[index]);
+            
+                j = index;
+            
+            } while (index < i);
+        }
+    }
+
+    bool compute() {
+      heapSort();
+      return true;
+    }
+
+}
+
+/* class QuickSort : public Vertex {
     public:
     // Fields
     InOut<Vector<int>> local_list;
@@ -36,7 +104,7 @@ class QuickSort : public Vertex {
       quickSort(0, local_list.size() - 1);
       return true;
     }
-};
+}; */
 
 class Samples : public MultiVertex {
     public: 
