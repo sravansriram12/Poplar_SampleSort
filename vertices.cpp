@@ -6,6 +6,12 @@ class HeapSort: public Vertex {
     // Fields
     InOut<Vector<int>> local_list;
 
+    void swap(unsigned idx1, unsigned idx2) {
+        int temp = local_list[idx1];
+        local_list[idx1] = local_list[idx2];
+        local_list[idx2] = temp;
+    }
+
     void buildMaxHeap()
     {
         for (int i = 1; i < local_list.size(); i++)
@@ -19,7 +25,7 @@ class HeapSort: public Vertex {
                 // parent is smaller
                 while (local_list[j] > local_list[(j - 1) / 2])
                 {
-                    swap(local_list[j], local_list[(j - 1) / 2]);
+                    swap(j, (j - 1) / 2);
                     j = (j - 1) / 2;
                 }
             }
@@ -33,7 +39,7 @@ class HeapSort: public Vertex {
         {
             // swap value of first indexed
             // with last indexed
-            swap(local_list[0], local_list[i]);
+            swap(0, i);
         
             // maintaining heap property
             // after each swapping
@@ -54,7 +60,7 @@ class HeapSort: public Vertex {
                 // then swapping parent with child
                 // having higher value
                 if (local_list[j] < local_list[index] && index < i)
-                    swap(local_list[j], local_list[index]);
+                    swap(j, index);
             
                 j = index;
             
