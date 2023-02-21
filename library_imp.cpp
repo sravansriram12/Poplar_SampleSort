@@ -6,6 +6,7 @@
 #include <popops/TopK.hpp>
 #include <popops/SortOrder.hpp>
 #include <popops/codelets.hpp>
+#include <poplar/DebugContext.hpp>
 #include <algorithm>
 #include <cmath>
 #include <fstream>
@@ -93,7 +94,7 @@ int main(int argc, char *argv[]) {
  
   TopKParams params(n, false, SortOrder::ASCENDING, false);
   clock_gettime(CLOCK_REALTIME, &engine_start);
-  Tensor final_list = popops::topK(graph, prog, initial_list, params);
+  Tensor final_list = popops::topK(graph, prog, initial_list, params, DebugContext{});
   clock_gettime(CLOCK_REALTIME, &engine_stop);
 
   if (DEBUG == 1) {
