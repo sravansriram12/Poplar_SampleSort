@@ -190,7 +190,7 @@ int main(int argc, char *argv[]) {
   double total_time;
   clock_gettime(CLOCK_REALTIME, &start);
 
-  /*std::vector<std::vector<unsigned>> indexes (p, std::vector<unsigned> (0, 0));
+  std::vector<std::vector<unsigned>> indexes (p, std::vector<unsigned> (0, 0));
   for (unsigned i = 0; i < n; i++) {
     graph.setTileMapping(initial_list[i], processor_list[i]);
     indexes[processor_list[i]].push_back(i);
@@ -224,15 +224,15 @@ int main(int argc, char *argv[]) {
   engine2.writeTensor("list-write", input_list.data(), input_list.data() + input_list.size());
 
   engine2.run(0);  
-  engine2.readTensor("sorted-list-read", input_list.data(), input_list.data() + input_list.size()); */
+  engine2.readTensor("sorted-list-read", input_list.data(), input_list.data() + input_list.size()); 
 
  
   if (DEBUG == 1) {
     engine.printProfileSummary(cout, {{"showExecutionSteps", "true"}});
-    //engine2.printProfileSummary(cout, {{"showExecutionSteps", "true"}});
+    engine2.printProfileSummary(cout, {{"showExecutionSteps", "true"}});
   }
 
-   /*if (DEBUG == 1) {
+   if (DEBUG == 1) {
     cout << "FINISHED EXECUTING IPU SAMPLE SORT ALGORITHM" << endl;
     cout << endl;
     if (n <= 500) {
@@ -241,7 +241,7 @@ int main(int argc, char *argv[]) {
     }
   }
 
-   cout << "IPU-Host Interaction Time (s): " << total_time << endl; */
+   cout << "IPU-Host Interaction Time (s): " << total_time << endl; 
 
 
   return 0;
