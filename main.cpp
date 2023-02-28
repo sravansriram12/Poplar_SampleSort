@@ -78,7 +78,7 @@ int main(int argc, char *argv[]) {
   }
   unsigned local_list_size = n / p;
   unsigned DEBUG = atoi(argv[argc - 1]);
-  const char *dev = "ipu";
+  const char *dev = "model-ipu2";
   
   Device device;
 
