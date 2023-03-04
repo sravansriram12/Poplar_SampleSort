@@ -210,6 +210,7 @@ int main(int argc, char *argv[]) {
     sorted_tensor = concat(sorted_tensor, all_processor_lists[i]);
   }
   Tensor size_tensor = graph.addVariable(INT, {1}, "Tensor size");
+  graph.setTileMapping(size_tensor, 0);
   ComputeSet set_size = graph.addComputeSet("Set find");
    VertexRef size_find = graph.addVertex(set_size, "ExampleVertex");
     graph.connect(size_find["processors"], initial_list);
