@@ -167,7 +167,8 @@ class DetermineProcessor: public MultiVertex {
     }
 };
 
-class ExampleVertex: public Vertex{
+class ExampleVertex: public Vertex {
+    public:
     Input<Vector<int>> processors;
     Output<Vector<int>> size;
 
