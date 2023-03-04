@@ -166,3 +166,13 @@ class DetermineProcessor: public MultiVertex {
         return true;
     }
 };
+
+class ExampleVertex: public Vertex{
+    Input<Vector> processors;
+    Output<Vector> size;
+
+    bool compute() {
+        size[0] = processors[0];
+        return true;
+    }
+};

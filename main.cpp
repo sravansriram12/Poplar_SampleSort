@@ -209,11 +209,21 @@ int main(int argc, char *argv[]) {
   for (unsigned i = 1; i < p; i++) {
     sorted_tensor = concat(sorted_tensor, all_processor_lists[i]);
   }
+  Tensor size_tensor = graph.addVariable(INT, {1}, "Tensor size");
+  ComputeSet set_size = graph.addComputeSet("Set find");
+   VertexRef size_find = graph.addVertex(set_size, "ExampleVertex");
+    graph.connect(size_find["processors"], input_list);
+    graph.connect(size_find["size"], size_tensor);
+    graph.setTileMapping(size_find, 10);
+    graph.setPerfEstimate(size_find, 20);
+    
 
   graph.createHostRead("sorted-list-read", sorted_tensor);
 
   Sequence prog2;
   prog2.add(Execute(local_sort));
+  prog2.add(Execute(set_size));
+  prog2.add(PrintTensor(size_tensor));
 
   clock_gettime(CLOCK_REALTIME, &stop);
   total_time = (stop.tv_sec-start.tv_sec)
