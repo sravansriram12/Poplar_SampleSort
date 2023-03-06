@@ -83,9 +83,11 @@ int main(int argc, char *argv[]) {
   int active_numbers_even = n % 2 == 0 ? n : n - 1;
   int even_pairs_per_tile = ceil((active_numbers_even / 2) / 1472);
   Tensor evenTensor = graph.addVariable(INT, {active_numbers_even}, "odd_list");
+  cout << even_pairs_per_tile << endl;
   int active_numbers_odd = n % 2 == 0 ? n - 2 : n - 1;
   Tensor oddTensor = graph.addVariable(INT, {active_numbers_odd}, "even_list");
   int odd_pairs_per_tile = ceil((active_numbers_odd / 2) / 1472);
+  cout << odd_pairs_per_tile << endl;
 
   int tile_num = 0;
   for(int i = 0; i < active_numbers_even / 2; i += even_pairs_per_tile) {
