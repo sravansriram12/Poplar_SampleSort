@@ -105,8 +105,6 @@ int main(int argc, char *argv[]) {
     graph.setTileMapping(oddTensor.slice(i, end_index), tile_num);
     tile_num++;
   }
-
-  cout << active_numbers_odd << endl;
   
   for (int k = 0; k < n; k++) {
     prog.add(Copy(initial_list.slice(0, active_numbers_even), evenTensor));
@@ -133,7 +131,6 @@ int main(int argc, char *argv[]) {
       VertexRef brickSort_vtx = graph.addVertex(oddset, "BrickSortComparison");
       graph.setTileMapping(brickSort_vtx, tile_num);
       int end_index = std::min(active_numbers_odd, i + (odd_pairs_per_tile * 2));
-      cout << i << " " << end_index << endl;
       graph.connect(brickSort_vtx["subtensor"], oddTensor.slice(i, end_index));
       graph.setPerfEstimate(brickSort_vtx, 20);
       tile_num++;
