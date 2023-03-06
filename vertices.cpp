@@ -167,13 +167,16 @@ class DetermineProcessor: public MultiVertex {
     }
 };
 
-class ExampleVertex: public Vertex {
-    public:
-    Input<Vector<int>> processors;
-    Output<Vector<int>> size;
+class BrickSortComparison : public Vertex {
+    InOut<Vector<Int>> subtensor;
 
     bool compute() {
-        size[0] = processors[0];
-        return true;
+        for(int i = 0; i < subtensor.size(); i += 2) {
+            if (subtensor[i] > subtensor[i + 1]) {
+                int temp = subtensor[i + 1];
+                subtensor[i + 1] = subtensor[i];
+                subtensor[i] = temp;
+            }
+        }
     }
-};
+}
