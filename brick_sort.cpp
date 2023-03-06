@@ -81,7 +81,8 @@ int main(int argc, char *argv[]) {
   graph.addCodelets("vertices.cpp");
   Tensor initial_list = graph.addVariable(INT, {n}, "initial_list");
   int active_numbers_even = n % 2 == 0 ? n : n - 1;
-  int even_pairs_per_tile = ceil((active_numbers_even / 2) / 1472);
+  float div_even = float(active_numbers_even / 2) / 1472;
+  int even_pairs_per_tile = ceil(div_even);
   Tensor evenTensor = graph.addVariable(INT, {active_numbers_even}, "odd_list");
   cout << even_pairs_per_tile << endl;
   int active_numbers_odd = n % 2 == 0 ? n - 2 : n - 1;
