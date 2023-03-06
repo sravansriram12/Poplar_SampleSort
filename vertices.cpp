@@ -178,5 +178,6 @@ class BrickSortComparison : public Vertex {
                 subtensor[i] = temp;
             }
         }
+        return true;
     }
 };
