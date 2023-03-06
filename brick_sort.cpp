@@ -111,7 +111,7 @@ int main(int argc, char *argv[]) {
     ComputeSet evenset = graph.addComputeSet("Even bubble" + to_string(k));
 
     tile_num = 0;
-    for(int i = 0; i < active_numbers_even / 2; i += (even_pairs_per_tile * 2)) {
+    for(int i = 0; i < active_numbers_even; i += (even_pairs_per_tile * 2)) {
       VertexRef brickSort_vtx = graph.addVertex(evenset, "BrickSortComparison");
       graph.setTileMapping(brickSort_vtx, tile_num);
       int end_index = std::min(active_numbers_even, (i + even_pairs_per_tile) * 2);
@@ -128,7 +128,7 @@ int main(int argc, char *argv[]) {
     ComputeSet oddset = graph.addComputeSet("Odd bubble" + to_string(k));
     
     tile_num = 0;
-    for(int i = 0; i < active_numbers_odd / 2; i += odd_pairs_per_tile) {
+    for(int i = 0; i < active_numbers_odd; i += odd_pairs_per_tile) {
       VertexRef brickSort_vtx = graph.addVertex(oddset, "BrickSortComparison");
       graph.setTileMapping(brickSort_vtx, tile_num);
       int end_index = std::min(active_numbers_odd, (i + odd_pairs_per_tile) * 2);
