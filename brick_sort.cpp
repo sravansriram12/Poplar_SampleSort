@@ -141,7 +141,6 @@ int main(int argc, char *argv[]) {
 
   graph.createHostWrite("list-write", initial_list);
   
-  prog.add(PrintTensor(initial_list));
   Engine engine(graph, prog);
   engine.load(device);
   engine.writeTensor("list-write", input_list.data(), input_list.data() + input_list.size());
