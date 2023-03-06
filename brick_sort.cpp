@@ -95,7 +95,7 @@ int main(int argc, char *argv[]) {
     tile_num++;
   }
   if (n % 2 != 0) {
-    graph.setTileMapping(initial_list.slice(n - 1), tile_num);
+    graph.setTileMapping(initial_list[n - 1], tile_num);
   }
 
   
