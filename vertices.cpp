@@ -168,7 +168,7 @@ class DetermineProcessor: public MultiVertex {
 };
 
 class BrickSortComparison : public Vertex {
-    InOut<Vector<Int>> subtensor;
+    InOut<Vector<int>> subtensor;
 
     bool compute() {
         for(int i = 0; i < subtensor.size(); i += 2) {
