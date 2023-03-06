@@ -94,14 +94,14 @@ int main(int argc, char *argv[]) {
 
   int tile_num = 0;
   for(int i = 0; i < active_numbers_even / 2; i += (even_pairs_per_tile * 2)) {
-    int end_index = min(active_numbers_even, (i + even_pairs_per_tile) * 2);
+    int end_index = std::min(active_numbers_even, (i + even_pairs_per_tile) * 2);
     graph.setTileMapping(evenTensor.slice(i, end_index), tile_num);
     tile_num++;
   }
 
   tile_num = 0;
   for(int i = 0; i < active_numbers_odd / 2; i += (odd_pairs_per_tile * 2)) {
-    int end_index = min(active_numbers_odd, (i + odd_pairs_per_tile) * 2);
+    int end_index = std::min(active_numbers_odd, (i + odd_pairs_per_tile) * 2);
     graph.setTileMapping(oddTensor.slice(i, end_index), tile_num);
     tile_num++;
   }
@@ -114,7 +114,7 @@ int main(int argc, char *argv[]) {
     for(int i = 0; i < active_numbers_even / 2; i += (even_pairs_per_tile * 2)) {
       VertexRef brickSort_vtx = graph.addVertex(evenset, "BrickSortComparison");
       graph.setTileMapping(brickSort_vtx, tile_num);
-      int end_index = min(active_numbers_even, (i + even_pairs_per_tile) * 2);
+      int end_index = std::min(active_numbers_even, (i + even_pairs_per_tile) * 2);
       graph.connect(brickSort_vtx["subtensor"], evenTensor.slice(i, end_index);
       graph.setPerfEstimate(brickSort_vtx, 20);
       tile_num++;
@@ -130,7 +130,7 @@ int main(int argc, char *argv[]) {
     for(int i = 0; i < active_numbers_odd / 2; i += odd_pairs_per_tile) {
       VertexRef brickSort_vtx = graph.addVertex(oddset, "BrickSortComparison");
       graph.setTileMapping(brickSort_vtx, tile_num);
-      int end_index = min(active_numbers_odd, (i + odd_pairs_per_tile) * 2);
+      int end_index = std::min(active_numbers_odd, (i + odd_pairs_per_tile) * 2);
       graph.connect(brickSort_vtx["subtensor"], end_index);
       graph.setPerfEstimate(brickSort_vtx, 20);
       tile_num++;
