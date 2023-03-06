@@ -93,21 +93,8 @@ int main(int argc, char *argv[]) {
   graph.setTileMapping(initial_list, 0);
 
   int tile_num = 0;
-  for(int i = 0; i < active_numbers_even; i += (even_pairs_per_tile * 2)) {
-    int end_index = std::min(active_numbers_even, (i + even_pairs_per_tile) * 2);
-    graph.setTileMapping(evenTensor.slice(i, end_index), tile_num);
-    tile_num++;
-  }
-
-  tile_num = 0;
-  for(int i = 0; i < active_numbers_odd; i += (odd_pairs_per_tile * 2)) {
-    int end_index = std::min(active_numbers_odd, (i + odd_pairs_per_tile) * 2);
-    graph.setTileMapping(oddTensor.slice(i, end_index), tile_num);
-    tile_num++;
-  }
   
   for (int k = 0; k < n; k++) {
-    prog.add(Copy(initial_list.slice(0, active_numbers_even), evenTensor));
     ComputeSet evenset = graph.addComputeSet("Even bubble" + to_string(k));
 
     tile_num = 0;
@@ -115,28 +102,23 @@ int main(int argc, char *argv[]) {
       VertexRef brickSort_vtx = graph.addVertex(evenset, "BrickSortComparison");
       graph.setTileMapping(brickSort_vtx, tile_num);
       int end_index = std::min(active_numbers_even, i + (even_pairs_per_tile * 2));
-      graph.connect(brickSort_vtx["subtensor"], evenTensor.slice(i, end_index));
+      graph.connect(brickSort_vtx["subtensor"], initial_list.slice(i, end_index));
       graph.setPerfEstimate(brickSort_vtx, 20);
       tile_num++;
     }
     prog.add(Execute(evenset));
-
-    prog.add(Copy(evenTensor, initial_list.slice(0, active_numbers_even)));
-
-    prog.add(Copy(initial_list.slice(1, 1 + active_numbers_odd), oddTensor));
     ComputeSet oddset = graph.addComputeSet("Odd bubble" + to_string(k));
     
     tile_num = 0;
-    for(int i = 0; i < active_numbers_odd; i += (odd_pairs_per_tile * 2)) {
+    for(int i = 1; i < active_numbers_odd; i += (odd_pairs_per_tile * 2)) {
       VertexRef brickSort_vtx = graph.addVertex(oddset, "BrickSortComparison");
       graph.setTileMapping(brickSort_vtx, tile_num);
       int end_index = std::min(active_numbers_odd, i + (odd_pairs_per_tile * 2));
-      graph.connect(brickSort_vtx["subtensor"], oddTensor.slice(i, end_index));
+      graph.connect(brickSort_vtx["subtensor"], initial_list.slice(i, end_index));
       graph.setPerfEstimate(brickSort_vtx, 20);
       tile_num++;
     }
     prog.add(Execute(oddset));
-    prog.add(Copy(oddTensor, initial_list.slice(1, 1 + active_numbers_odd)));
   }
 
   graph.createHostWrite("list-write", initial_list);
