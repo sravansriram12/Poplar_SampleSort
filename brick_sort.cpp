@@ -92,6 +92,8 @@ int main(int argc, char *argv[]) {
   int odd_pairs_per_tile = ceil(div_odd);
   cout << odd_pairs_per_tile << endl;
 
+  graph.setTileMapping(initial_list, 0);
+
   int tile_num = 0;
   for(int i = 0; i < active_numbers_even / 2; i += even_pairs_per_tile) {
     graph.setTileMapping(evenTensor.slice(i * 2, (i + even_pairs_per_tile) * 2), tile_num);
