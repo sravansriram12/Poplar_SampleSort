@@ -93,7 +93,7 @@ int main(int argc, char *argv[]) {
     tile_num++;
   }
 
-  int tile_num = 0;
+  tile_num = 0;
   for(int i = 0; i < active_numbers_odd / 2; i += odd_pairs_per_tile) {
     graph.setTileMapping(oddTensor.slice(i, (i + odd_pairs_per_tile) * 2), tile_num);
     tile_num++;
@@ -103,11 +103,11 @@ int main(int argc, char *argv[]) {
     prog.add(Copy(initial_list.slice(0, active_numbers_even), evenTensor));
     ComputeSet evenset = graph.addComputeSet("Even bubble" + to_string(i));
 
-    int tile_num = 0;
+    tile_num = 0;
     for(int i = 0; i < active_numbers_even / 2; i += even_pairs_per_tile) {
       VertexRef brickSort_vtx = graph.addVertex(evenset, "BrickSortComparison");
       graph.setTileMapping(brickSort_vtx, tile_num);
-      brickSort.connect(evenTensor.slice(i, (i + even_pairs_per_tile) * 2), "subtensor");
+      brickSort_vtx.connect(evenTensor.slice(i, (i + even_pairs_per_tile) * 2), "subtensor");
       graph.setPerfEstimate(brickSort_vtx, 20);
       tile_num++;
     }
@@ -122,7 +122,7 @@ int main(int argc, char *argv[]) {
     for(int i = 0; i < active_numbers_odd / 2; i += odd_pairs_per_tile) {
       VertexRef brickSort_vtx = graph.addVertex(oddset, "BrickSortComparison");
       graph.setTileMapping(brickSort_vtx, tile_num);
-      brickSort.connect(oddTensor.slice(i, (i + odd_pairs_per_tile) * 2), "subtensor");
+      brickSort_vtx.connect(oddTensor.slice(i, (i + odd_pairs_per_tile) * 2), "subtensor");
       graph.setPerfEstimate(brickSort_vtx, 20);
       tile_num++;
     }
