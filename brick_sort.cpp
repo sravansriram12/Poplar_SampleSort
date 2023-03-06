@@ -146,7 +146,8 @@ int main(int argc, char *argv[]) {
   engine.writeTensor("list-write", input_list.data(), input_list.data() + input_list.size());
 
   engine.run(0);
-
+  
+  engine.printProfileSummary(cout, {{"showExecutionSteps", "true"}});
   
 
   clock_gettime(CLOCK_REALTIME, &stop);
