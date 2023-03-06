@@ -94,13 +94,13 @@ int main(int argc, char *argv[]) {
 
   int tile_num = 0;
   for(int i = 0; i < active_numbers_even / 2; i += even_pairs_per_tile) {
-    graph.setTileMapping(evenTensor.slice(i, (i + even_pairs_per_tile) * 2), tile_num);
+    graph.setTileMapping(evenTensor.slice(i * 2, (i + even_pairs_per_tile) * 2), tile_num);
     tile_num++;
   }
 
   tile_num = 0;
   for(int i = 0; i < active_numbers_odd / 2; i += odd_pairs_per_tile) {
-    graph.setTileMapping(oddTensor.slice(i, (i + odd_pairs_per_tile) * 2), tile_num);
+    graph.setTileMapping(oddTensor.slice(i * 2, (i + odd_pairs_per_tile) * 2), tile_num);
     tile_num++;
   }
   
@@ -112,7 +112,7 @@ int main(int argc, char *argv[]) {
     for(int i = 0; i < active_numbers_even / 2; i += even_pairs_per_tile) {
       VertexRef brickSort_vtx = graph.addVertex(evenset, "BrickSortComparison");
       graph.setTileMapping(brickSort_vtx, tile_num);
-      graph.connect(brickSort_vtx["subtensor"], evenTensor.slice(i, (i + even_pairs_per_tile) * 2));
+      graph.connect(brickSort_vtx["subtensor"], evenTensor.slice(i * 2, (i + even_pairs_per_tile) * 2));
       graph.setPerfEstimate(brickSort_vtx, 20);
       tile_num++;
     }
@@ -120,19 +120,19 @@ int main(int argc, char *argv[]) {
 
     prog.add(Copy(evenTensor, initial_list.slice(0, active_numbers_even)));
 
-    prog.add(Copy(initial_list.slice(1, active_numbers_odd), oddTensor));
+    prog.add(Copy(initial_list.slice(1, 1 + active_numbers_odd), oddTensor));
     ComputeSet oddset = graph.addComputeSet("Odd bubble" + to_string(i));
     
     tile_num = 0;
     for(int i = 0; i < active_numbers_odd / 2; i += odd_pairs_per_tile) {
       VertexRef brickSort_vtx = graph.addVertex(oddset, "BrickSortComparison");
       graph.setTileMapping(brickSort_vtx, tile_num);
-      graph.connect(brickSort_vtx["subtensor"], oddTensor.slice(i, (i + odd_pairs_per_tile) * 2));
+      graph.connect(brickSort_vtx["subtensor"], oddTensor.slice(i * 2, (i + odd_pairs_per_tile) * 2));
       graph.setPerfEstimate(brickSort_vtx, 20);
       tile_num++;
     }
     prog.add(Execute(oddset));
-    prog.add(Copy(oddTensor, initial_list.slice(1, active_numbers_odd)));
+    prog.add(Copy(oddTensor, initial_list.slice(1, 1 + active_numbers_odd)));
   }
 
   graph.createHostWrite("list-write", initial_list);
