@@ -179,4 +179,4 @@ class BrickSortComparison : public Vertex {
             }
         }
     }
-}
+};
