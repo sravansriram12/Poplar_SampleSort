@@ -83,11 +83,11 @@ int main(int argc, char *argv[]) {
   int active_numbers_even = n % 2 == 0 ? n : n - 1;
   float div_even = float(active_numbers_even / 2) / 1472;
   int even_pairs_per_tile = ceil(div_even);
-  Tensor evenTensor = graph.addVariable(INT, {active_numbers_even}, "odd_list");
+  Tensor evenTensor = graph.addVariable(INT, {active_numbers_even}, "even_list");
   
   int active_numbers_odd = n % 2 == 0 ? n - 2 : n - 1;
   float div_odd = float(active_numbers_odd / 2) / 1472;
-  Tensor oddTensor = graph.addVariable(INT, {active_numbers_odd}, "even_list");
+  Tensor oddTensor = graph.addVariable(INT, {active_numbers_odd}, "odd_list");
   int odd_pairs_per_tile = ceil(div_odd);
 
   graph.setTileMapping(initial_list, 0);
@@ -115,6 +115,7 @@ int main(int argc, char *argv[]) {
       VertexRef brickSort_vtx = graph.addVertex(evenset, "BrickSortComparison");
       graph.setTileMapping(brickSort_vtx, tile_num);
       int end_index = std::min(active_numbers_even, (i + even_pairs_per_tile) * 2);
+      cout << i << " " << end_index << endl;
       graph.connect(brickSort_vtx["subtensor"], evenTensor.slice(i, end_index));
       graph.setPerfEstimate(brickSort_vtx, 20);
       tile_num++;
