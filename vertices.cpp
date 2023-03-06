@@ -167,12 +167,12 @@ class DetermineProcessor: public MultiVertex {
     }
 };
 
-class BrickSortComparison : public Vertex {
+class BrickSortComparison : public MultiVertex {
     public:
     InOut<Vector<int>> subtensor;
 
-    bool compute() {
-        for(int i = 0; i < subtensor.size(); i += 2) {
+    bool compute(unsigned workerId) {
+        for(int i = workerId * 2; i < subtensor.size(); i += (2 * MultiVertex::numWorkers())) {
             if (subtensor[i] > subtensor[i + 1]) {
                 int temp = subtensor[i + 1];
                 subtensor[i + 1] = subtensor[i];
