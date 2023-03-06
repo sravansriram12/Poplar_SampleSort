@@ -113,6 +113,7 @@ int main(int argc, char *argv[]) {
       VertexRef brickSort_vtx = graph.addVertex(oddset, "BrickSortComparison");
       graph.setTileMapping(brickSort_vtx, tile_num);
       int end_index = std::min(active_numbers_odd, i + (odd_pairs_per_tile * 2));
+      graph.setTileMapping(initial_list.slice(i, end_index), tile_num);
       graph.connect(brickSort_vtx["subtensor"], initial_list.slice(i, end_index));
       graph.setPerfEstimate(brickSort_vtx, 20);
       tile_num++;
