@@ -106,9 +106,9 @@ int main(int argc, char *argv[]) {
     tile_num++;
   }
   
-  for (int i = 0; i < n; i++) {
+  for (int k = 0; k < n; k++) {
     prog.add(Copy(initial_list.slice(0, active_numbers_even), evenTensor));
-    ComputeSet evenset = graph.addComputeSet("Even bubble" + to_string(i));
+    ComputeSet evenset = graph.addComputeSet("Even bubble" + to_string(k));
 
     tile_num = 0;
     for(int i = 0; i < active_numbers_even / 2; i += (even_pairs_per_tile * 2)) {
@@ -124,7 +124,7 @@ int main(int argc, char *argv[]) {
     prog.add(Copy(evenTensor, initial_list.slice(0, active_numbers_even)));
 
     prog.add(Copy(initial_list.slice(1, 1 + active_numbers_odd), oddTensor));
-    ComputeSet oddset = graph.addComputeSet("Odd bubble" + to_string(i));
+    ComputeSet oddset = graph.addComputeSet("Odd bubble" + to_string(k));
     
     tile_num = 0;
     for(int i = 0; i < active_numbers_odd / 2; i += odd_pairs_per_tile) {
