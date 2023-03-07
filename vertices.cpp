@@ -206,4 +206,4 @@ class MergeSortComparison : public Vertex {
 
         return true;
     }
-}
+};
