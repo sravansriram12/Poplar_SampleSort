@@ -82,12 +82,13 @@ int main(int argc, char *argv[]) {
   Tensor initial_list = graph.addVariable(INT, {n}, "initial_list");
   int p = 1000;
   int numbers_per_tile = ceil(float(n) / p);
+  int p_in_use = n / numbers_per_tile;
 
   int tile_num = 0;
   int nums = 0;
-  for(int i = 0; i < p; i++) {
-    int end_index = std::min(nums, nums + numbers_per_tile);
-    graph.setTileMapping(initial_list.slice(nums, end_index), p);
+  for(int i = 0; i < p_in_use; i++) {
+    int end_index = std::min(n, nums + numbers_per_tile);
+    graph.setTileMapping(initial_list.slice(nums, end_index), i);
     nums += numbers_per_tile;
   }
 
@@ -96,7 +97,7 @@ int main(int argc, char *argv[]) {
       
       int nums = 0;
       int nums2 = nums + numbers_per_tile;
-      for (int i = 0; i < p; i += 2) {
+      for (int i = 0; i < p_in_use; i += 2) {
         int end_index1 = std::min(n, nums + numbers_per_tile);
         int end_index2 = std::min(n, nums2 + numbers_per_tile);
         VertexRef heapsort_vtx = graph.addVertex(cs_even, "HeapSort");
@@ -112,7 +113,7 @@ int main(int argc, char *argv[]) {
        
       nums = numbers_per_tile;
       nums2 = nums + numbers_per_tile;
-      for (int i = 1; i < p - 1; i += 2) {
+      for (int i = 1; i < p_in_use - 1; i += 2) {
         int end_index1 = std::min(n, nums + numbers_per_tile);
         int end_index2 = std::min(n, nums2 + numbers_per_tile);
         VertexRef heapsort_vtx = graph.addVertex(cs_odd, "HeapSort");
