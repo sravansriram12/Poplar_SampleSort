@@ -62,12 +62,12 @@ int main(int argc, char *argv[]) {
   }
 
 
-  srand48(1);
+  srand48(0);
   
   auto input_list = std::vector<int>(n);
   int n1 = n;
   for (unsigned idx = 0; idx < n; ++idx) {
-    input_list[idx] = n1;
+    input_list[idx] = (int) mrand48();
     n1--;
   }
 
@@ -98,15 +98,12 @@ int main(int argc, char *argv[]) {
       
       int nums = 0;
       int nums2 = nums + numbers_per_tile;
-      std::vector<Tensor> clean_up;
       for (int i = 0; i < p_in_use; i += 2) {
         int end_index1 = std::min(n, nums + numbers_per_tile);
         int end_index2 = std::min(n, nums2 + numbers_per_tile);
         VertexRef mergesort_vtx = graph.addVertex(cs_even, "MergeSortComparison");
         graph.connect(mergesort_vtx["a"], initial_list.slice(nums, end_index1));
-        Tensor other_tile = initial_list.slice(nums2, end_index2);
-        graph.connect(mergesort_vtx["b"], other_tile);
-        clean_up.push_back(other_tile);
+        graph.connect(mergesort_vtx["b"], initial_list.slice(nums2, end_index2));
         graph.setTileMapping(mergesort_vtx, i);
         graph.setPerfEstimate(mergesort_vtx, 20);
         nums += (numbers_per_tile * 2);
@@ -124,9 +121,7 @@ int main(int argc, char *argv[]) {
         int end_index2 = std::min(n, nums2 + numbers_per_tile);
         VertexRef mergesort_vtx = graph.addVertex(cs_odd, "MergeSortComparison");
         graph.connect(mergesort_vtx["a"], initial_list.slice(nums, end_index1));
-        Tensor other_tile = initial_list.slice(nums2, end_index2);
-        graph.connect(mergesort_vtx["b"], other_tile);
-        clean_up.push_back(other_tile);
+        graph.connect(mergesort_vtx["b"], initial_list.slice(nums2, end_index2));
         graph.setTileMapping(mergesort_vtx, i);
         graph.setPerfEstimate(mergesort_vtx, 20);
         nums += (numbers_per_tile * 2);
@@ -134,9 +129,6 @@ int main(int argc, char *argv[]) {
       }
 
       prog.add(Execute(cs_odd));
-      for (int i = 0; i < clean_up.size(); i++) {
-        prog.add(WriteUndef(clean_up[i]));
-      }
   }
 
   prog.add(PrintTensor(initial_list));
