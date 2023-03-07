@@ -67,7 +67,7 @@ int main(int argc, char *argv[]) {
   auto input_list = std::vector<int>(n);
   int n1 = n;
   for (unsigned idx = 0; idx < n; ++idx) {
-    input_list[idx] = (int) mrand48();
+    input_list[idx] = n1;
     n1--;
   }
 
