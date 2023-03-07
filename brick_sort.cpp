@@ -123,7 +123,7 @@ int main(int argc, char *argv[]) {
     }
     prog.add(Execute(evenset));
 
-    prog.add(Copy(initial_list.slice(1, 1 + active_numbers_odd), oddTensor);
+    prog.add(Copy(initial_list.slice(1, 1 + active_numbers_odd), oddTensor));
 
     prog.add(Copy(initial_list.slice(1, 1 + active_numbers_odd), oddTensor));
     ComputeSet oddset = graph.addComputeSet("Odd bubble" + to_string(k));
