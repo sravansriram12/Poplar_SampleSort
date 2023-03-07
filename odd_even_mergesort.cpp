@@ -80,64 +80,54 @@ int main(int argc, char *argv[]) {
   // Add codelets to the graph
   graph.addCodelets("vertices.cpp");
   Tensor initial_list = graph.addVariable(INT, {n}, "initial_list");
-  int active_numbers_even = n % 2 == 0 ? n : n - 1;
-  float div_even = float(active_numbers_even / 2) / 1472;
-  int even_pairs_per_tile = ceil(div_even);
-  
-  int active_numbers_odd = n % 2 == 0 ? n - 2 : n - 1;
-  float div_odd = float(active_numbers_odd / 2) / 1472;
-  Tensor oddTensor = graph.addVariable(INT, {active_numbers_odd}, "odd_list");
-  int odd_pairs_per_tile = ceil(div_odd);
+  int p = 1000;
+  int numbers_per_tile = ceil(float(n) / p);
 
   int tile_num = 0;
-  for(int i = 0; i < active_numbers_even; i += (even_pairs_per_tile * 2)) {
-    int end_index = std::min(active_numbers_even, (i + even_pairs_per_tile) * 2);
-    graph.setTileMapping(initial_list.slice(i, end_index), tile_num);
-    tile_num++;
-  }
-  if (n % 2 != 0) {
-    graph.setTileMapping(initial_list.slice(n - 1, n), tile_num);
+  int nums = 0;
+  for(int i = 0; i < p; i++) {
+    int end_index = std::min(nums, nums + numbers_per_tile);
+    graph.setTileMapping(initial_list.slice(nums, end_index), p);
+    nums += numbers_per_tile;
   }
 
-  tile_num = 0;
-  for(int i = 0; i < active_numbers_odd; i += (odd_pairs_per_tile * 2)) {
-    int end_index = std::min(active_numbers_odd, (i + odd_pairs_per_tile) * 2);
-    graph.setTileMapping(oddTensor.slice(i, end_index), tile_num);
-    tile_num++;
+  for (int k = 0; k < ceil(log2(n)); k++) {
+      ComputeSet cs_even = graph.addComputeSet("mergeEven"+to_string(k));
+      
+      int nums = 0;
+      int nums2 = nums + numbers_per_tile;
+      for (int i = 0; i < p; i += 2) {
+        int end_index1 = std::min(n, nums + numbers_per_tile);
+        int end_index2 = std::min(n, nums2 + numbers_per_tile);
+        VertexRef heapsort_vtx = graph.addVertex(cs_even, "HeapSort");
+        graph.connect(heapsort_vtx["local_list"], concat(initial_list.slice(nums, end_index1), initial_list.slice(nums2, end_index2)));
+        graph.setTileMapping(heapsort_vtx, i);
+        graph.setPerfEstimate(heapsort_vtx, 20);
+        nums += numbers_per_tile;
+        nums2 += numbers_per_tile;
+      }
+      prog.add(Execute(cs_even));
+
+      ComputeSet cs_odd = graph.addComputeSet("mergeOdd"+to_string(k));
+       
+      nums = numbers_per_tile;
+      nums2 = nums + numbers_per_tile;
+      for (int i = 1; i < p - 1; i += 2) {
+        int end_index1 = std::min(n, nums + numbers_per_tile);
+        int end_index2 = std::min(n, nums2 + numbers_per_tile);
+        VertexRef heapsort_vtx = graph.addVertex(cs_odd, "HeapSort");
+        graph.connect(heapsort_vtx["local_list"], concat(initial_list.slice(nums, end_index1), initial_list.slice(nums2, end_index2)));
+        graph.setTileMapping(heapsort_vtx, i);
+        graph.setPerfEstimate(heapsort_vtx, 20);
+        nums += numbers_per_tile;
+        nums2 += numbers_per_tile;
+      }
+
+      prog.add(Execute(cs_odd));
   }
 
-  for (int k = 0; k < n; k++) {
-    ComputeSet evenset = graph.addComputeSet("Even bubble" + to_string(k));
-
-    tile_num = 0;
-    for(int i = 0; i < active_numbers_even; i += (even_pairs_per_tile * 2)) {
-      VertexRef brickSort_vtx = graph.addVertex(evenset, "BrickSortComparison");
-      graph.setTileMapping(brickSort_vtx, tile_num);
-      int end_index = std::min(active_numbers_even, i + (even_pairs_per_tile * 2));
-      graph.connect(brickSort_vtx["subtensor"], initial_list.slice(i, end_index));
-      graph.setPerfEstimate(brickSort_vtx, 20);
-      tile_num++;
-    }
-    prog.add(Execute(evenset));
-
-    prog.add(Copy(initial_list.slice(1, 1 + active_numbers_odd), oddTensor));
-
-    prog.add(Copy(initial_list.slice(1, 1 + active_numbers_odd), oddTensor));
-    ComputeSet oddset = graph.addComputeSet("Odd bubble" + to_string(k));
-    
-    tile_num = 0;
-    for(int i = 0; i < active_numbers_odd; i += (odd_pairs_per_tile * 2)) {
-      VertexRef brickSort_vtx = graph.addVertex(oddset, "BrickSortComparison");
-      graph.setTileMapping(brickSort_vtx, tile_num);
-      int end_index = std::min(active_numbers_odd, i + (odd_pairs_per_tile * 2));
-      graph.connect(brickSort_vtx["subtensor"], oddTensor.slice(i, end_index));
-      graph.setPerfEstimate(brickSort_vtx, 20);
-      tile_num++;
-    }
-    prog.add(Execute(oddset));
-    prog.add(Copy(oddTensor, initial_list.slice(1, 1 + active_numbers_odd)));
-  }
-
+  prog.add(PrintTensor(initial_list));
+  
   graph.createHostWrite("list-write", initial_list);
   
   Engine engine(graph, prog, OptionFlags{{"debug.retainDebugInformation", "true"}});
