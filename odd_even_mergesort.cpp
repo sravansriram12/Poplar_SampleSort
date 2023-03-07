@@ -103,7 +103,7 @@ int main(int argc, char *argv[]) {
         int end_index2 = std::min(n, nums2 + numbers_per_tile);
         VertexRef mergesort_vtx = graph.addVertex(cs_even, "MergeSortComparison");
         graph.connect(mergesort_vtx["a"], initial_list.slice(nums, end_index1));
-        Tensor other_tile = initial_list.slice(nums, end_index2);
+        Tensor other_tile = initial_list.slice(nums2, end_index2);
         graph.connect(mergesort_vtx["b"], other_tile);
         clean_up.push_back(other_tile);
         graph.setTileMapping(mergesort_vtx, i);
@@ -123,7 +123,7 @@ int main(int argc, char *argv[]) {
         int end_index2 = std::min(n, nums2 + numbers_per_tile);
         VertexRef mergesort_vtx = graph.addVertex(cs_odd, "MergeSortComparison");
         graph.connect(mergesort_vtx["a"], initial_list.slice(nums, end_index1));
-        Tensor other_tile = initial_list.slice(nums, end_index2);
+        Tensor other_tile = initial_list.slice(nums2, end_index2);
         graph.connect(mergesort_vtx["b"], other_tile);
         clean_up.push_back(other_tile);
         graph.setTileMapping(mergesort_vtx, i);
