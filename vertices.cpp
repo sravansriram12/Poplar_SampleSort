@@ -199,7 +199,7 @@ class MergeSortComparison : public Vertex {
     
             // If there was a greater element
             if (last > b[i]) {
-                b[j + 1] = b[i];
+                a[j + 1] = b[i];
                 b[i] = last;
             }
         }
