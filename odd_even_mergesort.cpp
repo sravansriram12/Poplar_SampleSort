@@ -97,6 +97,7 @@ int main(int argc, char *argv[]) {
     graph.setPerfEstimate(heapsort_vtx, 20);
     nums += numbers_per_tile;
   }
+  prog.add(Execute(cs));
 
   int even_stop = p_in_use;
   int odd_stop = p_in_use - 1;
