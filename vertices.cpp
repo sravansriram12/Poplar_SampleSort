@@ -186,41 +186,21 @@ class BrickSortComparison : public MultiVertex {
 class MergeSortComparison : public Vertex {
     public:
     Input<Vector<int>> a;
-    Input<<Vector<int>> b;
-    Output<Vector<int>> a_out;
-    Ouput<Vector<int>> b_out;
+    Input<Vector<int>> b;
 
     bool compute() {
-        int i = 0;
-        int j = 0;
-        while (i < a.size() && j < b.size()) {
-            if (a[i] <= b[j]) {
-                if (i + j >= a.size()) {
-                    b_out[(i + j) % a.size()] = a[i];
-                } else {
-                    a_out[i + j] = a[i];
-                }
-                i++;
-            } else {
-                 if (i + j >= a.size()) {
-                    b_out[(i + j) % a.size()] = b[j];
-                } else {
-                    a_out[i + j] = b[j];
-                }
-                j++;
-            }
-            
-        }
-
-        if (i < a.size()) {
-            while (i < a.size()) {
-                b_out[(i + j) % a.size()] = a[i];
-                i++;
-            }
-        } else {
-            while (j < b.size()) {
-                b_out[(i + j) % a.size()] = b[j];
-                j++;
+        for (int i = b.size() - 1; i >= 0; i--) {
+        // Find the smallest element greater than ar2[i].
+        // Move all elements one position ahead till the
+        // smallest greater element is not found */
+            int j, last = a[m - 1];
+            for (j = b.size() - 2; j >= 0 && a[j] > b[i]; j--)
+                a[j + 1] = a[j];
+    
+            // If there was a greater element
+            if (last > b[i]) {
+                b[j + 1] = b[i];
+                b[i] = last;
             }
         }
 
