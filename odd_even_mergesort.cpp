@@ -94,12 +94,19 @@ int main(int argc, char *argv[]) {
     nums += numbers_per_tile;
   }
 
+  int even_stop = p_in_use;
+  int odd_stop = p_in_use - 1;
+  if (p_in_use % 2 != 0) {
+    even_stop = p_in_use - 1;
+    odd_stop = p_in_use;
+  } 
+
   for (int k = 0; k < p_in_use; k++) {
       ComputeSet cs_even = graph.addComputeSet("mergeEven"+to_string(k));
       
       nums = 0;
       int nums2 = nums + numbers_per_tile;
-      for (int i = 0; i < p_in_use; i += 2) {
+      for (int i = 0; i < even_stop; i += 2) {
         int end_index1 = std::min(n, nums + numbers_per_tile);
         int end_index2 = std::min(n, nums2 + numbers_per_tile);
         VertexRef mergesort_vtx = graph.addVertex(cs_even, "MergeSortComparison");
@@ -117,7 +124,7 @@ int main(int argc, char *argv[]) {
       nums = numbers_per_tile;
       nums2 = nums + numbers_per_tile;
       
-      for (int i = 1; i < p_in_use - 1; i += 2) {
+      for (int i = 1; i < odd_stop; i += 2) {
         int end_index1 = std::min(n, nums + numbers_per_tile);
         int end_index2 = std::min(n, nums2 + numbers_per_tile);
         VertexRef mergesort_vtx = graph.addVertex(cs_odd, "MergeSortComparison");
