@@ -30,7 +30,7 @@ int main(int argc, char *argv[]) {
     cout << "Error in number of arguments" << endl;
   }
 
-  unsigned n = atoi(argv[argc - 1]);  // number of elements
+  int n = atoi(argv[argc - 1]);  // number of elements
   const char *dev = "model-ipu2";
   srand(time(NULL));
   
