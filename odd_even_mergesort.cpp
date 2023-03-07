@@ -104,8 +104,8 @@ int main(int argc, char *argv[]) {
         graph.connect(heapsort_vtx["local_list"], concat(initial_list.slice(nums, end_index1), initial_list.slice(nums2, end_index2)));
         graph.setTileMapping(heapsort_vtx, i);
         graph.setPerfEstimate(heapsort_vtx, 20);
-        nums += numbers_per_tile;
-        nums2 += numbers_per_tile;
+        nums += (numbers_per_tile * 2);
+        nums2 += (numbers_per_tile * 2);
       }
       prog.add(Execute(cs_even));
 
@@ -120,8 +120,8 @@ int main(int argc, char *argv[]) {
         graph.connect(heapsort_vtx["local_list"], concat(initial_list.slice(nums, end_index1), initial_list.slice(nums2, end_index2)));
         graph.setTileMapping(heapsort_vtx, i);
         graph.setPerfEstimate(heapsort_vtx, 20);
-        nums += numbers_per_tile;
-        nums2 += numbers_per_tile;
+        nums += (numbers_per_tile * 2);
+        nums2 += (numbers_per_tile * 2);
       }
 
       prog.add(Execute(cs_odd));
