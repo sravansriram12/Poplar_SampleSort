@@ -97,7 +97,7 @@ int main(int argc, char *argv[]) {
       
       int nums = 0;
       int nums2 = nums + numbers_per_tile;
-      vector<Tensor> clean_up;
+      std::vector<Tensor> clean_up;
       for (int i = 0; i < p_in_use; i += 2) {
         int end_index1 = std::min(n, nums + numbers_per_tile);
         int end_index2 = std::min(n, nums2 + numbers_per_tile);
