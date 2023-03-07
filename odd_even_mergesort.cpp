@@ -131,7 +131,7 @@ int main(int argc, char *argv[]) {
       for (int i = 1; i < odd_stop; i += 2) {
         int end_index1 = std::min(n, nums + numbers_per_tile);
         int end_index2 = std::min(n, nums2 + numbers_per_tile);
-        VertexRef heapsort_vtx = graph.addVertex(cs_even, "HeapSort");
+        VertexRef heapsort_vtx = graph.addVertex(cs_odd, "HeapSort");
         graph.connect(heapsort_vtx["local_list"], concat(initial_list.slice(nums, end_index1), initial_list.slice(nums2, end_index2)));
         graph.setTileMapping(heapsort_vtx, i);
         graph.setPerfEstimate(heapsort_vtx, 20);
