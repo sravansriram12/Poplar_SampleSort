@@ -101,12 +101,13 @@ int main(int argc, char *argv[]) {
       for (int i = 0; i < p_in_use; i += 2) {
         int end_index1 = std::min(n, nums + numbers_per_tile);
         int end_index2 = std::min(n, nums2 + numbers_per_tile);
-        VertexRef heapsort_vtx = graph.addVertex(cs_even, "HeapSort");
-        Tensor other_tile = initial_list.slice(nums2, end_index2);
-        graph.connect(heapsort_vtx["local_list"], concat(initial_list.slice(nums, end_index1), initial_list.slice(nums2, end_index2)));
+        VertexRef mergesort_vtx = graph.addVertex(cs_even, "MergeSortComparison");
+        graph.connect(mergesort_vtx["a"], initial_list.slice(nums, end_index1));
+        Tensor other_tile = initial_list.slice(nums, end_index2);
+        graph.connect(mergesort_vtx["b"], other_tile);
         clean_up.push_back(other_tile);
-        graph.setTileMapping(heapsort_vtx, i);
-        graph.setPerfEstimate(heapsort_vtx, 20);
+        graph.setTileMapping(mergesort_vtx, i);
+        graph.setPerfEstimate(mergesort_vtx, 20);
         nums += (numbers_per_tile * 2);
         nums2 += (numbers_per_tile * 2);
       }
@@ -120,12 +121,13 @@ int main(int argc, char *argv[]) {
       for (int i = 1; i < p_in_use - 1; i += 2) {
         int end_index1 = std::min(n, nums + numbers_per_tile);
         int end_index2 = std::min(n, nums2 + numbers_per_tile);
-        VertexRef heapsort_vtx = graph.addVertex(cs_odd, "HeapSort");
-        Tensor other_tile = initial_list.slice(nums2, end_index2);
-        graph.connect(heapsort_vtx["local_list"], concat(initial_list.slice(nums, end_index1), other_tile));
+        VertexRef mergesort_vtx = graph.addVertex(cs_odd, "MergeSortComparison");
+        graph.connect(mergesort_vtx["a"], initial_list.slice(nums, end_index1));
+        Tensor other_tile = initial_list.slice(nums, end_index2);
+        graph.connect(mergesort_vtx["b"], other_tile);
         clean_up.push_back(other_tile);
-        graph.setTileMapping(heapsort_vtx, i);
-        graph.setPerfEstimate(heapsort_vtx, 20);
+        graph.setTileMapping(mergesort_vtx, i);
+        graph.setPerfEstimate(mergesort_vtx, 20);
         nums += (numbers_per_tile * 2);
         nums2 += (numbers_per_tile * 2);
       }
@@ -148,7 +150,7 @@ int main(int argc, char *argv[]) {
   engine.run(0);
   engine.readTensor("list-read", input_list.data(), input_list.data() + input_list.size());
   
-  //engine.printProfileSummary(cout, {{"showExecutionSteps", "true"}});
+  engine.printProfileSummary(cout, {{"showExecutionSteps", "true"}});
 
   clock_gettime(CLOCK_REALTIME, &stop);
   total_time = (stop.tv_sec-start.tv_sec)

@@ -182,3 +182,48 @@ class BrickSortComparison : public MultiVertex {
         return true;
     }
 };
+
+class MergeSortComparison : public Vertex {
+    public:
+    Input<Vector<int>> a;
+    Input<<Vector<int>> b;
+    Output<Vector<int>> a_out;
+    Ouput<Vector<int>> b_out;
+
+    bool compute() {
+        int i = 0;
+        int j = 0;
+        while (i < a.size() && j < b.size()) {
+            if (a[i] <= b[j]) {
+                if (i + j >= a.size()) {
+                    b_out[(i + j) % a.size()] = a[i];
+                } else {
+                    a_out[i + j] = a[i];
+                }
+                i++;
+            } else {
+                 if (i + j >= a.size()) {
+                    b_out[(i + j) % a.size()] = b[j];
+                } else {
+                    a_out[i + j] = b[j];
+                }
+                j++;
+            }
+            
+        }
+
+        if (i < a.size()) {
+            while (i < a.size()) {
+                b_out[(i + j) % a.size()] = a[i];
+                i++;
+            }
+        } else {
+            while (j < b.size()) {
+                b_out[(i + j) % a.size()] = b[j];
+                j++;
+            }
+        }
+
+        return true;
+    }
+}
