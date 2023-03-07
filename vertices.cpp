@@ -185,8 +185,8 @@ class BrickSortComparison : public MultiVertex {
 
 class MergeSortComparison : public Vertex {
     public:
-    Input<Vector<int>> a;
-    Input<Vector<int>> b;
+    InOut<Vector<int>> a;
+    InOut<Vector<int>> b;
 
     bool compute() {
         for (int i = b.size() - 1; i >= 0; i--) {
