@@ -110,7 +110,6 @@ int main(int argc, char *argv[]) {
       ComputeSet cs_even = graph.addComputeSet("mergeEven"+to_string(k));
       
       nums = 0;
-      std::vector<VertexRef> clean_up;
       int nums2 = nums + numbers_per_tile;
       for (int i = 0; i < even_stop; i += 2) {
         int end_index1 = std::min(n, nums + numbers_per_tile);
@@ -118,23 +117,18 @@ int main(int argc, char *argv[]) {
         VertexRef mergesort_vtx = graph.addVertex(cs_even, "MergeSortComparison");
         graph.connect(mergesort_vtx["a"], initial_list.slice(nums, end_index1));
         graph.connect(mergesort_vtx["b"], initial_list.slice(nums2, end_index2));
-        clean_up.push_back(mergesort_vtx);
         graph.setTileMapping(mergesort_vtx, i);
         graph.setPerfEstimate(mergesort_vtx, 20);
         nums += (numbers_per_tile * 2);
         nums2 += (numbers_per_tile * 2);
       }
       prog.add(Execute(cs_even));
-      for (int i = 0; i < clean_up.size(); i++) {
-        prog.add(WriteUndef(clean_up[i]));
-      }
 
       ComputeSet cs_odd = graph.addComputeSet("mergeOdd"+to_string(k));
        
       nums = numbers_per_tile;
       nums2 = nums + numbers_per_tile;
-      
-      std::vector<VertexRef> clean_up2;
+    
       for (int i = 1; i < odd_stop; i += 2) {
         int end_index1 = std::min(n, nums + numbers_per_tile);
         int end_index2 = std::min(n, nums2 + numbers_per_tile);
@@ -143,15 +137,11 @@ int main(int argc, char *argv[]) {
         graph.connect(mergesort_vtx["b"], initial_list.slice(nums2, end_index2));
         graph.setTileMapping(mergesort_vtx, i);
         graph.setPerfEstimate(mergesort_vtx, 20);
-        clean_up2.push_back(mergesort_vtx);
         nums += (numbers_per_tile * 2);
         nums2 += (numbers_per_tile * 2);
       }
 
       prog.add(Execute(cs_odd));
-      for (int i = 0; i < clean_up2.size(); i++) {
-        prog.add(WriteUndef(clean_up2[i]));
-      }
   }
   
   graph.createHostWrite("list-write", initial_list);
