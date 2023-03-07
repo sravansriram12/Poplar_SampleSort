@@ -194,7 +194,7 @@ class MergeSortComparison : public Vertex {
         // Move all elements one position ahead till the
         // smallest greater element is not found */
             int j, last = a[a.size() - 1];
-            for (j = b.size() - 2; j >= 0 && a[j] > b[i]; j--)
+            for (j = a.size() - 2; j >= 0 && a[j] > b[i]; j--)
                 a[j + 1] = a[j];
     
             // If there was a greater element
