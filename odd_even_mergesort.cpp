@@ -97,11 +97,14 @@ int main(int argc, char *argv[]) {
       
       int nums = 0;
       int nums2 = nums + numbers_per_tile;
+      vector<Tensor> clean_up;
       for (int i = 0; i < p_in_use; i += 2) {
         int end_index1 = std::min(n, nums + numbers_per_tile);
         int end_index2 = std::min(n, nums2 + numbers_per_tile);
         VertexRef heapsort_vtx = graph.addVertex(cs_even, "HeapSort");
+        Tensor other_tile = initial_list.slice(nums2, end_index2);
         graph.connect(heapsort_vtx["local_list"], concat(initial_list.slice(nums, end_index1), initial_list.slice(nums2, end_index2)));
+        clean_up.push_back(other_tile);
         graph.setTileMapping(heapsort_vtx, i);
         graph.setPerfEstimate(heapsort_vtx, 20);
         nums += (numbers_per_tile * 2);
@@ -113,11 +116,14 @@ int main(int argc, char *argv[]) {
        
       nums = numbers_per_tile;
       nums2 = nums + numbers_per_tile;
+      
       for (int i = 1; i < p_in_use - 1; i += 2) {
         int end_index1 = std::min(n, nums + numbers_per_tile);
         int end_index2 = std::min(n, nums2 + numbers_per_tile);
         VertexRef heapsort_vtx = graph.addVertex(cs_odd, "HeapSort");
-        graph.connect(heapsort_vtx["local_list"], concat(initial_list.slice(nums, end_index1), initial_list.slice(nums2, end_index2)));
+        Tensor other_tile = initial_list.slice(nums2, end_index2);
+        graph.connect(heapsort_vtx["local_list"], concat(initial_list.slice(nums, end_index1), other_tile));
+        clean_up.push_back(other_tile);
         graph.setTileMapping(heapsort_vtx, i);
         graph.setPerfEstimate(heapsort_vtx, 20);
         nums += (numbers_per_tile * 2);
@@ -125,6 +131,9 @@ int main(int argc, char *argv[]) {
       }
 
       prog.add(Execute(cs_odd));
+      for (int i = 0; i < clean_up.size(); i++) {
+        prog.add(WriteUndef(clean_up[i]));
+      }
   }
 
   prog.add(PrintTensor(initial_list));
