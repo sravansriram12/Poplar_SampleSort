@@ -83,7 +83,7 @@ int main(int argc, char *argv[]) {
   Tensor initial_list = graph.addVariable(INT, {n}, "initial_list");
   int p = 1472;
   int numbers_per_tile = ceil(float(n) / p);
-  int p_in_use = n / numbers_per_tile;
+  int p_in_use = ceil(float(n) / numbers_per_tile);
 
   int tile_num = 0;
   int nums = 0;
