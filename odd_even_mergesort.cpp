@@ -126,7 +126,7 @@ int main(int argc, char *argv[]) {
       }
       prog.add(Execute(cs_even));
       for (int i = 0; i < clean_up.size(); i++) {
-        prog.add(WriteUndef(clean_up[i]["a"]))
+        prog.add(WriteUndef(clean_up[i]));
       }
 
       ComputeSet cs_odd = graph.addComputeSet("mergeOdd"+to_string(k));
@@ -150,7 +150,7 @@ int main(int argc, char *argv[]) {
 
       prog.add(Execute(cs_odd));
       for (int i = 0; i < clean_up2.size(); i++) {
-        prog.add(WriteUndef(clean_up2[i]["b"]))
+        prog.add(WriteUndef(clean_up2[i]));
       }
   }
   
