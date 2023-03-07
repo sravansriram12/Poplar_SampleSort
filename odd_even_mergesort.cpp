@@ -130,21 +130,29 @@ int main(int argc, char *argv[]) {
   prog.add(PrintTensor(initial_list));
   
   graph.createHostWrite("list-write", initial_list);
+  graph.createHostRead("list-read", initial_list);
   
   Engine engine(graph, prog, OptionFlags{{"debug.retainDebugInformation", "true"}});
   engine.load(device);
   engine.writeTensor("list-write", input_list.data(), input_list.data() + input_list.size());
 
   engine.run(0);
+  engine.readTensor("list-read", input_list.data(), input_list.data() + input_list.size());
   
   engine.printProfileSummary(cout, {{"showExecutionSteps", "true"}});
-  
 
   clock_gettime(CLOCK_REALTIME, &stop);
   total_time = (stop.tv_sec-start.tv_sec)
   +0.000000001*(stop.tv_nsec-start.tv_nsec);
 
   cout << "Total time (s): " << total_time << endl;
+
+  for (int i = 0; i < input_list.size() - 1; i++) {
+    if (input_list[i + 1] < input_list[i]) {
+        cout << "ERROR: NOT SORTED" << endl;
+        break;
+    }
+  }
 
   return 0;
 }
