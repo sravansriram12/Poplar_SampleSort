@@ -91,7 +91,7 @@ int main(int argc, char *argv[]) {
     nums += numbers_per_tile;
   }
 
-  for (int k = 0; k < p; k++) {
+  for (int k = 0; k < p_in_use; k++) {
       ComputeSet cs_even = graph.addComputeSet("mergeEven"+to_string(k));
       
       int nums = 0;
