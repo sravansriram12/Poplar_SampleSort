@@ -140,11 +140,9 @@ int main(int argc, char *argv[]) {
     prog.add(Copy(oddTensor, initial_list.slice(1, 1 + active_numbers_odd)));
   }
 
-  prog.add(PrintTensor(initial_list));
-
   graph.createHostWrite("list-write", initial_list);
   
-  Engine engine(graph, prog, OptionFlags{{"debug.retainDebugInformation", "true"}});
+  Engine engine(graph, prog);
   engine.load(device);
   engine.writeTensor("list-write", input_list.data(), input_list.data() + input_list.size());
 
