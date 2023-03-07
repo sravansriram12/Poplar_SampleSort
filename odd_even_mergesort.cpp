@@ -147,7 +147,7 @@ int main(int argc, char *argv[]) {
   graph.createHostWrite("list-write", initial_list);
   graph.createHostRead("list-read", initial_list);
   
-  Engine engine(graph, prog);
+  Engine engine(graph, prog, OptionFlags{{"debug.retainDebugInformation", "true"}});
   engine.load(device);
   engine.writeTensor("list-write", input_list.data(), input_list.data() + input_list.size());
 
