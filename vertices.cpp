@@ -193,7 +193,7 @@ class MergeSortComparison : public Vertex {
         // Find the smallest element greater than ar2[i].
         // Move all elements one position ahead till the
         // smallest greater element is not found */
-            int j, last = a[m - 1];
+            int j, last = a[a.size() - 1];
             for (j = b.size() - 2; j >= 0 && a[j] > b[i]; j--)
                 a[j + 1] = a[j];
     
