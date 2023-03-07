@@ -88,8 +88,8 @@ int main(int argc, char *argv[]) {
   int tile_num = 0;
   int nums = 0;
   for(int i = 0; i < p_in_use; i++) {
-    cout << nums << endl;
     int end_index = std::min(n, nums + numbers_per_tile);
+    cout << nums << " " << p_in_use << " " << end_index << endl;
     graph.setTileMapping(initial_list.slice(nums, end_index), i);
     nums += numbers_per_tile;
   }
