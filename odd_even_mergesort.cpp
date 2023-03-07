@@ -93,8 +93,6 @@ int main(int argc, char *argv[]) {
     nums += numbers_per_tile;
   }
 
-  prog.add(PrintTensor(initial_list));
-
   for (int k = 0; k < p_in_use; k++) {
       ComputeSet cs_even = graph.addComputeSet("mergeEven"+to_string(k));
       
@@ -132,8 +130,6 @@ int main(int argc, char *argv[]) {
 
       prog.add(Execute(cs_odd));
   }
-
-  prog.add(PrintTensor(initial_list));
   
   graph.createHostWrite("list-write", initial_list);
   graph.createHostRead("list-read", initial_list);
