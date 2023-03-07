@@ -148,7 +148,7 @@ int main(int argc, char *argv[]) {
 
   engine.run(0);
   
-  //engine.printProfileSummary(cout, {{"showExecutionSteps", "true"}});
+  engine.printProfileSummary(cout, {{"showExecutionSteps", "true"}});
   
 
   clock_gettime(CLOCK_REALTIME, &stop);
