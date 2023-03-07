@@ -81,7 +81,7 @@ int main(int argc, char *argv[]) {
   // Add codelets to the graph
   graph.addCodelets("vertices.cpp");
   Tensor initial_list = graph.addVariable(INT, {n}, "initial_list");
-  int p = 1000;
+  int p = 1472;
   int numbers_per_tile = ceil(float(n) / p);
   int p_in_use = n / numbers_per_tile;
 
@@ -98,7 +98,7 @@ int main(int argc, char *argv[]) {
   for (int k = 0; k < p_in_use; k++) {
       ComputeSet cs_even = graph.addComputeSet("mergeEven"+to_string(k));
       
-      int nums = 0;
+      nums = 0;
       int nums2 = nums + numbers_per_tile;
       for (int i = 0; i < p_in_use; i += 2) {
         int end_index1 = std::min(n, nums + numbers_per_tile);
