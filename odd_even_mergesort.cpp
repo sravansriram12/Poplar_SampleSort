@@ -139,7 +139,7 @@ int main(int argc, char *argv[]) {
   engine.run(0);
   engine.readTensor("list-read", input_list.data(), input_list.data() + input_list.size());
   
-  engine.printProfileSummary(cout, {{"showExecutionSteps", "true"}});
+  //engine.printProfileSummary(cout, {{"showExecutionSteps", "true"}});
 
   clock_gettime(CLOCK_REALTIME, &stop);
   total_time = (stop.tv_sec-start.tv_sec)
