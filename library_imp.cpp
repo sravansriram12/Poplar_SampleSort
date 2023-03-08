@@ -109,7 +109,7 @@ int main(int argc, char *argv[]) {
   graph.createHostWrite("list-write", initial_list);
   
   
-  Engine engine(graph, prog, OptionFlags{{"debug.retainDebugInformation", "true"}});
+  Engine engine(graph, prog);
   
   
   engine.load(device);
@@ -124,7 +124,6 @@ int main(int argc, char *argv[]) {
   +0.000000001*(engine_stop.tv_nsec-engine_start.tv_nsec);
 
   if (DEBUG == 1) {
-    engine.printProfileSummary(cout, {{"showExecutionSteps", "true"}});
     cout << "Engine construction time: " << subtract_time << endl;
   }
   
