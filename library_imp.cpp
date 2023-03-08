@@ -93,9 +93,9 @@ int main(int argc, char *argv[]) {
  
  
   TopKParams params(n, false, SortOrder::ASCENDING, false);
-  clock_gettime(CLOCK_REALTIME, &engine_start);
-  Tensor final_list = popops::topK(graph, prog, initial_list, params, DebugContext{});
-  clock_gettime(CLOCK_REALTIME, &engine_stop);
+  
+  Tensor final_list = popops::topK(graph, prog, initial_list, params);
+  
 
   if (DEBUG == 1) {
      if (n <= 500) {
@@ -105,8 +105,9 @@ int main(int argc, char *argv[]) {
   
   graph.createHostWrite("list-write", initial_list);
   
-  
+  clock_gettime(CLOCK_REALTIME, &engine_start);
   Engine engine(graph, prog, OptionFlags{{"debug.retainDebugInformation", "true"}});
+  clock_gettime(CLOCK_REALTIME, &engine_stop);
   
   subtract_time = (engine_stop.tv_sec-engine_start.tv_sec)
   +0.000000001*(engine_stop.tv_nsec-engine_start.tv_nsec);
