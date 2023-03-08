@@ -104,7 +104,7 @@ int main(int argc, char *argv[]) {
     odd_stop = p_in_use;
   } 
 
-  for (int k = 0; k < p_in_use; k++) {
+  for (int k = 0; k < ceil(log2(p_in_use)); k++) {
       ComputeSet cs_even = graph.addComputeSet("mergeEven"+to_string(k));
       
       nums = 0;
