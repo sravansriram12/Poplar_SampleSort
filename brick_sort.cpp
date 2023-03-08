@@ -31,7 +31,7 @@ int main(int argc, char *argv[]) {
   }
 
   unsigned n = atoi(argv[argc - 1]);  // number of elements
-  const char *dev = "model-ipu2";
+  const char *dev = "ipu";
   srand(time(NULL));
   
   Device device;
