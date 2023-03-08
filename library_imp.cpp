@@ -33,7 +33,7 @@ int main(int argc, char *argv[]) {
   unsigned n = atoi(argv[argc - 3]);  // number of elements
   unsigned p = atoi(argv[argc - 2]);   // number of processors (tiles)
   unsigned DEBUG = atoi(argv[argc - 1]);
-  unsigned local_list_size = n / p;
+  unsigned local_list_size = ceil(float(n) / p);
   const char *dev = "ipu";
   srand(time(NULL));
   
