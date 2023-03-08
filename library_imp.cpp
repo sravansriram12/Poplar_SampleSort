@@ -77,6 +77,7 @@ int main(int argc, char *argv[]) {
 
   struct timespec engine_start, engine_stop;
   double subtract_time;
+  
   // 2D tensor where each inner tensor at index i represents the initial list at processor i
   Tensor initial_list = graph.addVariable(INT, {n});
 
@@ -91,7 +92,7 @@ int main(int argc, char *argv[]) {
     }
   }
  
- 
+  clock_gettime(CLOCK_REALTIME, &engine_start);
   TopKParams params(n, false, SortOrder::ASCENDING, false);
   
   Tensor final_list = popops::topK(graph, prog, initial_list, params);
@@ -105,18 +106,20 @@ int main(int argc, char *argv[]) {
   
   graph.createHostWrite("list-write", initial_list);
   
-  clock_gettime(CLOCK_REALTIME, &engine_start);
-  Engine engine(graph, prog);
-  clock_gettime(CLOCK_REALTIME, &engine_stop);
   
-  subtract_time = (engine_stop.tv_sec-engine_start.tv_sec)
-  +0.000000001*(engine_stop.tv_nsec-engine_start.tv_nsec);
+  Engine engine(graph, prog);
+  
+  
   engine.load(device);
   
   engine.writeTensor("list-write", input_list.data(), input_list.data() + input_list.size());
   engine.run(0);  
+  engine.readTensor("list-read", input_list.data(), input_list.data() + input_list.size()); 
 
+  clock_gettime(CLOCK_REALTIME, &engine_stop);
   
+  subtract_time = (engine_stop.tv_sec-engine_start.tv_sec)
+  +0.000000001*(engine_stop.tv_nsec-engine_start.tv_nsec);
 
   if (DEBUG == 1) {
     cout << "Engine construction time: " << subtract_time << endl;
