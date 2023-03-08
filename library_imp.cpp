@@ -96,6 +96,8 @@ int main(int argc, char *argv[]) {
   TopKParams params(n, false, SortOrder::ASCENDING, false);
   
   Tensor final_list = popops::topK(graph, prog, initial_list, params);
+
+  graph.createHostRead("list-read", final_list);
   
 
   if (DEBUG == 1) {
