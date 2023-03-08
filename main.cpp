@@ -127,6 +127,10 @@ int main(int argc, char *argv[]) {
   }
   
   // Create the Graph object
+  struct timespec start, stop;
+  double total_time;
+  clock_gettime(CLOCK_REALTIME, &start);
+  
   Graph graph(device);
   Sequence prog;
 
@@ -186,9 +190,7 @@ int main(int argc, char *argv[]) {
 
   engine.readTensor("list-read", processor_list.data(), processor_list.data() + processor_list.size());
 
-  struct timespec start, stop;
-  double total_time;
-  clock_gettime(CLOCK_REALTIME, &start);
+  
 
   std::vector<std::vector<unsigned>> indexes (p, std::vector<unsigned> (0, 0));
   for (unsigned i = 0; i < n; i++) {
@@ -216,9 +218,7 @@ int main(int argc, char *argv[]) {
   Sequence prog2;
   prog2.add(Execute(local_sort));
 
-  clock_gettime(CLOCK_REALTIME, &stop);
-  total_time = (stop.tv_sec-start.tv_sec)
-  +0.000000001*(stop.tv_nsec-start.tv_nsec);
+  
  
   Engine engine2(graph, prog2,  OptionFlags{{"debug.retainDebugInformation", "true"}});
   engine2.load(device);
@@ -226,6 +226,10 @@ int main(int argc, char *argv[]) {
 
   engine2.run(0);  
   engine2.readTensor("sorted-list-read", input_list.data(), input_list.data() + input_list.size()); 
+
+  clock_gettime(CLOCK_REALTIME, &stop);
+  total_time = (stop.tv_sec-start.tv_sec)
+  +0.000000001*(stop.tv_nsec-start.tv_nsec);
 
  
   if (DEBUG == 1) {

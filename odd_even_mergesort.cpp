@@ -143,7 +143,7 @@ int main(int argc, char *argv[]) {
   graph.createHostWrite("list-write", initial_list);
   graph.createHostRead("list-read", initial_list);
   
-  Engine engine(graph, prog);
+  Engine engine(graph, prog, OptionFlags{{"debug.retainDebugInformation", "true"}});
   engine.load(device);
   engine.writeTensor("list-write", input_list.data(), input_list.data() + input_list.size());
 
@@ -155,6 +155,7 @@ int main(int argc, char *argv[]) {
   +0.000000001*(stop.tv_nsec-start.tv_nsec);
 
   cout << "Total time (s): " << total_time << endl;
+  engine.printProfileSummary(cout, {{"showExecutionSteps", "true"}});
 
   for (int i = 0; i < input_list.size() - 1; i++) {
     if (input_list[i + 1] < input_list[i]) {
