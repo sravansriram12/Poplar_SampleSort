@@ -109,7 +109,7 @@ int main(int argc, char *argv[]) {
   graph.createHostWrite("list-write", initial_list);
   
   
-  Engine engine(graph, prog, OptionFlags{{"debug.retainDebugInformation", "true"});
+  Engine engine(graph, prog, OptionFlags{{"debug.retainDebugInformation", "true"}});
   
   
   engine.load(device);
