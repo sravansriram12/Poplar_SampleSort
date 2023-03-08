@@ -34,7 +34,7 @@ int main(int argc, char *argv[]) {
   unsigned p = atoi(argv[argc - 2]);   // number of processors (tiles)
   unsigned DEBUG = atoi(argv[argc - 1]);
   unsigned local_list_size = n / p;
-  const char *dev = "model-ipu2";
+  const char *dev = "ipu";
   srand(time(NULL));
   
   Device device;
@@ -106,7 +106,7 @@ int main(int argc, char *argv[]) {
   graph.createHostWrite("list-write", initial_list);
   
   clock_gettime(CLOCK_REALTIME, &engine_start);
-  Engine engine(graph, prog, OptionFlags{{"debug.retainDebugInformation", "true"}});
+  Engine engine(graph, prog);
   clock_gettime(CLOCK_REALTIME, &engine_stop);
   
   subtract_time = (engine_stop.tv_sec-engine_start.tv_sec)
@@ -119,8 +119,7 @@ int main(int argc, char *argv[]) {
   
 
   if (DEBUG == 1) {
-    engine.printProfileSummary(cout, {{"showExecutionSteps", "true"}});
-    cout << "Setting up elements on tile time: " << subtract_time << endl;
+    cout << "Engine construction time: " << subtract_time << endl;
   }
   
 
