@@ -125,7 +125,7 @@ int main(int argc, char *argv[]) {
 
   if (DEBUG == 1) {
     engine.printProfileSummary(cout, {{"showExecutionSteps", "true"}});
-    cout << "Engine construction time: " << subtract_time << endl;
+    cout << "Total time: " << subtract_time << endl;
   }
   
 

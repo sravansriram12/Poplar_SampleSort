@@ -69,8 +69,8 @@ int main(int argc, char *argv[]) {
     input_list[idx] = (int) mrand48();
   }
 
-  struct timespec start, stop;
-  double total_time;
+  struct timespec start, stop, engine_start, engine_stop;
+  double total_time, engine_time;
   clock_gettime(CLOCK_REALTIME, &start);
 
   Graph graph(device);
@@ -142,8 +142,17 @@ int main(int argc, char *argv[]) {
   
   graph.createHostWrite("list-write", initial_list);
   graph.createHostRead("list-read", initial_list);
-  
+
+  clock_gettime(CLOCK_REALTIME, &engine_start);
   Engine engine(graph, prog, OptionFlags{{"debug.retainDebugInformation", "true"}});
+  clock_gettime(CLOCK_REALTIME, &engine_stop);
+
+
+  engine_time = (engine_stop.tv_sec-engine_start.tv_sec)
+  +0.000000001*(engine_stop.tv_nsec-engine_start.tv_nsec);
+
+  cout << "Engine construction time (s): " << engine_time << endl;
+
   engine.load(device);
   engine.writeTensor("list-write", input_list.data(), input_list.data() + input_list.size());
 
@@ -153,6 +162,8 @@ int main(int argc, char *argv[]) {
   clock_gettime(CLOCK_REALTIME, &stop);
   total_time = (stop.tv_sec-start.tv_sec)
   +0.000000001*(stop.tv_nsec-start.tv_nsec);
+
+  
 
   cout << "Total time (s): " << total_time << endl;
   engine.printProfileSummary(cout, {{"showExecutionSteps", "true"}});
