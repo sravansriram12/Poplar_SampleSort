@@ -31,7 +31,7 @@ int main(int argc, char *argv[]) {
   }
 
   int n = atoi(argv[argc - 1]);  // number of elements
-  const char *dev = "model-ipu2";
+  const char *dev = "ipu";
   
   Device device;
 
@@ -143,14 +143,12 @@ int main(int argc, char *argv[]) {
   graph.createHostWrite("list-write", initial_list);
   graph.createHostRead("list-read", initial_list);
   
-  Engine engine(graph, prog, OptionFlags{{"debug.retainDebugInformation", "true"}});
+  Engine engine(graph, prog);
   engine.load(device);
   engine.writeTensor("list-write", input_list.data(), input_list.data() + input_list.size());
 
   engine.run(0);
   engine.readTensor("list-read", input_list.data(), input_list.data() + input_list.size());
-  
-  engine.printProfileSummary(cout, {{"showExecutionSteps", "true"}});
 
   clock_gettime(CLOCK_REALTIME, &stop);
   total_time = (stop.tv_sec-start.tv_sec)
