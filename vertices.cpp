@@ -190,8 +190,8 @@ class MergeSortComparison : public MultiVertex {
     Output<Vector<int>> c;
 
     int binary_search_b(int v) {
-        int left = first; 
-        int right = last-1; 
+        int left = 0; 
+        int right = a.size() - 1; 
 
         if (a[left] >= v) return left;
         if (a[right] < v) return right+1;
