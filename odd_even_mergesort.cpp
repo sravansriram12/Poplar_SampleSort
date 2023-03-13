@@ -142,16 +142,16 @@ int main(int argc, char *argv[]) {
   } else {
     ComputeSet cs = graph.addComputeSet("localsort");
     Tensor placeholder = graph.addVariable(INT, {n * 2}, "placeholder");
-    std::vector<int> indices(p_in_use * 2);
+    std::vector<Tensor> placeholder(p_in_use);
      for(int i = 0; i < p_in_use; i++) {
         int end_index = std::min(n, nums + numbers_per_tile);
         VertexRef heapsort_vtx = graph.addVertex(cs, "HeapSort");
         graph.setTileMapping(initial_list.slice(nums, end_index), i);
         graph.setTileMapping(heapsort_vtx, i);
         graph.setPerfEstimate(heapsort_vtx, 20);
-        graph.setTileMapping(placeholder.slice(nums * 2, end_index * 2), i);
-        indices[i * 2] = nums * 2;
-        indices[i * 2 + 1] = end_index * 2;
+        Tensor a = graph.addVariable(INT, {(end_index - nums ) * 2});
+        graph.setTileMapping(a, i);
+        placeholder[i] = a;
         nums += numbers_per_tile;
     }
 
@@ -168,7 +168,7 @@ int main(int argc, char *argv[]) {
             VertexRef mergesort_vtx = graph.addVertex(cs_even, "MergeSortComparison");
             graph.connect(mergesort_vtx["a"], initial_list.slice(nums, end_index1));
             graph.connect(mergesort_vtx["b"], initial_list.slice(nums2, end_index2));
-            graph.connect(mergesort_vtx["c"], placeholder.slice(indices[i * 2], indices[i * 2 + 1]));
+            graph.connect(mergesort_vtx["c"], placeholder[i]);
             graph.setTileMapping(mergesort_vtx, i);
             graph.setPerfEstimate(mergesort_vtx, 20);
             nums += (numbers_per_tile * 2);
@@ -186,7 +186,7 @@ int main(int argc, char *argv[]) {
             VertexRef mergesort_vtx = graph.addVertex(cs_odd, "MergeSortComparison");
             graph.connect(mergesort_vtx["a"], initial_list.slice(nums, end_index1));
             graph.connect(mergesort_vtx["b"], initial_list.slice(nums2, end_index2));
-            graph.connect(mergesort_vtx["c"], placeholder.slice(indices[i * 2], indices[i * 2 + 1]));
+            graph.connect(mergesort_vtx["c"], placeholder[i]);
             graph.setTileMapping(mergesort_vtx, i);
             graph.setPerfEstimate(mergesort_vtx, 20);
             nums += (numbers_per_tile * 2);
@@ -201,9 +201,8 @@ int main(int argc, char *argv[]) {
             for (int i = 0; i < even_stop; i += 2) {
                 int end_index1 = std::min(n, nums + numbers_per_tile);
                 int end_index2 = std::min(n, nums2 + numbers_per_tile);
-                cout << indices[i * 2 + 1] - indices[i * 2] + numbers_per_tile << endl;
-                prog.add(Copy(placeholder.slice(indices[i * 2], indices[i * 2] + numbers_per_tile), initial_list.slice(nums, end_index1)));
-                prog.add(Copy(placeholder.slice(indices[i * 2] + numbers_per_tile, indices[i * 2 + 1]), initial_list.slice(nums2, end_index2)));
+                prog.add(Copy(placeholder[i].slice(0, end_index1 - nums), initial_list.slice(nums, end_index1)));
+                prog.add(Copy(placeholder[i].slice(end_index1 - nums, (end_index1 - nums) + end_index2 - nums2), initial_list.slice(nums2, end_index2)));
                 nums += (numbers_per_tile * 2);
                 nums2 += (numbers_per_tile * 2);
             }
@@ -213,9 +212,8 @@ int main(int argc, char *argv[]) {
             for (int i = 1; i < odd_stop; i += 2) {
                 int end_index1 = std::min(n, nums + numbers_per_tile);
                 int end_index2 = std::min(n, nums2 + numbers_per_tile);
-                cout << indices[i * 2 + 1] - indices[i * 2] + numbers_per_tile << endl;
-                prog.add(Copy(placeholder.slice(indices[i * 2], indices[i * 2] + numbers_per_tile), initial_list.slice(nums, end_index1)));
-                prog.add(Copy(placeholder.slice(indices[i * 2] + numbers_per_tile, indices[i * 2 + 1]), initial_list.slice(nums2, end_index2)));
+                prog.add(Copy(placeholder[i].slice(0, end_index1 - nums), initial_list.slice(nums, end_index1)));
+                prog.add(Copy(placeholder[i].slice(end_index1 - nums, (end_index1 - nums) + end_index2 - nums2), initial_list.slice(nums2, end_index2)));
                 nums += (numbers_per_tile * 2);
                 nums2 += (numbers_per_tile * 2);
             }
