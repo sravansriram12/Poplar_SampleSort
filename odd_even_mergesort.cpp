@@ -86,6 +86,12 @@ int main(int argc, char *argv[]) {
   int tile_num = 0;
   int nums = 0;
 
+  for(int i = 0; i < p_in_use; i++) {
+    int end_index = std::min(n, nums + numbers_per_tile);
+    graph.setTileMapping(initial_list.slice(nums, end_index), i);
+    nums += numbers_per_tile;
+  }
+
   int even_stop = p_in_use;
   int odd_stop = p_in_use - 1;
   if (p_in_use % 2 != 0) {
