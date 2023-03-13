@@ -142,7 +142,7 @@ int main(int argc, char *argv[]) {
   } else {
     ComputeSet cs = graph.addComputeSet("localsort");
     Tensor placeholder = graph.addVariable(INT, {n * 2}, "placeholder");
-    vector<int> indices(p_in_use * 2);
+    std::vector<int> indices(p_in_use * 2);
      for(int i = 0; i < p_in_use; i++) {
         int end_index = std::min(n, nums + numbers_per_tile);
         VertexRef heapsort_vtx = graph.addVertex(cs, "HeapSort");
