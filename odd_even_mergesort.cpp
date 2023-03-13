@@ -141,7 +141,6 @@ int main(int argc, char *argv[]) {
   
   } else {
     ComputeSet cs = graph.addComputeSet("localsort");
-    Tensor placeholder = graph.addVariable(INT, {n * 2}, "placeholder");
     std::vector<Tensor> placeholder(p_in_use);
      for(int i = 0; i < p_in_use; i++) {
         int end_index = std::min(n, nums + numbers_per_tile);
