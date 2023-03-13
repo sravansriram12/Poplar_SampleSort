@@ -199,8 +199,9 @@ int main(int argc, char *argv[]) {
             for (int i = 0; i < even_stop; i += 2) {
                 int end_index1 = std::min(n, nums + numbers_per_tile);
                 int end_index2 = std::min(n, nums2 + numbers_per_tile);
-                prog.add(Copy(placeholder.slice(nums * 2, nums * 2 + (end_index1 - nums)), initial_list.slice(nums, end_index1)));
-                prog.add(Copy(placeholder.slice(nums * 2 + (end_index1 - nums), end_index1 * 2), initial_list.slice(nums2, end_index2)));
+                cout << end_index1 - nums + 1 << endl;
+                prog.add(Copy(placeholder.slice(nums * 2, nums * 2 + (end_index1 - nums + 1)), initial_list.slice(nums, end_index1)));
+                prog.add(Copy(placeholder.slice(nums * 2 + (end_index1 - nums + 1), end_index1 * 2), initial_list.slice(nums2, end_index2)));
                 nums += (numbers_per_tile * 2);
                 nums2 += (numbers_per_tile * 2);
             }
@@ -210,8 +211,8 @@ int main(int argc, char *argv[]) {
             for (int i = 1; i < odd_stop; i += 2) {
                 int end_index1 = std::min(n, nums + numbers_per_tile);
                 int end_index2 = std::min(n, nums2 + numbers_per_tile);
-                prog.add(Copy(placeholder.slice(nums * 2, nums * 2 + (end_index1 - nums)), initial_list.slice(nums, end_index1)));
-                prog.add(Copy(placeholder.slice(nums * 2 + (end_index1 - nums), end_index1 * 2), initial_list.slice(nums2, end_index2)));
+                prog.add(Copy(placeholder.slice(nums * 2, nums * 2 + (end_index1 - nums + 1)), initial_list.slice(nums, end_index1)));
+                prog.add(Copy(placeholder.slice(nums * 2 + (end_index1 - nums + 1), end_index1 * 2), initial_list.slice(nums2, end_index2)));
                 nums += (numbers_per_tile * 2);
                 nums2 += (numbers_per_tile * 2);
             }
