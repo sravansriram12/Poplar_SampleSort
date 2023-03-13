@@ -85,17 +85,6 @@ int main(int argc, char *argv[]) {
 
   int tile_num = 0;
   int nums = 0;
-  ComputeSet cs = graph.addComputeSet("localsort");
-  for(int i = 0; i < p_in_use; i++) {
-    int end_index = std::min(n, nums + numbers_per_tile);
-    VertexRef heapsort_vtx = graph.addVertex(cs, "HeapSort");
-    graph.setTileMapping(initial_list.slice(nums, end_index), i);
-    graph.connect(heapsort_vtx["local_list"], initial_list.slice(nums, end_index));
-    graph.setTileMapping(heapsort_vtx, i);
-    graph.setPerfEstimate(heapsort_vtx, 20);
-    nums += numbers_per_tile;
-  }
-  prog.add(Execute(cs));
 
   int even_stop = p_in_use;
   int odd_stop = p_in_use - 1;
@@ -104,12 +93,11 @@ int main(int argc, char *argv[]) {
     odd_stop = p_in_use;
   } 
 
-  for (int k = 0; k < p_in_use; k++) {
-      ComputeSet cs_even = graph.addComputeSet("mergeEven"+to_string(k));
-      
-      nums = 0;
-      int nums2 = nums + numbers_per_tile;
-      for (int i = 0; i < even_stop; i += 2) {
+    ComputeSet cs_even = graph.addComputeSet("mergeEven"+to_string(k));
+
+    nums = 0;
+    int nums2 = nums + numbers_per_tile;
+    for (int i = 0; i < even_stop; i += 2) { (1000 / 2)
         int end_index1 = std::min(n, nums + numbers_per_tile);
         int end_index2 = std::min(n, nums2 + numbers_per_tile);
         VertexRef heapsort_vtx = graph.addVertex(cs_even, "HeapSort");
@@ -118,15 +106,14 @@ int main(int argc, char *argv[]) {
         graph.setPerfEstimate(heapsort_vtx, 20);
         nums += (numbers_per_tile * 2);
         nums2 += (numbers_per_tile * 2);
-      }
-      prog.add(Execute(cs_even));
+    }
 
-      ComputeSet cs_odd = graph.addComputeSet("mergeOdd"+to_string(k));
-       
-      nums = numbers_per_tile;
-      nums2 = nums + numbers_per_tile;
-    
-      for (int i = 1; i < odd_stop; i += 2) {
+    ComputeSet cs_odd = graph.addComputeSet("mergeOdd"+to_string(k));
+
+    nums = numbers_per_tile;
+    nums2 = nums + numbers_per_tile;
+
+    for (int i = 1; i < odd_stop; i += 2) { (1000 / 2)
         int end_index1 = std::min(n, nums + numbers_per_tile);
         int end_index2 = std::min(n, nums2 + numbers_per_tile);
         VertexRef heapsort_vtx = graph.addVertex(cs_odd, "HeapSort");
@@ -135,8 +122,11 @@ int main(int argc, char *argv[]) {
         graph.setPerfEstimate(heapsort_vtx, 20);
         nums += (numbers_per_tile * 2);
         nums2 += (numbers_per_tile * 2);
-      }
+    }
 
+  
+  for (int k = 0; k < p_in_use; k++) {
+      prog.add(Execute(cs_even));
       prog.add(Execute(cs_odd));
   }
   
