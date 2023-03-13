@@ -196,13 +196,12 @@ int main(int argc, char *argv[]) {
             prog.add(Execute(cs_even));
             nums = 0;
             nums2 = nums + numbers_per_tile;
-            int nums3 = 0;
             for (int i = 0; i < even_stop; i += 2) {
                 int end_index1 = std::min(n, nums + numbers_per_tile);
                 int end_index2 = std::min(n, nums2 + numbers_per_tile);
-                cout << (end_index2 * 2) - (nums * 2 + numbers_per_tile) << endl;
+                cout << (end_index2) - (nums * 2 + numbers_per_tile) << endl;
                 prog.add(Copy(placeholder.slice(nums * 2, nums * 2 + numbers_per_tile), initial_list.slice(nums, end_index1)));
-                prog.add(Copy(placeholder.slice(nums * 2 + numbers_per_tile, end_index2 * 2), initial_list.slice(nums2, end_index2)));
+                prog.add(Copy(placeholder.slice(nums * 2 + numbers_per_tile, end_index2), initial_list.slice(nums2, end_index2)));
                 nums += (numbers_per_tile * 2);
                 nums2 += (numbers_per_tile * 2);
             }
@@ -213,7 +212,7 @@ int main(int argc, char *argv[]) {
                 int end_index1 = std::min(n, nums + numbers_per_tile);
                 int end_index2 = std::min(n, nums2 + numbers_per_tile);
                 prog.add(Copy(placeholder.slice(nums * 2,  nums * 2 + numbers_per_tile), initial_list.slice(nums, end_index1)));
-                prog.add(Copy(placeholder.slice( nums * 2 + numbers_per_tile, end_index2 * 2), initial_list.slice(nums2, end_index2)));
+                prog.add(Copy(placeholder.slice( nums * 2 + numbers_per_tile, end_index2), initial_list.slice(nums2, end_index2)));
                 nums += (numbers_per_tile * 2);
                 nums2 += (numbers_per_tile * 2);
             }
