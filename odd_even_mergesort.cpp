@@ -146,7 +146,7 @@ int main(int argc, char *argv[]) {
         int end_index = std::min(n, nums + numbers_per_tile);
         VertexRef heapsort_vtx = graph.addVertex(cs, "HeapSort");
         graph.setTileMapping(initial_list.slice(nums, end_index), i);
-        graph.connect(heapsort_vtx["local_list"], initial_list.slice(nums, end_index))
+        graph.connect(heapsort_vtx["local_list"], initial_list.slice(nums, end_index));
         graph.setTileMapping(heapsort_vtx, i);
         graph.setPerfEstimate(heapsort_vtx, 20);
         Tensor a = graph.addVariable(INT, {(end_index - nums ) * 2});
