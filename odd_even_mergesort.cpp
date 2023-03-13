@@ -97,7 +97,7 @@ int main(int argc, char *argv[]) {
 
     nums = 0;
     int nums2 = nums + numbers_per_tile;
-    for (int i = 0; i < even_stop; i += 2) { (1000 / 2)
+    for (int i = 0; i < even_stop; i += 2) { 
         int end_index1 = std::min(n, nums + numbers_per_tile);
         int end_index2 = std::min(n, nums2 + numbers_per_tile);
         VertexRef heapsort_vtx = graph.addVertex(cs_even, "HeapSort");
@@ -113,7 +113,7 @@ int main(int argc, char *argv[]) {
     nums = numbers_per_tile;
     nums2 = nums + numbers_per_tile;
 
-    for (int i = 1; i < odd_stop; i += 2) { (1000 / 2)
+    for (int i = 1; i < odd_stop; i += 2) { 
         int end_index1 = std::min(n, nums + numbers_per_tile);
         int end_index2 = std::min(n, nums2 + numbers_per_tile);
         VertexRef heapsort_vtx = graph.addVertex(cs_odd, "HeapSort");
