@@ -183,27 +183,62 @@ class BrickSortComparison : public MultiVertex {
     }
 };
 
-class MergeSortComparison : public Vertex {
+class MergeSortComparison : public MultiVertex {
     public:
-    InOut<Vector<int>> a;
-    InOut<Vector<int>> b;
+    Input<Vector<int>> a;
+    Input<Vector<int>> b;
+    Output<Vector<int>> c;
 
-    bool compute() {
-        for (int i = b.size() - 1; i >= 0; i--) {
-        // Find the smallest element greater than ar2[i].
-        // Move all elements one position ahead till the
-        // smallest greater element is not found */
-            int j, last = a[a.size() - 1];
-            for (j = a.size() - 2; j >= 0 && a[j] > b[i]; j--)
-                a[j + 1] = a[j];
-    
-            // If there was a greater element
-            if (last > b[i]) {
-                a[j + 1] = b[i];
-                b[i] = last;
+    int binary_search_b(int v) {
+        int left = first; 
+        int right = last-1; 
+
+        if (a[left] >= v) return left;
+        if (a[right] < v) return right+1;
+        int mid = (left+right)/2; 
+        while (mid > left) {
+            if (a[mid] < v) {
+                left = mid; 
+            } else {
+                right = mid;
+            }
+            mid = (left+right)/2;
+        }
+        return right;
+    }
+
+    int binary_search_a(int v) {
+        int left = 0; 
+        int right = b.size() - 1; 
+
+        if (b[left] > v) return left; 
+        if (b[right] <= v) return right+1;
+        int mid = (left+right)/2; 
+        while (mid > left) {
+            if (b[mid] <= v) {
+                left = mid; 
+            } else {
+                right = mid;
+            }
+            mid = (left+right)/2;
+        }
+        return right;
+    }
+
+
+    bool compute(unsigned workerId) {
+        if (workerId < 3) {
+            for (unsigned i = workerId; i < a.size(); i += 3) {
+                int r = binary_search_b(a[i]);
+                c[i + r] = a[i];
+            }
+        } else {
+             for (unsigned i = workerId - 3; i < b.size(); i += 3) {
+                int r = binary_search_a(b[i]);
+                c[i + r] = b[i];
             }
         }
-
         return true;
     }
+       
 };
