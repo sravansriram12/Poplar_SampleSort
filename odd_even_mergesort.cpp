@@ -93,7 +93,7 @@ int main(int argc, char *argv[]) {
     odd_stop = p_in_use;
   } 
 
-    ComputeSet cs_even = graph.addComputeSet("mergeEven"+to_string(k));
+    ComputeSet cs_even = graph.addComputeSet("mergeEven");
 
     nums = 0;
     int nums2 = nums + numbers_per_tile;
@@ -108,7 +108,7 @@ int main(int argc, char *argv[]) {
         nums2 += (numbers_per_tile * 2);
     }
 
-    ComputeSet cs_odd = graph.addComputeSet("mergeOdd"+to_string(k));
+    ComputeSet cs_odd = graph.addComputeSet("mergeOdd");
 
     nums = numbers_per_tile;
     nums2 = nums + numbers_per_tile;
