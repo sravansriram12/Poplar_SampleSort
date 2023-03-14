@@ -216,7 +216,7 @@ class MergeSortComparison : public Vertex {
             gap > 0; gap = nextGap(gap))
         {
             // comparing elements in the first array.
-            for (i = 0; i + gap < a.size(); i++)
+            for (i = 0; i + gap < arr1.size(); i++)
                 if (arr1[i] > arr1[i + gap])
                     swap(i, i + gap, 1);
     
