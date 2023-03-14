@@ -207,7 +207,7 @@ class MergeSortComparison : public MultiVertex {
             // comparing elements in both arrays.
             for (j = gap > arr1.size() ? gap - arr1.size() + workerId : workerId;
                 i < arr1.size() && j < arr2.size();
-                i += MultiVertex::NumWorkers(), i += MultiVertex::numWorkers())
+                i += MultiVertex::numWorkers(), i += MultiVertex::numWorkers())
                 if (arr1[i] > arr2[j])
                     swap(i, j, 0);
     
