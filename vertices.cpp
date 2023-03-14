@@ -238,7 +238,8 @@ class MergeSortComparison : public Vertex {
 
 
     bool compute() {
-        merge()
+        merge();
+        return true;
     }
        
 };
