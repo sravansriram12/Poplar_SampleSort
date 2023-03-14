@@ -167,7 +167,7 @@ class DetermineProcessor: public MultiVertex {
     }
 };
 
-class MergeSortComparison : public Vertex {
+class MergeSortComparison : public MultiVertex {
     public:
     InOut<Vector<int>> arr1;
     InOut<Vector<int>> arr2;
@@ -194,26 +194,26 @@ class MergeSortComparison : public Vertex {
         return (gap / 2) + (gap % 2);
     }
  
-    void merge() {
+    void merge(unsigned workerId) {
         int i, j, gap = arr1.size() + arr2.size();
         for (gap = nextGap(gap);
             gap > 0; gap = nextGap(gap))
         {
             // comparing elements in the first array.
-            for (i = 0; i + gap < arr1.size(); i++)
+            for (i = workerId; i + gap < arr1.size(); i += MultiVertex::NumWorkers())
                 if (arr1[i] > arr1[i + gap])
                     swap(i, i + gap, 1);
     
             // comparing elements in both arrays.
-            for (j = gap > arr1.size() ? gap - arr1.size() : 0;
+            for (j = gap > arr1.size() ? gap - arr1.size() + workerId : workerId;
                 i < arr1.size() && j < arr2.size();
-                i++, j++)
+                i += MultiVertex::NumWorkers(), i += MultiVertex::NumWorkers())
                 if (arr1[i] > arr2[j])
                     swap(i, j, 0);
     
             if (j < arr2.size()) {
                 // comparing elements in the second array.
-                for (j = 0; j + gap < arr2.size(); j++)
+                for (j = workerId; j + gap < arr2.size(); j += MultiVertex::NumWorkers())
                     if (arr2[j] > arr2[j + gap])
                         swap(j, j + gap, 2);
             }
@@ -221,8 +221,8 @@ class MergeSortComparison : public Vertex {
     }
 
 
-    bool compute() {
-        merge();
+    bool compute(unsigned workerId) {
+        merge(unsigned workerId);
         return true;
     }
        
