@@ -225,13 +225,13 @@ class MergeSortComparison : public Vertex {
                 i < arr1.size() && j < arr2.size();
                 i++, j++)
                 if (arr1[i] > arr2[j])
-                    swap(i, j, 0]);
+                    swap(i, j, 0);
     
             if (j < arr2.size()) {
                 // comparing elements in the second array.
                 for (j = 0; j + gap < arr2.size(); j++)
                     if (arr2[j] > arr2[j + gap])
-                        swap(j], j + gap, 2);
+                        swap(j, j + gap, 2);
             }
         }
     }
