@@ -200,20 +200,20 @@ class MergeSortComparison : public MultiVertex {
             gap > 0; gap = nextGap(gap))
         {
             // comparing elements in the first array.
-            for (i = workerId; i + gap < arr1.size(); i += MultiVertex::NumWorkers())
+            for (i = workerId; i + gap < arr1.size(); i += MultiVertex::numWorkers())
                 if (arr1[i] > arr1[i + gap])
                     swap(i, i + gap, 1);
     
             // comparing elements in both arrays.
             for (j = gap > arr1.size() ? gap - arr1.size() + workerId : workerId;
                 i < arr1.size() && j < arr2.size();
-                i += MultiVertex::NumWorkers(), i += MultiVertex::NumWorkers())
+                i += MultiVertex::NumWorkers(), i += MultiVertex::numWorkers())
                 if (arr1[i] > arr2[j])
                     swap(i, j, 0);
     
             if (j < arr2.size()) {
                 // comparing elements in the second array.
-                for (j = workerId; j + gap < arr2.size(); j += MultiVertex::NumWorkers())
+                for (j = workerId; j + gap < arr2.size(); j += MultiVertex::numWorkers())
                     if (arr2[j] > arr2[j + gap])
                         swap(j, j + gap, 2);
             }
@@ -222,7 +222,7 @@ class MergeSortComparison : public MultiVertex {
 
 
     bool compute(unsigned workerId) {
-        merge(unsigned workerId);
+        merge(workerId);
         return true;
     }
        
