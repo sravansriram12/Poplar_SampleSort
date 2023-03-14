@@ -93,7 +93,7 @@ int main(int argc, char *argv[]) {
         odd_stop = p_in_use;
     } 
 
-  if (n < 1000000) {
+  if (n < 10) {
     for(int i = 0; i < p_in_use; i++) {
         int end_index = std::min(n, nums + numbers_per_tile);
         graph.setTileMapping(initial_list.slice(nums, end_index), i);
