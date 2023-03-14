@@ -183,62 +183,62 @@ class BrickSortComparison : public MultiVertex {
     }
 };
 
-class MergeSortComparison : public MultiVertex {
+class MergeSortComparison : public Vertex {
     public:
-    Input<Vector<int>> a;
-    Input<Vector<int>> b;
-    Output<Vector<int>> c;
+    InOut<Vector<int>> arr1;
+    InOut<Vector<int>> arr2;
 
-    int binary_search_b(int v) {
-        int left = 0; 
-        int right = a.size() - 1; 
-
-        if (a[left] >= v) return left;
-        if (a[right] < v) return right+1;
-        int mid = (left+right)/2; 
-        while (mid > left) {
-            if (a[mid] < v) {
-                left = mid; 
-            } else {
-                right = mid;
-            }
-            mid = (left+right)/2;
-        }
-        return right;
-    }
-
-    int binary_search_a(int v) {
-        int left = 0; 
-        int right = b.size() - 1; 
-
-        if (b[left] > v) return left; 
-        if (b[right] <= v) return right+1;
-        int mid = (left+right)/2; 
-        while (mid > left) {
-            if (b[mid] <= v) {
-                left = mid; 
-            } else {
-                right = mid;
-            }
-            mid = (left+right)/2;
-        }
-        return right;
-    }
-
-
-    bool compute(unsigned workerId) {
-        if (workerId < 3) {
-            for (unsigned i = workerId; i < a.size(); i += 3) {
-                int r = binary_search_b(a[i]);
-                c[i + r] = a[i];
-            }
+    void swap(unsigned idx1, unsigned idx2, int num) {
+        if (num == 0) {
+            int temp = arr1[idx1];
+            arr1[idx1] = arr2[idx2];
+            arr2[idx2] = temp;
+        } else if (num == 1) {
+            int temp = arr1[idx1];
+            arr1[idx1] = arr1[idx2];
+            arr1[idx2] = temp;
         } else {
-             for (unsigned i = workerId - 3; i < b.size(); i += 3) {
-                int r = binary_search_a(b[i]);
-                c[i + r] = b[i];
+            int temp = arr2[idx1];
+            arr2[idx1] = arr2[idx2];
+            arr2[idx2] = temp;
+        }
+    } 
+
+    int nextGap(int gap) {
+        if (gap <= 1)
+            return 0;
+        return (gap / 2) + (gap % 2);
+    }
+ 
+    void merge() {
+        int i, j, gap = arr1.size() + arr2.size();
+        for (gap = nextGap(gap);
+            gap > 0; gap = nextGap(gap))
+        {
+            // comparing elements in the first array.
+            for (i = 0; i + gap < a.size(); i++)
+                if (arr1[i] > arr1[i + gap])
+                    swap(i, i + gap, 1);
+    
+            // comparing elements in both arrays.
+            for (j = gap > arr1.size() ? gap - arr1.size() : 0;
+                i < arr1.size() && j < arr2.size();
+                i++, j++)
+                if (arr1[i] > arr2[j])
+                    swap(i, j, 0]);
+    
+            if (j < arr2.size()) {
+                // comparing elements in the second array.
+                for (j = 0; j + gap < arr2.size(); j++)
+                    if (arr2[j] > arr2[j + gap])
+                        swap(j], j + gap, 2);
             }
         }
-        return true;
+    }
+
+
+    bool compute() {
+        merge()
     }
        
 };

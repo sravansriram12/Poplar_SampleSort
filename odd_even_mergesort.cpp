@@ -141,7 +141,6 @@ int main(int argc, char *argv[]) {
   
   } else {
     ComputeSet cs = graph.addComputeSet("localsort");
-    std::vector<Tensor> placeholder(p_in_use);
      for(int i = 0; i < p_in_use; i++) {
         int end_index = std::min(n, nums + numbers_per_tile);
         VertexRef heapsort_vtx = graph.addVertex(cs, "HeapSort");
@@ -149,9 +148,6 @@ int main(int argc, char *argv[]) {
         graph.connect(heapsort_vtx["local_list"], initial_list.slice(nums, end_index));
         graph.setTileMapping(heapsort_vtx, i);
         graph.setPerfEstimate(heapsort_vtx, 20);
-        Tensor a = graph.addVariable(INT, {(end_index - nums ) * 2});
-        graph.setTileMapping(a, i);
-        placeholder[i] = a;
         nums += numbers_per_tile;
     }
 
@@ -166,9 +162,8 @@ int main(int argc, char *argv[]) {
             int end_index1 = std::min(n, nums + numbers_per_tile);
             int end_index2 = std::min(n, nums2 + numbers_per_tile);
             VertexRef mergesort_vtx = graph.addVertex(cs_even, "MergeSortComparison");
-            graph.connect(mergesort_vtx["a"], initial_list.slice(nums, end_index1));
-            graph.connect(mergesort_vtx["b"], initial_list.slice(nums2, end_index2));
-            graph.connect(mergesort_vtx["c"], placeholder[i]);
+            graph.connect(mergesort_vtx["arr1"], initial_list.slice(nums, end_index1));
+            graph.connect(mergesort_vtx["arr2"], initial_list.slice(nums2, end_index2));
             graph.setTileMapping(mergesort_vtx, i);
             graph.setPerfEstimate(mergesort_vtx, 20);
             nums += (numbers_per_tile * 2);
@@ -179,14 +174,13 @@ int main(int argc, char *argv[]) {
 
         nums = numbers_per_tile;
         nums2 = nums + numbers_per_tile;
-
+        
         for (int i = 1; i < odd_stop; i += 2) { 
             int end_index1 = std::min(n, nums + numbers_per_tile);
             int end_index2 = std::min(n, nums2 + numbers_per_tile);
             VertexRef mergesort_vtx = graph.addVertex(cs_odd, "MergeSortComparison");
-            graph.connect(mergesort_vtx["a"], initial_list.slice(nums, end_index1));
-            graph.connect(mergesort_vtx["b"], initial_list.slice(nums2, end_index2));
-            graph.connect(mergesort_vtx["c"], placeholder[i]);
+            graph.connect(mergesort_vtx["arr1"], initial_list.slice(nums, end_index1));
+            graph.connect(mergesort_vtx["arr2"], initial_list.slice(nums2, end_index2));
             graph.setTileMapping(mergesort_vtx, i);
             graph.setPerfEstimate(mergesort_vtx, 20);
             nums += (numbers_per_tile * 2);
@@ -196,27 +190,7 @@ int main(int argc, char *argv[]) {
         
          for (int k = 0; k < p_in_use; k++) {
             prog.add(Execute(cs_even));
-            nums = 0;
-            nums2 = nums + numbers_per_tile;
-            for (int i = 0; i < even_stop; i += 2) {
-                int end_index1 = std::min(n, nums + numbers_per_tile);
-                int end_index2 = std::min(n, nums2 + numbers_per_tile);
-                prog.add(Copy(placeholder[i].slice(0, end_index1 - nums), initial_list.slice(nums, end_index1)));
-                prog.add(Copy(placeholder[i].slice(end_index1 - nums, (end_index1 - nums) + end_index2 - nums2), initial_list.slice(nums2, end_index2)));
-                nums += (numbers_per_tile * 2);
-                nums2 += (numbers_per_tile * 2);
-            }
             prog.add(Execute(cs_odd));
-            nums = numbers_per_tile;
-            nums2 = nums + numbers_per_tile;
-            for (int i = 1; i < odd_stop; i += 2) {
-                int end_index1 = std::min(n, nums + numbers_per_tile);
-                int end_index2 = std::min(n, nums2 + numbers_per_tile);
-                prog.add(Copy(placeholder[i].slice(0, end_index1 - nums), initial_list.slice(nums, end_index1)));
-                prog.add(Copy(placeholder[i].slice(end_index1 - nums, (end_index1 - nums) + end_index2 - nums2), initial_list.slice(nums2, end_index2)));
-                nums += (numbers_per_tile * 2);
-                nums2 += (numbers_per_tile * 2);
-            }
         }
 
        
