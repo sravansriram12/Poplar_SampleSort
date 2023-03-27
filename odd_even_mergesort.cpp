@@ -105,7 +105,7 @@ int main(int argc, char *argv[]) {
         graph.connect(heapsort_vtx["local_list"], initial_list.slice(nums, end_index));
         graph.setTileMapping(heapsort_vtx, i);
         
-        Tensor p = graph.addVariable(INT, {numbers_per_tile * 2}, "padding"+i);
+        Tensor p = graph.addVariable(INT, {numbers_per_tile * 2}, "padding"+std::to_string(i));
         graph.setTileMapping(p, i);
         paddings[i] = p;
         VertexRef initialize = graph.addVertex(cs, "Initialize");
