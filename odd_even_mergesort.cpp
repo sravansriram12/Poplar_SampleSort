@@ -150,6 +150,7 @@ int main(int argc, char *argv[]) {
         prog.add(Execute(cs_even));
         prog.add(PrintTensor(paddings[0]));
         prog.add(Execute(cs_odd));
+        prog.add(PrintTensor(paddings[0]));
     }
 
     
