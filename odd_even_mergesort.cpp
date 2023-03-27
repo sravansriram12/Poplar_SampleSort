@@ -199,7 +199,7 @@ int main(int argc, char *argv[]) {
             k_iterate /= 2;
         } */
 
-        VertexRef mergesort_vtx = graph.addVertex(cs_even, "MergeSort");
+        VertexRef mergesort_vtx = graph.addVertex(cs_odd, "MergeSort");
         graph.connect(mergesort_vtx["a"], concat(initial_list.slice(nums, end_index1), initial_list.slice(nums2, end_index2)));
         graph.connect(mergesort_vtx["c"], paddings[i]);
         graph.setTileMapping(mergesort_vtx, i);

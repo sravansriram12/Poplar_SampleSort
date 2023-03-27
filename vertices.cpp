@@ -228,6 +228,7 @@ class MergeSortComparison : public Vertex {
 
 
 class BitonicSort : public MultiVertex {
+ public:
  InOut<Vector<int>> arr;
  Input<int> k;
 
@@ -250,6 +251,7 @@ class BitonicSort : public MultiVertex {
 };
 
 class Initialize : public MultiVertex {
+ public:
  InOut<Vector<int>> arr;
 
  bool compute(unsigned workerId) {
