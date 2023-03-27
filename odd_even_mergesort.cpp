@@ -108,9 +108,9 @@ int main(int argc, char *argv[]) {
         Tensor p = graph.addVariable(INT, {numbers_per_tile * 2}, "padding"+std::to_string(i));
         graph.setTileMapping(p, i);
         paddings[i] = p;
-        VertexRef initialize = graph.addVertex(cs, "Initialize");
+       /* VertexRef initialize = graph.addVertex(cs, "Initialize");
         graph.connect(initialize["arr"], p);
-        graph.setTileMapping(initialize, i); 
+        graph.setTileMapping(initialize, i); */
         
         nums += numbers_per_tile;
     }
@@ -149,7 +149,7 @@ int main(int argc, char *argv[]) {
         int k_iterate = k;
         int j = 0;
 
-        Tensor asc = concat(paddings[i], initial_list.slice(nums, end_index1));
+        /*Tensor asc = concat(paddings[i], initial_list.slice(nums, end_index1));
         Tensor d = initial_list.slice(nums2, end_index2);
         Tensor bitonic_sequence = concat(asc, d.reverse(0));
        
@@ -160,12 +160,12 @@ int main(int argc, char *argv[]) {
             graph.setTileMapping(bitonicsort_vtx, i);
             j++;
             k_iterate /= 2;
-        }
+        } */
         
-        /*VertexRef mergesort_vtx = graph.addVertex(cs_even, "MergeSort");
+        VertexRef mergesort_vtx = graph.addVertex(cs_even, "MergeSort");
         graph.connect(mergesort_vtx["a"], concat(initial_list.slice(nums, end_index1), initial_list.slice(nums2, end_index2)));
         graph.connect(mergesort_vtx["c"], paddings[i]);
-        graph.setTileMapping(mergesort_vtx, i); */
+        graph.setTileMapping(mergesort_vtx, i); 
         
        
         nums += (numbers_per_tile * 2);
@@ -188,7 +188,7 @@ int main(int argc, char *argv[]) {
         int k_iterate = k;
         int j = 0;
 
-        Tensor asc = concat(paddings[i], initial_list.slice(nums, end_index1));
+        /*Tensor asc = concat(paddings[i], initial_list.slice(nums, end_index1));
         Tensor d = initial_list.slice(nums2, end_index2);
         Tensor bitonic_sequence = concat(asc, d.reverse(0));
 
@@ -199,12 +199,12 @@ int main(int argc, char *argv[]) {
             graph.setTileMapping(bitonicsort_vtx, i);
             j++;
             k_iterate /= 2;
-        } 
+        }  */
 
-        /*VertexRef mergesort_vtx = graph.addVertex(cs_odd, "MergeSort");
+        VertexRef mergesort_vtx = graph.addVertex(cs_odd, "MergeSort");
         graph.connect(mergesort_vtx["a"], concat(initial_list.slice(nums, end_index1), initial_list.slice(nums2, end_index2)));
         graph.connect(mergesort_vtx["c"], paddings[i]);
-        graph.setTileMapping(mergesort_vtx, i); */
+        graph.setTileMapping(mergesort_vtx, i); 
 
         nums += (numbers_per_tile * 2);
         nums2 += (numbers_per_tile * 2); 
