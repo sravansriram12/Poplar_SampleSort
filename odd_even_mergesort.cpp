@@ -121,15 +121,6 @@ int main(int argc, char *argv[]) {
     k = (int)log2(numbers_per_tile + rem);
     k = pow(2, k);
 
-    std::vector<ComputeSet> compute_sets_even;
-    std::vector<ComputeSet> compute_sets_odd;
-
-    while (k > 0) {
-        compute_sets_even.push_back(graph.addComputeSet("bitonic_sort_even" + k));
-        compute_sets_odd.push_back(graph.addComputeSet("bitonic_sort_odd" + k));
-        k = k / 2;
-    } 
-
     
 
     ComputeSet cs_even = graph.addComputeSet("mergeEven");
@@ -146,21 +137,7 @@ int main(int argc, char *argv[]) {
         graph.connect(mergesort_vtx["arr2"], initial_list.slice(nums2, end_index2));
         graph.setTileMapping(mergesort_vtx, i); */
 
-        int k_iterate = k;
-        int j = 0;
-
-        /*Tensor asc = concat(paddings[i], initial_list.slice(nums, end_index1));
-        Tensor d = initial_list.slice(nums2, end_index2);
-        Tensor bitonic_sequence = concat(asc, d.reverse(0));
-       
-        while (k_iterate > 0) {
-            VertexRef bitonicsort_vtx = graph.addVertex(compute_sets_even[j], "BitonicSort");
-            graph.connect(bitonicsort_vtx["arr"], bitonic_sequence);
-            graph.connect(bitonicsort_vtx["k"], k_iterate);
-            graph.setTileMapping(bitonicsort_vtx, i);
-            j++;
-            k_iterate /= 2;
-        } */
+      
         
         VertexRef mergesort_vtx = graph.addVertex(cs_even, "MergeSort");
         graph.connect(mergesort_vtx["a"], concat(initial_list.slice(nums, end_index1), initial_list.slice(nums2, end_index2)));
@@ -185,22 +162,6 @@ int main(int argc, char *argv[]) {
         graph.connect(mergesort_vtx["arr2"], initial_list.slice(nums2, end_index2));
         graph.setTileMapping(mergesort_vtx, i); */
 
-        int k_iterate = k;
-        int j = 0;
-
-        /*Tensor asc = concat(paddings[i], initial_list.slice(nums, end_index1));
-        Tensor d = initial_list.slice(nums2, end_index2);
-        Tensor bitonic_sequence = concat(asc, d.reverse(0));
-
-        while (k_iterate > 0) {
-            VertexRef bitonicsort_vtx = graph.addVertex(compute_sets_odd[j], "BitonicSort");
-            graph.connect(bitonicsort_vtx["arr"], bitonic_sequence);
-            graph.connect(bitonicsort_vtx["k"], k_iterate);
-            graph.setTileMapping(bitonicsort_vtx, i);
-            j++;
-            k_iterate /= 2;
-        }  */
-
         VertexRef mergesort_vtx = graph.addVertex(cs_odd, "MergeSort");
         graph.connect(mergesort_vtx["a"], concat(initial_list.slice(nums, end_index1), initial_list.slice(nums2, end_index2)));
         graph.connect(mergesort_vtx["c"], paddings[i]);
@@ -214,13 +175,6 @@ int main(int argc, char *argv[]) {
     for (int k = 0; k < p_in_use; k++) {
         prog.add(Execute(cs_even));
         prog.add(Execute(cs_odd));
-        /*for (int i = 0; i < compute_sets_even.size(); i++) {
-             prog.add(Execute(compute_sets_even[i]));
-        }
-           for (int i = 0; i < compute_sets_odd.size(); i++) {
-             prog.add(Execute(compute_sets_odd[i]));
-        } */
-
     }
 
   
