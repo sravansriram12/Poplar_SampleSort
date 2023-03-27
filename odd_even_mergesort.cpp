@@ -65,7 +65,7 @@ int main(int argc, char *argv[]) {
   srand48(0);
   auto input_list = std::vector<int>(n);
   for (unsigned idx = 0; idx < n; ++idx) {
-    input_list[idx] = (int) rand() % 100 + 1;
+    input_list[idx] = (int) mrand48();
   }
 
   struct timespec start, stop, engine_start, engine_stop;
