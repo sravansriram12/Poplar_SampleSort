@@ -132,7 +132,7 @@ int main(int argc, char *argv[]) {
 
     
 
-    //ComputeSet cs_even = graph.addComputeSet("mergeEven");
+    ComputeSet cs_even = graph.addComputeSet("mergeEven");
      
 
     nums = 0;
@@ -172,7 +172,7 @@ int main(int argc, char *argv[]) {
         nums2 += (numbers_per_tile * 2);
     }
 
-    //ComputeSet cs_odd = graph.addComputeSet("mergeOdd");
+    ComputeSet cs_odd = graph.addComputeSet("mergeOdd");
 
     nums = numbers_per_tile;
     nums2 = nums + numbers_per_tile;
@@ -212,14 +212,14 @@ int main(int argc, char *argv[]) {
 
 
     for (int k = 0; k < p_in_use; k++) {
-        //prog.add(Execute(cs_even));
-        //prog.add(Execute(cs_odd));
-        for (int i = 0; i < compute_sets_even.size(); i++) {
+        prog.add(Execute(cs_even));
+        prog.add(Execute(cs_odd));
+        /*for (int i = 0; i < compute_sets_even.size(); i++) {
              prog.add(Execute(compute_sets_even[i]));
         }
            for (int i = 0; i < compute_sets_odd.size(); i++) {
              prog.add(Execute(compute_sets_odd[i]));
-        }
+        } */
 
     }
 
