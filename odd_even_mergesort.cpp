@@ -149,6 +149,8 @@ int main(int argc, char *argv[]) {
         prog.add(Execute(cs_odd));
     }
 
+    prog.add(PrintTensor(initial_list));
+
   
   graph.createHostWrite("list-write", initial_list);
   graph.createHostRead("list-read", initial_list);
