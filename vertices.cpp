@@ -1,6 +1,7 @@
 #include <poplar/Vertex.hpp>
 using namespace poplar;
 
+/*
 class HeapSort: public Vertex {
     public:
     // Fields
@@ -72,7 +73,7 @@ class HeapSort: public Vertex {
       return true;
     }
 
-};
+}; */
 
 /* class QuickSort : public Vertex {
     public:
@@ -167,6 +168,7 @@ class DetermineProcessor: public MultiVertex {
     }
 };
 
+/*
 class MergeSortComparison : public Vertex {
     public:
     InOut<Vector<int>> arr1;
@@ -224,7 +226,7 @@ class MergeSortComparison : public Vertex {
         return true;
     }
        
-}; 
+}; */
 
 
 class BitonicSort : public MultiVertex {
