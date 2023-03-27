@@ -254,7 +254,7 @@ class Initialize : public MultiVertex {
 
  bool compute(unsigned workerId) {
      for (int i = workerId; i < arr.size(); i += MultiVertex::numWorkers()) {
-         arr[i] = -2147483647   
+         arr[i] = -2147483647;
      }
            
     return true;
@@ -315,11 +315,11 @@ class MergeSort : public MultiVertex {
 
     bool compute(unsigned workerId) {
         if (workerId < 3) {
-            for (unsigned i = workerId; i < a.size() / 2; i += MultiVertex::NumWorkers() / 2) {
+            for (unsigned i = workerId; i < a.size() / 2; i += MultiVertex::numWorkers() / 2) {
                 c[binary_search_b(a[i])] = a[i];
             }
         } else {
-            for (unsigned i = (a.size() / 2) + (workerId - 3); i < a.size(); i += MultiVertex::NumWorkers() / 2) {
+            for (unsigned i = (a.size() / 2) + (workerId - 3); i < a.size(); i += MultiVertex::numWorkers() / 2) {
                 c[binary_search_a(a[i])] = a[i];
             }
         }
