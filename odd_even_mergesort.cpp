@@ -142,8 +142,8 @@ int main(int argc, char *argv[]) {
         nums2 += (numbers_per_tile * 2);
     }
 
-    prog.add(PrintTensor(initial_list);
-    prog.add(PrintTensor(initial_list);
+    prog.add(PrintTensor(initial_list));
+    prog.add(PrintTensor(initial_list));
 
     
     for (int k = 0; k < p_in_use; k++) {
