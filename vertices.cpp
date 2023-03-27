@@ -282,7 +282,7 @@ class MergeSort : public MultiVertex {
             }
         } else {
             for (unsigned i = (arr1.size() / 2) + (workerId - 3); i < arr1.size(); i += MultiVertex::numWorkers() / 2) {
-                arr2[binary_search_b(arr1[i]) + i] = arr1[i];
+                arr2[binary_search_b(arr1[i]) + (i - (arr1.size() / 2))] = arr1[i];
             }
         }
 
