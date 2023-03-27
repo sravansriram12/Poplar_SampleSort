@@ -226,17 +226,11 @@ class MergeSortComparison : public Vertex {
        
 };
 
-class MergeSort : public MultiVertex {
+class MergeSort : public Vertex {
     public:
     InOut<Vector<int>> arr1;
     InOut<Vector<int>> arr2;
     InOut<Vector<int>> arr3;
-    unsigned one = 0;
-    unsigned two = 0;
-    unsigned three = 0;
-    unsigned four = 0;
-    unsigned five = 0;
-    unsigned six = 0;
 
 
     int binary_search_arr2(int v) {
@@ -276,55 +270,19 @@ class MergeSort : public MultiVertex {
     }
 
 
-    bool compute(unsigned workerId) {
+    bool compute() {
     
-        for (unsigned i = workerId; i < arr1.size(); i += MultiVertex::numWorkers()) {
+        for (unsigned i = 0; i < arr1.size(); i++) {
             arr3[binary_search_arr1(arr1[i]) + i] = arr1[i];
         }
-        if (workerId == 0) {
-            one = 1;
-        } else if (workerId == 1) {
-            two = 1;
-        } else if (workerId == 2) {
-            three = 1;
-        } else if (workerId == 3) {
-            four = 1;
-        } else if (workerId == 4) {
-            five = 1;
-        } else if (workerId == 5) {
-            six = 1;
-        }
-
-        while (!(one == 1 && two == 1 && three == 1 && four == 1 && five == 1 && six == 1)) {
-            
-        }
-
-        for (unsigned i = workerId; i < arr2.size(); i += MultiVertex::numWorkers()) {
+        for (unsigned i = 0 ; i < arr2.size(); i++) {
             arr3[binary_search_arr2(arr2[i]) + i] = arr2[i];
         }
-
-        if (workerId == 0) {
-            one = 2;
-        } else if (workerId == 1) {
-            two = 2;
-        } else if (workerId == 2) {
-            three = 2;
-        } else if (workerId == 3) {
-            four = 2;
-        } else if (workerId == 4) {
-            five = 2;
-        } else if (workerId == 5) {
-            six = 2;
-        }
-
-        while (!(one == 2 && two == 2 && three == 2 && four == 2 && five == 2 && six == 2)) {
-            
-        }
         
-        for (unsigned i = workerId; i < arr1.size(); i += MultiVertex::numWorkers()) {
+        for (unsigned i = 0; i < arr1.size(); i++) {
             arr1[i] = arr3[i];
         }
-        for (unsigned i = arr1.size() + workerId; i < arr1.size() + arr2.size(); i += MultiVertex::numWorkers()) {
+        for (unsigned i = arr1.size(); i < arr1.size() + arr2.size(); i++) {
             arr2[i - arr1.size()] = arr3[i];
         }
        
