@@ -78,7 +78,7 @@ int main(int argc, char *argv[]) {
   // Add codelets to the graph
   graph.addCodelets("vertices.cpp");
   Tensor initial_list = graph.addVariable(INT, {n}, "initial_list");
-  int p = 1472;
+  int p = 5;
   int numbers_per_tile = ceil(float(n) / p);
   int p_in_use = ceil(float(n) / numbers_per_tile);
 
