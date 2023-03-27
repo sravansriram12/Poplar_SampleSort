@@ -86,77 +86,77 @@ int main(int argc, char *argv[]) {
   int tile_num = 0;
   int nums = 0;
 
-    int even_stop = p_in_use;
-    int odd_stop = p_in_use - 1;
-    if (p_in_use % 2 != 0) {
-        even_stop = p_in_use - 1;
-        odd_stop = p_in_use;
-    } 
+  int even_stop = p_in_use;
+  int odd_stop = p_in_use - 1;
+  if (p_in_use % 2 != 0) {
+      even_stop = p_in_use - 1;
+      odd_stop = p_in_use;
+  } 
     
-    ComputeSet cs = graph.addComputeSet("localsort");
-    int rem = pow(2, ceil(log2(numbers_per_tile * 2)) - (numbers_per_tile * 2);
+  ComputeSet cs = graph.addComputeSet("localsort");
+  int rem = pow(2, ceil(log2(numbers_per_tile * 2)) - (numbers_per_tile * 2);
 
-    std::vector<Tensor> paddings(p_in_use);
-    for(int i = 0; i < p_in_use; i++) {
-        int end_index = std::min(n, nums + numbers_per_tile);
-        VertexRef heapsort_vtx = graph.addVertex(cs, "HeapSort");
-        graph.setTileMapping(initial_list.slice(nums, end_index), i);
-        
-        graph.connect(heapsort_vtx["local_list"], initial_list.slice(nums, end_index));
-        graph.setTileMapping(heapsort_vtx, i);
-        
-        nums += numbers_per_tile;
-    }
+  std::vector<Tensor> paddings(p_in_use);
+  for(int i = 0; i < p_in_use; i++) {
+      int end_index = std::min(n, nums + numbers_per_tile);
+      VertexRef heapsort_vtx = graph.addVertex(cs, "HeapSort");
+      graph.setTileMapping(initial_list.slice(nums, end_index), i);
+      
+      graph.connect(heapsort_vtx["local_list"], initial_list.slice(nums, end_index));
+      graph.setTileMapping(heapsort_vtx, i);
+      
+      nums += numbers_per_tile;
+  }
 
-    prog.add(Execute(cs));
+  prog.add(Execute(cs));
 
-    int i, k;
-    k = (int)log2(numbers_per_tile + rem);
-    k = pow(2, k);
+  int i, k;
+  k = (int)log2(numbers_per_tile + rem);
+  k = pow(2, k);
 
+  
+
+  ComputeSet cs_even = graph.addComputeSet("mergeEven");
     
 
-    ComputeSet cs_even = graph.addComputeSet("mergeEven");
-     
+  nums = 0;
+  int nums2 = nums + numbers_per_tile;
+  for (int i = 0; i < even_stop; i += 2) { 
+      int end_index1 = std::min(n, nums + numbers_per_tile);
+      int end_index2 = std::min(n, nums2 + numbers_per_tile);
+      
+      VertexRef mergesort_vtx = graph.addVertex(cs_even, "MergeSortComparison");
+      graph.connect(mergesort_vtx["arr1"], initial_list.slice(nums, end_index1));
+      graph.connect(mergesort_vtx["arr2"], initial_list.slice(nums2, end_index2));
+      graph.setTileMapping(mergesort_vtx, i); 
+      
+      
+      nums += (numbers_per_tile * 2);
+      nums2 += (numbers_per_tile * 2);
+  }
 
-    nums = 0;
-    int nums2 = nums + numbers_per_tile;
-    for (int i = 0; i < even_stop; i += 2) { 
-        int end_index1 = std::min(n, nums + numbers_per_tile);
-        int end_index2 = std::min(n, nums2 + numbers_per_tile);
-        
-        VertexRef mergesort_vtx = graph.addVertex(cs_even, "MergeSortComparison");
-        graph.connect(mergesort_vtx["arr1"], initial_list.slice(nums, end_index1));
-        graph.connect(mergesort_vtx["arr2"], initial_list.slice(nums2, end_index2));
-        graph.setTileMapping(mergesort_vtx, i); 
-        
-       
-        nums += (numbers_per_tile * 2);
-        nums2 += (numbers_per_tile * 2);
-    }
+  ComputeSet cs_odd = graph.addComputeSet("mergeOdd");
 
-    ComputeSet cs_odd = graph.addComputeSet("mergeOdd");
+  nums = numbers_per_tile;
+  nums2 = nums + numbers_per_tile;
+  
+  for (int i = 1; i < odd_stop; i += 2) { 
+      int end_index1 = std::min(n, nums + numbers_per_tile);
+      int end_index2 = std::min(n, nums2 + numbers_per_tile);
+      VertexRef mergesort_vtx = graph.addVertex(cs_odd, "MergeSortComparison");
+      graph.connect(mergesort_vtx["arr1"], initial_list.slice(nums, end_index1));
+      graph.connect(mergesort_vtx["arr2"], initial_list.slice(nums2, end_index2));
+      graph.setTileMapping(mergesort_vtx, i);
 
-    nums = numbers_per_tile;
-    nums2 = nums + numbers_per_tile;
-    
-    for (int i = 1; i < odd_stop; i += 2) { 
-        int end_index1 = std::min(n, nums + numbers_per_tile);
-        int end_index2 = std::min(n, nums2 + numbers_per_tile);
-        VertexRef mergesort_vtx = graph.addVertex(cs_odd, "MergeSortComparison");
-        graph.connect(mergesort_vtx["arr1"], initial_list.slice(nums, end_index1));
-        graph.connect(mergesort_vtx["arr2"], initial_list.slice(nums2, end_index2));
-        graph.setTileMapping(mergesort_vtx, i);
-
-        nums += (numbers_per_tile * 2);
-        nums2 += (numbers_per_tile * 2); 
-    }
+      nums += (numbers_per_tile * 2);
+      nums2 += (numbers_per_tile * 2); 
+  }
 
 
-    for (int k = 0; k < p_in_use; k++) {
-        prog.add(Execute(cs_even));
-        prog.add(Execute(cs_odd));
-    }
+  for (int k = 0; k < p_in_use; k++) {
+      prog.add(Execute(cs_even));
+      prog.add(Execute(cs_odd));
+  }
 
   
   graph.createHostWrite("list-write", initial_list);
