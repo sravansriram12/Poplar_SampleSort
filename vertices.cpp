@@ -225,3 +225,91 @@ class MergeSortComparison : public Vertex {
     }
        
 };
+
+class MergeSort : public MultiVertex {
+    public:
+    InOut<Vector<int>> arr1;
+    InOut<Vector<int>> arr2;
+    unsigned one = 0;
+    unsigned two = 0;
+    unsigned three = 0;
+    unsigned four = 0;
+    unsigned five = 0;
+    unsigned six = 0;
+
+
+    int binary_search_b(int v) {
+        int left = 0; 
+        int right = (arr1.size() / 2) - 1; 
+
+        if (arr1[left] >= v) return left;
+        if (arr1[right] < v) return right+1;
+        int mid = (left+right)/2; 
+        while (mid > left) {
+            if (arr1[mid] < v) {
+                left = mid; 
+            } else {
+                right = mid;
+            }
+            mid = (left+right)/2;
+        }
+        return right;
+    }
+
+    int binary_search_a(int v) {
+        int left = arr1.size() / 2; 
+        int right = arr1.size() - 1; 
+
+        if (arr1[left] > v) return left; 
+        if (arr1[right] <= v) return right+1;
+        int mid = (left+right)/2; 
+        while (mid > left) {
+            if (arr1[mid] <= v) {
+                left = mid; 
+            } else {
+                right = mid;
+            }
+            mid = (left+right)/2;
+        }
+        return right;
+    }
+
+
+    bool compute(unsigned workerId) {
+        if (workerId < 3) {
+            for (unsigned i = workerId; i < arr1.size() / 2; i += MultiVertex::NumWorkers() / 2) {
+                arr2[binary_search_b(arr1[i])] = arr1[i];
+            }
+        } else {
+            for (unsigned i = (arr1.size() / 2) + (workerId - 3); i < arr1.size(); i += MultiVertex::NumWorkers() / 2) {
+                arr2[binary_search_a(arr1[i])] = arr1[i];
+            }
+        }
+
+        if (workerId == 0) {
+            one = 1;
+        } else if (workerId == 1) {
+            two = 1;
+        } else if (workerId == 2) {
+            three = 1;
+        } else if (workerId == 3) {
+            four = 1;
+        } else if (workerId == 4) {
+            five = 1;
+        } else {
+            six = 1;
+        }
+
+        while (!(one == 1 && two == 1 && three == 1 && four == 1 && five == 1 && six == 1)) {
+            continue;
+        }
+
+
+        for (unsigned i = workerId; i < arr1.size(); i += MultiVertex::numWorkers()) {
+            arr1[i] = arr2[i];
+        }
+       
+        return true;
+    }
+       
+};
