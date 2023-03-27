@@ -294,7 +294,7 @@ class MergeSort : public MultiVertex {
         } else if (workerId == 3) {
             four = 1;
         } else if (workerId == 4) {
-            five == 1;
+            five = 1;
         } else if (workerId == 5) {
             six = 1;
         }
