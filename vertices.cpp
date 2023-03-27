@@ -226,7 +226,7 @@ class MergeSortComparison : public Vertex {
        
 };
 
-class MergeSort : public MultiVertex {
+class MergeSort : public Vertex {
     public:
     InOut<Vector<int>> arr1;
     InOut<Vector<int>> arr2;
@@ -275,37 +275,21 @@ class MergeSort : public MultiVertex {
     }
 
 
-    bool compute(unsigned workerId) {
-        if (workerId < 3) {
-            for (unsigned i = workerId; i < arr1.size() / 2; i += MultiVertex::numWorkers() / 2) {
+    bool compute() {
+    
+            for (unsigned i = 0; i < arr1.size() / 2; i += 1) {
                 arr2[binary_search_a(arr1[i]) - (arr1.size() / 2) + i] = arr1[i];
             }
-        } else {
-            for (unsigned i = (arr1.size() / 2) + (workerId - 3); i < arr1.size(); i += MultiVertex::numWorkers() / 2) {
+            for (unsigned i = (arr1.size() / 2) ; i < arr1.size(); i += 1) {
                 arr2[binary_search_b(arr1[i]) + (i - (arr1.size() / 2))] = arr1[i];
             }
-        }
+        
 
-        if (workerId == 0) {
-            one = 1;
-        } else if (workerId == 1) {
-            two = 1;
-        } else if (workerId == 2) {
-            three = 1;
-        } else if (workerId == 3) {
-            four = 1;
-        } else if (workerId == 4) {
-            five = 1;
-        } else {
-            six = 1;
-        }
+       
 
-        while (!(one == 1 && two == 1 && three == 1 && four == 1 && five == 1 && six == 1)) {
-            continue;
-        }
+    
 
-
-        for (unsigned i = workerId; i < arr1.size(); i += MultiVertex::numWorkers()) {
+        for (unsigned i = 0; i < arr1.size(); i += 1) {
             arr1[i] = arr2[i];
         }
        
