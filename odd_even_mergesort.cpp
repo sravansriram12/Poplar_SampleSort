@@ -146,11 +146,11 @@ int main(int argc, char *argv[]) {
 
     
     for (int k = 0; k < p_in_use; k++) {
-        //prog.add(Execute(cs_even));
+        prog.add(Execute(cs_even));
         //prog.add(PrintTensor(initial_list));
-        prog.add(PrintTensor(paddings[0]));
-        //prog.add(Execute(cs_odd));
-        prog.add(PrintTensor(paddings[0]));
+        //prog.add(PrintTensor(paddings[0]));
+        prog.add(Execute(cs_odd));
+       // prog.add(PrintTensor(paddings[0]));
     }
 
     
