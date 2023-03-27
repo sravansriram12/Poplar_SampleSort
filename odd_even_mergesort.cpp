@@ -142,12 +142,17 @@ int main(int argc, char *argv[]) {
         nums2 += (numbers_per_tile * 2);
     }
 
+    prog.add(PrintTensor(initial_list.slice(0, numbers_per_tile)));
+    prog.add(PrintTensor(initial_list.slice(numbers_per_tile, numbers_per_tile * 2)));
+
     
     for (int k = 0; k < p_in_use; k++) {
         prog.add(Execute(cs_even));
         prog.add(PrintTensor(paddings[0]));
         prog.add(Execute(cs_odd));
     }
+
+    
 
     
 
