@@ -281,10 +281,6 @@ class MergeSort : public MultiVertex {
         for (unsigned i = workerId; i < arr1.size(); i += MultiVertex::numWorkers()) {
             arr3[binary_search_arr1(arr1[i]) + i] = arr1[i];
         }
-        for (unsigned i = workerId; i < arr2.size(); i += MultiVertex::numWorkers()) {
-            arr3[binary_search_arr2(arr2[i]) + i] = arr2[i];
-        }
-
         if (workerId == 0) {
             one = 1;
         } else if (workerId == 1) {
@@ -300,6 +296,28 @@ class MergeSort : public MultiVertex {
         }
 
         while (!(one == 1 && two == 1 && three == 1 && four == 1 && five == 1 && six == 1)) {
+            
+        }
+
+        for (unsigned i = workerId; i < arr2.size(); i += MultiVertex::numWorkers()) {
+            arr3[binary_search_arr2(arr2[i]) + i] = arr2[i];
+        }
+
+        if (workerId == 0) {
+            one = 2;
+        } else if (workerId == 1) {
+            two = 2;
+        } else if (workerId == 2) {
+            three = 2;
+        } else if (workerId == 3) {
+            four = 2;
+        } else if (workerId == 4) {
+            five = 2;
+        } else if (workerId == 5) {
+            six = 2;
+        }
+
+        while (!(one == 2 && two == 2 && three == 2 && four == 2 && five == 2 && six == 2)) {
             
         }
         
