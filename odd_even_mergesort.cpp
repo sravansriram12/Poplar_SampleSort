@@ -92,18 +92,45 @@ int main(int argc, char *argv[]) {
         even_stop = p_in_use - 1;
         odd_stop = p_in_use;
     } 
-
+    
     ComputeSet cs = graph.addComputeSet("localsort");
+    int rem = pow(2, ceil(log2(numbers_per_tile * 2)) - (numbers_per_tile * 2);
+
+    std::vector<Tensor> paddings(p_in_use);
     for(int i = 0; i < p_in_use; i++) {
         int end_index = std::min(n, nums + numbers_per_tile);
         VertexRef heapsort_vtx = graph.addVertex(cs, "HeapSort");
         graph.setTileMapping(initial_list.slice(nums, end_index), i);
+        
         graph.connect(heapsort_vtx["local_list"], initial_list.slice(nums, end_index));
         graph.setTileMapping(heapsort_vtx, i);
+        
+        Tensor p = graph.addVariable(INT, {numbers_per_tile * 2}, "padding"+i);
+        graph.setTileMapping(p, i);
+        paddings[i] = p;
+        /*VertexRef initialize = graph.addVertex(cs, "Initialize");
+        graph.connect(initialize["arr"], p);
+        graph.setTileMapping(initialize, i); */
+        
         nums += numbers_per_tile;
     }
 
     prog.add(Execute(cs));
+
+    int i, k;
+    k = (int)log2(numbers_per_tile + rem);
+    k = pow(2, k);
+
+    //std::vector<ComputeSet> compute_sets_even;
+    //std::vector<ComputeSet> compute_sets_odd;
+
+    /*while (k > 0) {
+        compute_sets_even.push_back(graph.addComputeSet("bitonic_sort_even" + k));
+        compute_sets_odd.push_back(graph.addComputeSet("bitonic_sort_odd" + k));
+        k = k / 2;
+    } */
+
+    
 
     ComputeSet cs_even = graph.addComputeSet("mergeEven");
      
@@ -113,10 +140,33 @@ int main(int argc, char *argv[]) {
     for (int i = 0; i < even_stop; i += 2) { 
         int end_index1 = std::min(n, nums + numbers_per_tile);
         int end_index2 = std::min(n, nums2 + numbers_per_tile);
+        /*
         VertexRef mergesort_vtx = graph.addVertex(cs_even, "MergeSortComparison");
         graph.connect(mergesort_vtx["arr1"], initial_list.slice(nums, end_index1));
         graph.connect(mergesort_vtx["arr2"], initial_list.slice(nums2, end_index2));
+        graph.setTileMapping(mergesort_vtx, i); */
+
+        int k_iterate = k;
+        int j = 0;
+
+        /*Tensor asc = concat(paddings[i], initial_list.slice(nums, end_index1));
+        Tensor bitonic_sequence = concat(asc, initial_list.slice(nums2, end_index2).reverse());
+       
+        while (k_iterate > 0) {
+            VertexRef bitonicsort_vtx = graph.addVertex(compute_sets_even[j], "BitonicSort");
+            graph.connect(bitonicsort_vtx["arr"], bitonic_sequence);
+            graph.connect(bitonicsort_vtx["k"], k_iterate);
+            graph.setTileMapping(bitonicsort_vtx, i);
+            j++;
+            k_iterate /= 2;
+        }*/
+        
+        VertexRef mergesort_vtx = graph.addVertex(cs_even, "MergeSort");
+        graph.connect(mergesort_vtx["a"], concat(initial_list.slice(nums, end_index1), initial_list.slice(nums2, end_index2)));
+        graph.connect(mergesort_vtx["c"], placeholder[i]);
         graph.setTileMapping(mergesort_vtx, i);
+        
+       
         nums += (numbers_per_tile * 2);
         nums2 += (numbers_per_tile * 2);
     }
@@ -129,18 +179,46 @@ int main(int argc, char *argv[]) {
     for (int i = 1; i < odd_stop; i += 2) { 
         int end_index1 = std::min(n, nums + numbers_per_tile);
         int end_index2 = std::min(n, nums2 + numbers_per_tile);
-        VertexRef mergesort_vtx = graph.addVertex(cs_odd, "MergeSortComparison");
+        /*VertexRef mergesort_vtx = graph.addVertex(cs_odd, "MergeSortComparison");
         graph.connect(mergesort_vtx["arr1"], initial_list.slice(nums, end_index1));
         graph.connect(mergesort_vtx["arr2"], initial_list.slice(nums2, end_index2));
+        graph.setTileMapping(mergesort_vtx, i); */
+
+        int k_iterate = k;
+        int j = 0;
+
+        /*Tensor asc = concat(paddings[i], initial_list.slice(nums, end_index1));
+        Tensor bitonic_sequence = concat(asc, initial_list.slice(nums2, end_index2).reverse());
+
+        while (k_iterate > 0) {
+            VertexRef bitonicsort_vtx = graph.addVertex(compute_sets_odd[j], "BitonicSort");
+            graph.connect(bitonicsort_vtx["arr"], bitonic_sequence);
+            graph.connect(bitonicsort_vtx["k"], k_iterate);
+            graph.setTileMapping(bitonicsort_vtx, i);
+            j++;
+            k_iterate /= 2;
+        } */
+
+        VertexRef mergesort_vtx = graph.addVertex(cs_even, "MergeSort");
+        graph.connect(mergesort_vtx["a"], concat(initial_list.slice(nums, end_index1), initial_list.slice(nums2, end_index2)));
+        graph.connect(mergesort_vtx["c"], placeholder[i]);
         graph.setTileMapping(mergesort_vtx, i);
+
         nums += (numbers_per_tile * 2);
         nums2 += (numbers_per_tile * 2);
     }
 
-    
+
     for (int k = 0; k < p_in_use; k++) {
         prog.add(Execute(cs_even));
         prog.add(Execute(cs_odd));
+        /*for (int i = 0; i < compute_sets_even.size(); i++) {
+             prog.add(Execute(compute_sets_even[i]));
+        }
+           for (int i = 0; i < compute_sets_odd.size(); i++) {
+             prog.add(Execute(compute_sets_odd[i]));
+        } */
+
     }
 
   

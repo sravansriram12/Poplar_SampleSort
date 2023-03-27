@@ -225,3 +225,129 @@ class MergeSortComparison : public Vertex {
     }
        
 }; 
+
+
+class BitonicSort : public MultiVertex {
+ InOut<Vector<int>> arr;
+ Input<int> k;
+
+    void swap(unsigned idx1, unsigned idx2) {
+        int temp = arr[idx1];
+        arr[idx1] = arr[idx2];
+        arr[idx2] = temp;
+    }
+
+ bool compute(unsigned workerId) {
+     for (int i = workerId; i + k < arr.size(); i += MultiVertex::numWorkers()) {
+         if (arr[i] > arr[i + k]) {
+            swap(i, i + k);
+         }      
+     }
+           
+    
+    return true;
+ }
+};
+
+class Initialize : public MultiVertex {
+ InOut<Vector<int>> arr;
+
+ bool compute(unsigned workerId) {
+     for (int i = workerId; i < arr.size(); i += MultiVertex::numWorkers()) {
+         arr[i] = -2147483647   
+     }
+           
+    return true;
+ }
+};
+
+
+
+
+class MergeSort : public MultiVertex {
+    public:
+    Input<Vector<int>> a;
+    Output<Vector<int>> c;
+    unsigned one = 0;
+    unsigned two = 0;
+    unsigned three = 0;
+    unsigned four = 0;
+    unsigned five = 0;
+    unsigned six = 0;
+
+
+    int binary_search_b(int v) {
+        int left = 0; 
+        int right = (a.size() / 2) - 1; 
+
+        if (a[left] >= v) return left;
+        if (a[right] < v) return right+1;
+        int mid = (left+right)/2; 
+        while (mid > left) {
+            if (a[mid] < v) {
+                left = mid; 
+            } else {
+                right = mid;
+            }
+            mid = (left+right)/2;
+        }
+        return right;
+    }
+
+    int binary_search_a(int v) {
+        int left = a.size() / 2; 
+        int right = a.size() - 1; 
+
+        if (a[left] > v) return left; 
+        if (a[right] <= v) return right+1;
+        int mid = (left+right)/2; 
+        while (mid > left) {
+            if (a[mid] <= v) {
+                left = mid; 
+            } else {
+                right = mid;
+            }
+            mid = (left+right)/2;
+        }
+        return right;
+    }
+
+
+    bool compute(unsigned workerId) {
+        if (workerId < 3) {
+            for (unsigned i = workerId; i < a.size() / 2; i += MultiVertex::NumWorkers() / 2) {
+                c[binary_search_b(a[i])] = a[i];
+            }
+        } else {
+            for (unsigned i = (a.size() / 2) + (workerId - 3); i < a.size(); i += MultiVertex::NumWorkers() / 2) {
+                c[binary_search_a(a[i])] = a[i];
+            }
+        }
+
+        if (workerId == 0) {
+            one = 1;
+        } else if (workerId == 1) {
+            two = 1;
+        } else if (workerId == 2) {
+            three = 1;
+        } else if (workerId == 3) {
+            four = 1;
+        } else if (workerId == 4) {
+            five = 1;
+        } else {
+            six = 1;
+        }
+
+        while (!(one == 1 && two == 1 && three == 1 && four == 1 && five == 1 && six == 1)) {
+            continue;
+        }
+
+
+        for (unsigned i = workerId; i < a.size(); i += MultiVertex::numWorkers()) {
+            a[i] = c[i];
+        }
+       
+        return true;
+    }
+       
+};
