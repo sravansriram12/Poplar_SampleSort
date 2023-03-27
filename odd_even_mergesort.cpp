@@ -151,8 +151,7 @@ int main(int argc, char *argv[]) {
 
         Tensor asc = concat(paddings[i], initial_list.slice(nums, end_index1));
         Tensor d = initial_list.slice(nums2, end_index2);
-        d = d.reverse(0)
-        Tensor bitonic_sequence = concat(asc, d);
+        Tensor bitonic_sequence = concat(asc, d.reverse(0));
        
         while (k_iterate > 0) {
             VertexRef bitonicsort_vtx = graph.addVertex(compute_sets_even[j], "BitonicSort");
