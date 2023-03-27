@@ -105,10 +105,6 @@ int main(int argc, char *argv[]) {
         graph.connect(heapsort_vtx["local_list"], initial_list.slice(nums, end_index));
         graph.setTileMapping(heapsort_vtx, i);
         
-        /*Tensor p = graph.addVariable(INT, {numbers_per_tile * 2}, "padding"+std::to_string(i));
-        graph.setTileMapping(p, i);
-        paddings[i] = p; */
-        
         nums += numbers_per_tile;
     }
 
@@ -133,13 +129,6 @@ int main(int argc, char *argv[]) {
         graph.connect(mergesort_vtx["arr1"], initial_list.slice(nums, end_index1));
         graph.connect(mergesort_vtx["arr2"], initial_list.slice(nums2, end_index2));
         graph.setTileMapping(mergesort_vtx, i); 
-
-      
-        
-        /*VertexRef mergesort_vtx = graph.addVertex(cs_even, "MergeSort");
-        graph.connect(mergesort_vtx["a"], concat(initial_list.slice(nums, end_index1), initial_list.slice(nums2, end_index2)));
-        graph.connect(mergesort_vtx["c"], paddings[i]);
-        graph.setTileMapping(mergesort_vtx, i);  */
         
        
         nums += (numbers_per_tile * 2);
@@ -158,11 +147,6 @@ int main(int argc, char *argv[]) {
         graph.connect(mergesort_vtx["arr1"], initial_list.slice(nums, end_index1));
         graph.connect(mergesort_vtx["arr2"], initial_list.slice(nums2, end_index2));
         graph.setTileMapping(mergesort_vtx, i);
-
-        /*VertexRef mergesort_vtx = graph.addVertex(cs_odd, "MergeSort");
-        graph.connect(mergesort_vtx["a"], concat(initial_list.slice(nums, end_index1), initial_list.slice(nums2, end_index2)));
-        graph.connect(mergesort_vtx["c"], paddings[i]);
-        graph.setTileMapping(mergesort_vtx, i);  */
 
         nums += (numbers_per_tile * 2);
         nums2 += (numbers_per_tile * 2); 
