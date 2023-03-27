@@ -1,7 +1,7 @@
 #include <poplar/Vertex.hpp>
 using namespace poplar;
 
-/*
+
 class HeapSort: public Vertex {
     public:
     // Fields
@@ -73,7 +73,7 @@ class HeapSort: public Vertex {
       return true;
     }
 
-}; */
+}; 
 
 /* class QuickSort : public Vertex {
     public:
