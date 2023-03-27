@@ -266,8 +266,8 @@ class Initialize : public MultiVertex {
 
 class MergeSort : public MultiVertex {
     public:
-    Input<Vector<int>> a;
-    Output<Vector<int>> c;
+    InOut<Vector<int>> a;
+    InOut<Vector<int>> c;
     unsigned one = 0;
     unsigned two = 0;
     unsigned three = 0;
