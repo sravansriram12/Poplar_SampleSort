@@ -63,10 +63,9 @@ int main(int argc, char *argv[]) {
 
 
   srand48(0);
-  
   auto input_list = std::vector<int>(n);
   for (unsigned idx = 0; idx < n; ++idx) {
-    input_list[idx] = (int) rand() % 100;
+    input_list[idx] = (int) rand() % 100 + 1;
   }
 
   struct timespec start, stop, engine_start, engine_stop;
@@ -146,10 +145,11 @@ int main(int argc, char *argv[]) {
     
     for (int k = 0; k < p_in_use; k++) {
         prog.add(Execute(cs_even));
+        prog.add(PrintTensor(initial_list.slice(0, numbers_per_tile)));
         prog.add(Execute(cs_odd));
     }
 
-    prog.add(PrintTensor(initial_list));
+    
 
   
   graph.createHostWrite("list-write", initial_list);
