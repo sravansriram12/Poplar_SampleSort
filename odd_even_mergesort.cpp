@@ -145,7 +145,7 @@ int main(int argc, char *argv[]) {
     
     for (int k = 0; k < p_in_use; k++) {
         prog.add(Execute(cs_even));
-        prog.add(PrintTensor(initial_list.slice(0, numbers_per_tile)));
+        prog.add(padding[0]);
         prog.add(Execute(cs_odd));
     }
 
