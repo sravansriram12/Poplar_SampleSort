@@ -230,6 +230,7 @@ class MergeSort : public Vertex {
     public:
     InOut<Vector<int>> arr1;
     InOut<Vector<int>> arr2;
+    InOut<Vector<int>> arr3;
     unsigned one = 0;
     unsigned two = 0;
     unsigned three = 0;
@@ -238,9 +239,9 @@ class MergeSort : public Vertex {
     unsigned six = 0;
 
 
-    int binary_search_b(int v) {
+    int binary_search_arr2(int v) {
         int left = 0; 
-        int right = (arr1.size() / 2) - 1; 
+        int right = arr1.size() - 1; 
 
         if (arr1[left] >= v) return left;
         if (arr1[right] < v) return right+1;
@@ -256,15 +257,15 @@ class MergeSort : public Vertex {
         return right;
     }
 
-    int binary_search_a(int v) {
-        int left = arr1.size() / 2; 
-        int right = arr1.size() - 1; 
+    int binary_search_arr1(int v) {
+        int left = 0; 
+        int right = arr2.size() - 1; 
 
-        if (arr1[left] > v) return left; 
-        if (arr1[right] <= v) return right+1;
+        if (arr2[left] > v) return left; 
+        if (arr2[right] <= v) return right+1;
         int mid = (left+right)/2; 
         while (mid > left) {
-            if (arr1[mid] <= v) {
+            if (arr2[mid] <= v) {
                 left = mid; 
             } else {
                 right = mid;
@@ -277,20 +278,18 @@ class MergeSort : public Vertex {
 
     bool compute() {
     
-            for (unsigned i = 0; i < arr1.size() / 2; i += 1) {
-                arr2[binary_search_a(arr1[i]) - (arr1.size() / 2) + i] = arr1[i];
-            }
-            for (unsigned i = (arr1.size() / 2) ; i < arr1.size(); i += 1) {
-                arr2[binary_search_b(arr1[i]) + (i - (arr1.size() / 2))] = arr1[i];
-            }
-        
-
-       
-
-    
-
         for (unsigned i = 0; i < arr1.size(); i += 1) {
-            arr1[i] = arr2[i];
+            arr3[binary_search_arr1(arr1[i]) + i] = arr1[i];
+        }
+        for (unsigned i = 0 ; i < arr2.size(); i += 1) {
+            arr3[binary_search_arr2(arr2[i]) + i] = arr2[i];
+        }
+        
+        for (unsigned i = 0; i < arr1.size(); i += 1) {
+            arr1[i] = arr3[i];
+        }
+        for (unsigned i = arr1.size(); i < arr1.size() + arr2.size(); i += 1) {
+            arr2[i - arr1.size()] = arr3[i];
         }
        
         return true;
