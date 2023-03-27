@@ -168,7 +168,7 @@ class DetermineProcessor: public MultiVertex {
     }
 };
 
-/*
+
 class MergeSortComparison : public Vertex {
     public:
     InOut<Vector<int>> arr1;
@@ -226,45 +226,7 @@ class MergeSortComparison : public Vertex {
         return true;
     }
        
-}; */
-
-
-class BitonicSort : public MultiVertex {
- public:
- InOut<Vector<int>> arr;
- Input<int> k;
-
-    void swap(unsigned idx1, unsigned idx2) {
-        int temp = arr[idx1];
-        arr[idx1] = arr[idx2];
-        arr[idx2] = temp;
-    }
-
- bool compute(unsigned workerId) {
-     for (int i = workerId; i + k < arr.size(); i += MultiVertex::numWorkers()) {
-         if (arr[i] > arr[i + k]) {
-            swap(i, i + k);
-         }      
-     }
-           
-    
-    return true;
- }
-};
-
-class Initialize : public MultiVertex {
- public:
- InOut<Vector<int>> arr;
-
- bool compute(unsigned workerId) {
-     for (int i = workerId; i < arr.size(); i += MultiVertex::numWorkers()) {
-         arr[i] = -2147483647;
-     }
-           
-    return true;
- }
-};
-
+}; 
 
 
 
