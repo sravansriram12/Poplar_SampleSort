@@ -131,18 +131,18 @@ int main(int argc, char *argv[]) {
     for (int i = 0; i < even_stop; i += 2) { 
         int end_index1 = std::min(n, nums + numbers_per_tile);
         int end_index2 = std::min(n, nums2 + numbers_per_tile);
-        /*
+        
         VertexRef mergesort_vtx = graph.addVertex(cs_even, "MergeSortComparison");
         graph.connect(mergesort_vtx["arr1"], initial_list.slice(nums, end_index1));
         graph.connect(mergesort_vtx["arr2"], initial_list.slice(nums2, end_index2));
-        graph.setTileMapping(mergesort_vtx, i); */
+        graph.setTileMapping(mergesort_vtx, i); 
 
       
         
-        VertexRef mergesort_vtx = graph.addVertex(cs_even, "MergeSort");
+        /*VertexRef mergesort_vtx = graph.addVertex(cs_even, "MergeSort");
         graph.connect(mergesort_vtx["a"], concat(initial_list.slice(nums, end_index1), initial_list.slice(nums2, end_index2)));
         graph.connect(mergesort_vtx["c"], paddings[i]);
-        graph.setTileMapping(mergesort_vtx, i); 
+        graph.setTileMapping(mergesort_vtx, i);  */
         
        
         nums += (numbers_per_tile * 2);
@@ -157,15 +157,15 @@ int main(int argc, char *argv[]) {
     for (int i = 1; i < odd_stop; i += 2) { 
         int end_index1 = std::min(n, nums + numbers_per_tile);
         int end_index2 = std::min(n, nums2 + numbers_per_tile);
-        /*VertexRef mergesort_vtx = graph.addVertex(cs_odd, "MergeSortComparison");
+        VertexRef mergesort_vtx = graph.addVertex(cs_odd, "MergeSortComparison");
         graph.connect(mergesort_vtx["arr1"], initial_list.slice(nums, end_index1));
         graph.connect(mergesort_vtx["arr2"], initial_list.slice(nums2, end_index2));
-        graph.setTileMapping(mergesort_vtx, i); */
+        graph.setTileMapping(mergesort_vtx, i);
 
-        VertexRef mergesort_vtx = graph.addVertex(cs_odd, "MergeSort");
+        /*VertexRef mergesort_vtx = graph.addVertex(cs_odd, "MergeSort");
         graph.connect(mergesort_vtx["a"], concat(initial_list.slice(nums, end_index1), initial_list.slice(nums2, end_index2)));
         graph.connect(mergesort_vtx["c"], paddings[i]);
-        graph.setTileMapping(mergesort_vtx, i); 
+        graph.setTileMapping(mergesort_vtx, i);  */
 
         nums += (numbers_per_tile * 2);
         nums2 += (numbers_per_tile * 2); 
