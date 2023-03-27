@@ -278,11 +278,11 @@ class MergeSort : public MultiVertex {
     bool compute(unsigned workerId) {
         if (workerId < 3) {
             for (unsigned i = workerId; i < arr1.size() / 2; i += MultiVertex::numWorkers() / 2) {
-                arr2[binary_search_a(arr1[i])] = arr1[i];
+                arr2[binary_search_b(arr1[i])] = arr1[i];
             }
         } else {
             for (unsigned i = (arr1.size() / 2) + (workerId - 3); i < arr1.size(); i += MultiVertex::numWorkers() / 2) {
-                arr2[binary_search_b(arr1[i])] = arr1[i];
+                arr2[binary_search_a(arr1[i])] = arr1[i];
             }
         }
 
