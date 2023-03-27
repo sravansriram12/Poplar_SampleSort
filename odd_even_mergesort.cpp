@@ -150,7 +150,9 @@ int main(int argc, char *argv[]) {
         int j = 0;
 
         Tensor asc = concat(paddings[i], initial_list.slice(nums, end_index1));
-        Tensor bitonic_sequence = concat(asc, initial_list.slice(nums2, end_index2).reverse());
+        Tensor d = initial_list.slice(nums2, end_index2);
+        d = d.reverse()
+        Tensor bitonic_sequence = concat(asc, d);
        
         while (k_iterate > 0) {
             VertexRef bitonicsort_vtx = graph.addVertex(compute_sets_even[j], "BitonicSort");
@@ -188,7 +190,8 @@ int main(int argc, char *argv[]) {
         int j = 0;
 
         Tensor asc = concat(paddings[i], initial_list.slice(nums, end_index1));
-        Tensor bitonic_sequence = concat(asc, initial_list.slice(nums2, end_index2).reverse());
+        Tensor d = initial_list.slice(nums2, end_index2);
+        Tensor bitonic_sequence = concat(asc, d.reverse());
 
         while (k_iterate > 0) {
             VertexRef bitonicsort_vtx = graph.addVertex(compute_sets_odd[j], "BitonicSort");
