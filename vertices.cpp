@@ -283,7 +283,7 @@ class MergeSort : public Vertex {
         int i = 0; 
         int j = 0;
         int k = 0;
-        while (i != arr1.size() || j != arr2.size()) {
+        while (i < arr1.size() && j != arr2.size()) {
             if (arr1[i] <= arr2[j]) {
                 arr3[k] = arr1[i];
                 i++;
