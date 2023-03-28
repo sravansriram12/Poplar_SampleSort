@@ -272,11 +272,41 @@ class MergeSort : public Vertex {
 
     bool compute() {
     
+        /*
         for (unsigned i = 0; i < arr1.size(); i++) {
             arr3[binary_search_arr1(arr1[i]) + i] = arr1[i];
         }
         for (unsigned i = 0 ; i < arr2.size(); i++) {
             arr3[binary_search_arr2(arr2[i]) + i] = arr2[i];
+        } */
+
+        int i = 0; 
+        int j = 0;
+        int k = 0;
+        while (i != arr1.size() || j != arr2.size()) {
+            if (arr1[i] <= arr2[j]) {
+                arr3[k] = arr1[i];
+                i++;
+            } else {
+                arr3[k] = arr2[j];
+                j++;
+            }
+            k++;
+        }
+
+        if (i < arr1.size()) {
+            while (i != arr1.size()) {
+                arr3[k] = arr1[i];
+                i++;
+                k++;
+            }
+          
+        } else {
+             while (j != arr2.size()) {
+                arr3[k] = arr2[j];
+                j++;
+                k++;
+            }
         }
         
         for (unsigned i = 0; i < arr1.size(); i++) {
