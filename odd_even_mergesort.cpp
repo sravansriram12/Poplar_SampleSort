@@ -68,15 +68,17 @@ int main(int argc, char *argv[]) {
     input_list[idx] = (int) mrand48();
   }
 
-  struct timespec start, stop, engine_start, engine_stop;
-  double total_time, engine_time;
-  clock_gettime(CLOCK_REALTIME, &start);
+  struct timespec cpu_start, cpu_stop, compile_start, compile_stop, engine_start, engine_stop, complete_start, complete_stop;
+  double cpu_time, compile_time, engine_time, complete_time;
+  clock_gettime(CLOCK_REALTIME, &complete_start);
 
   Graph graph(device);
   Sequence prog;
 
   // Add codelets to the graph
   graph.addCodelets("vertices.cpp");
+  
+  clock_gettime(CLOCK_REALTIME, &cpu_start);
   Tensor initial_list = graph.addVariable(INT, {n}, "initial_list");
   int p = 1472;
   int numbers_per_tile = ceil(float(n) / p);
@@ -147,44 +149,50 @@ int main(int argc, char *argv[]) {
     
     for (int k = 0; k < p_in_use; k++) {
         prog.add(Execute(cs_even));
-        //prog.add(PrintTensor(initial_list));
-        //prog.add(PrintTensor(paddings[0]));
         prog.add(Execute(cs_odd));
-       // prog.add(PrintTensor(paddings[0]));
     }
 
-    
+    clock_gettime(CLOCK_REALTIME, &cpu_stop);
 
     
-
-  
   graph.createHostWrite("list-write", initial_list);
   graph.createHostRead("list-read", initial_list);
 
-  clock_gettime(CLOCK_REALTIME, &engine_start);
+  clock_gettime(CLOCK_REALTIME, &compile_start);
   Engine engine(graph, prog, OptionFlags{{"debug.retainDebugInformation", "true"}});
-  clock_gettime(CLOCK_REALTIME, &engine_stop);
+  clock_gettime(CLOCK_REALTIME, &compile_stop);
 
+  engine.load(device);
+  engine.writeTensor("list-write", input_list.data(), input_list.data() + input_list.size());
+  
+  clock_gettime(CLOCK_REALTIME, &engine_start);
+  engine.run(0);
+  clock_gettime(CLOCK_REALTIME, &engine_stop);
+  engine.readTensor("list-read", input_list.data(), input_list.data() + input_list.size());
+
+  clock_gettime(CLOCK_REALTIME, &complete_stop);
+  
+  
+  cpu_time = (cpu_stop.tv_sec-cpu_start.tv_sec)
+  +0.000000001*(cpu_stop.tv_nsec-cpu_start.tv_nsec);
+
+  compile_time = (compile_stop.tv_sec-compile_start.tv_sec)
+  +0.000000001*(compile_stop.tv_nsec-compile_start.tv_nsec);
 
   engine_time = (engine_stop.tv_sec-engine_start.tv_sec)
   +0.000000001*(engine_stop.tv_nsec-engine_start.tv_nsec);
 
-  cout << "Engine construction time (s): " << engine_time << endl;
-
-  engine.load(device);
-  engine.writeTensor("list-write", input_list.data(), input_list.data() + input_list.size());
-
-  engine.run(0);
-  engine.readTensor("list-read", input_list.data(), input_list.data() + input_list.size());
-
-  clock_gettime(CLOCK_REALTIME, &stop);
-  total_time = (stop.tv_sec-start.tv_sec)
-  +0.000000001*(stop.tv_nsec-start.tv_nsec);
+  complete_time = (complete_stop.tv_sec-complete_start.tv_sec)
+  +0.000000001*(complete_stop.tv_nsec-complete_start.tv_nsec);
 
   
 
-  cout << "Total time (s): " << total_time << endl;
+
   engine.printProfileSummary(cout, {{"showExecutionSteps", "true"}});
+  cout << "CPU time: " << cpu_time << endl;
+  cout << "Compile time: " << compile_time << endl;
+  cout << "Engine time: " << engine_time << endl;
+  cout << "Complete time: " << complete_time << endl;
 
   for (int i = 0; i < input_list.size() - 1; i++) {
     if (input_list[i + 1] < input_list[i]) {

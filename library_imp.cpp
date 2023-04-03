@@ -76,8 +76,8 @@ int main(int argc, char *argv[]) {
   popops::addCodelets(graph);
   Sequence prog;
 
-  struct timespec engine_start, engine_stop;
-  double subtract_time;
+  struct timespec cpu_start, cpu_stop, compile_start, compile_stop, engine_start, engine_stop, complete_start, complete_stop;
+  double cpu_time, compile_time, engine_time, complete_time;
   
   // 2D tensor where each inner tensor at index i represents the initial list at processor i
   Tensor initial_list = graph.addVariable(INT, {n});
@@ -96,10 +96,13 @@ int main(int argc, char *argv[]) {
     }
   }
  
-  clock_gettime(CLOCK_REALTIME, &engine_start);
+  
+  clock_gettime(CLOCK_REALTIME, &complete_start);
   TopKParams params(n, false, SortOrder::ASCENDING, false);
   
+  clock_gettime(CLOCK_REALTIME, &cpu_start);
   Tensor final_list = popops::topK(graph, prog, initial_list, params);
+  clock_gettime(CLOCK_REALTIME, &cpu_stop);
 
   graph.createHostRead("list-read", final_list);
   
@@ -112,24 +115,41 @@ int main(int argc, char *argv[]) {
   
   graph.createHostWrite("list-write", initial_list);
   
-  
-  Engine engine(graph, prog, OptionFlags{{"debug.retainDebugInformation", "true"}});
+  clock_gettime(CLOCK_REALTIME, &compile_start);
+  Engine engine(graph, prog);
+  clock_gettime(CLOCK_REALTIME, &compile_stop);
   
   
   engine.load(device);
   
   engine.writeTensor("list-write", input_list.data(), input_list.data() + input_list.size());
+  
+  clock_gettime(CLOCK_REALTIME, &engine_start);
   engine.run(0);  
+  clock_gettime(CLOCK_REALTIME, &engine_stop);
   engine.readTensor("list-read", input_list.data(), input_list.data() + input_list.size()); 
 
-  clock_gettime(CLOCK_REALTIME, &engine_stop);
+  clock_gettime(CLOCK_REALTIME, &complete_stop);
+
   
-  subtract_time = (engine_stop.tv_sec-engine_start.tv_sec)
+  cpu_time = (cpu_stop.tv_sec-cpu_start.tv_sec)
+  +0.000000001*(cpu_stop.tv_nsec-cpu_start.tv_nsec);
+
+  compile_time = (compile_stop.tv_sec-compile_start.tv_sec)
+  +0.000000001*(compile_stop.tv_nsec-compile_start.tv_nsec);
+
+  engine_time = (engine_stop.tv_sec-engine_start.tv_sec)
   +0.000000001*(engine_stop.tv_nsec-engine_start.tv_nsec);
 
+  complete_time = (complete_stop.tv_sec-complete_start.tv_sec)
+  +0.000000001*(complete_stop.tv_nsec-complete_start.tv_nsec);
+
   if (DEBUG == 1) {
-    engine.printProfileSummary(cout, {{"showExecutionSteps", "true"}});
-    cout << "Total time: " << subtract_time << endl;
+    //engine.printProfileSummary(cout, {{"showExecutionSteps", "true"}});
+    cout << "CPU time: " << cpu_time << endl;
+    cout << "Compile time: " << compile_time << endl;
+    cout << "Engine time: " << engine_time << endl;
+    cout << "Complete time: " << complete_time << endl;
   }
   
 
