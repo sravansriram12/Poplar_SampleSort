@@ -86,8 +86,8 @@ int main(int argc, char *argv[]) {
   int nums = 0;
   for (unsigned processor = 0; processor < p_in_use; processor++) {
     int end_index = std::min(n, nums + local_list_size);
-    graph.setTileMapping(initial_list.slice(nums, end_index), i);
-    nums += numbers_per_tile;
+    graph.setTileMapping(initial_list.slice(nums, end_index), processor);
+    nums += local_list_size;
   } 
 
   if (DEBUG == 1) {
