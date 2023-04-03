@@ -31,7 +31,8 @@ int main(int argc, char *argv[]) {
   }
 
   unsigned n = atoi(argv[argc - 3]);  // number of elements
-  unsigned p = atoi(argv[argc - 2]);   // number of processors (tiles)
+  unsigned p = 1472;
+  unsigned k = atoi(argv[argc - 2]);   // number of processors (tiles)
   unsigned DEBUG = atoi(argv[argc - 1]);
   unsigned local_list_size = ceil(float(n) / p);
   int p_in_use = ceil(float(n) / local_list_size);
@@ -98,7 +99,7 @@ int main(int argc, char *argv[]) {
  
   
   clock_gettime(CLOCK_REALTIME, &complete_start);
-  TopKParams params(n, false, SortOrder::ASCENDING, false);
+  TopKParams params(k, false, SortOrder::ASCENDING, false);
   
   clock_gettime(CLOCK_REALTIME, &cpu_start);
   Tensor final_list = popops::topK(graph, prog, initial_list, params);
