@@ -34,6 +34,7 @@ int main(int argc, char *argv[]) {
   unsigned p = atoi(argv[argc - 2]);   // number of processors (tiles)
   unsigned DEBUG = atoi(argv[argc - 1]);
   unsigned local_list_size = ceil(float(n) / p);
+  int p_in_use = ceil(float(n) / local_list_size);
   const char *dev = "ipu";
   srand(time(NULL));
   
@@ -82,8 +83,11 @@ int main(int argc, char *argv[]) {
   Tensor initial_list = graph.addVariable(INT, {n});
 
   // First computation phase - local sorting and sampling
-  for (unsigned processor = 0; processor < p; processor++) {
-    graph.setTileMapping(initial_list.slice(processor * local_list_size, (processor + 1) * local_list_size), processor);
+  int nums = 0;
+  for (unsigned processor = 0; processor < p_in_use; processor++) {
+    int end_index = std::min(n, nums + numbers_per_tile);
+    graph.setTileMapping(initial_list.slice(nums, end_index), i);
+    nums += numbers_per_tile;
   } 
 
   if (DEBUG == 1) {
