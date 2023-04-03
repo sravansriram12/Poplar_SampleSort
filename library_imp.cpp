@@ -85,7 +85,7 @@ int main(int argc, char *argv[]) {
   // First computation phase - local sorting and sampling
   int nums = 0;
   for (unsigned processor = 0; processor < p_in_use; processor++) {
-    int end_index = std::min(n, nums + numbers_per_tile);
+    int end_index = std::min(n, nums + local_list_size);
     graph.setTileMapping(initial_list.slice(nums, end_index), i);
     nums += numbers_per_tile;
   } 
