@@ -148,8 +148,9 @@ int main(int argc, char *argv[]) {
           graph.connect(mergesort_k["arr2"], initial_list.slice(nums2, end_index2));
           graph.connect(mergesort_k["arr3"], paddings[i]);
           graph.connect(mergesort_k["numbers"], k);
-          graph.setTileMapping(mergesort_k, i);
           graph.connect(mergesort_k["per_tile"], numbers_per_tile * 2);
+          graph.setTileMapping(mergesort_k, i);
+          
 
         }
 
