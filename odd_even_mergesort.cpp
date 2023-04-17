@@ -26,7 +26,7 @@ using std::to_string;
 
 int main(int argc, char *argv[]) {
   // Create the IPU model device
-  if (argc != 2) {
+  if (argc != 3) {
     cout << "Error in number of arguments" << endl;
   }
 
@@ -129,7 +129,7 @@ int main(int argc, char *argv[]) {
     
     int retain = 0;
     if (k < numbers_per_tile * 2) {
-      retain = k;
+      k = numbers
     } else {
       retain = numbers_per_tile * 2;
     }
@@ -137,12 +137,17 @@ int main(int argc, char *argv[]) {
     for (int i = 0; i < even_stop; i += 2) { 
         int end_index1 = std::min(n, nums + numbers_per_tile);
         int end_index2 = std::min(n, nums2 + numbers_per_tile);
+
+        if (k < numbers_per_tile * 2) {
+          k = 
+        }
      
         VertexRef mergesort_vtx = graph.addVertex(cs_even, "MergeSort");
         graph.connect(mergesort_vtx["arr1"], initial_list.slice(nums, end_index1));
         graph.connect(mergesort_vtx["arr2"], initial_list.slice(nums2, end_index2));
         graph.connect(mergesort_vtx["arr3"], paddings[i]);
         graph.connect(mergesort_vtx["numbers"], k);
+        graph.connect(mergesort_vtx["per_tile"], numbers_per_tile * 2);
 
         graph.setTileMapping(mergesort_vtx, i);
       
@@ -154,6 +159,7 @@ int main(int argc, char *argv[]) {
           graph.connect(mergesort_k["arr3"], paddings[i]);
           graph.connect(mergesort_k["numbers"], k);
           graph.setTileMapping(mergesort_k, i);
+          graph.connect(mergesort_k["per_tile"], numbers_per_tile * 2);
 
         }
 
@@ -179,6 +185,7 @@ int main(int argc, char *argv[]) {
         graph.connect(mergesort_vtx["arr2"], initial_list.slice(nums2, end_index2));
         graph.connect(mergesort_vtx["arr3"], paddings[i]);
         graph.connect(mergesort_vtx["numbers"], k);
+        graph.connect(mergesort_vtx["per_tile"], numbers_per_tile * 2);
         graph.setTileMapping(mergesort_vtx, i);
 
          if (i <= k_in_use) {
@@ -187,6 +194,7 @@ int main(int argc, char *argv[]) {
           graph.connect(mergesort_k["arr2"], initial_list.slice(nums2, end_index2));
           graph.connect(mergesort_k["arr3"], paddings[i]);
           graph.connect(mergesort_k["numbers"], k);
+          graph.connect(mergesort_k["per_tile"], numbers_per_tile * 2);
           graph.setTileMapping(mergesort_k, i);
 
         }

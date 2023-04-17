@@ -232,69 +232,108 @@ class MergeSort : public Vertex {
     InOut<Vector<int>> arr2;
     InOut<Vector<int>> arr3;
     Input<int> numbers;
-\
+    Input<int> per_tile;
 
     bool compute() {
 
         int i = 0; 
         int j = 0;
         int k = 0;
-        bool k_hit = false;
-        while (i < arr1.size() && j < arr2.size()) {
-            if (arr1[i] <= arr2[j]) {
-                arr3[k] = arr1[i];
-                i++;
-            } else {
-                arr3[k] = arr2[j];
-                j++;
-            }
-            k++;
-            if (k == numbers) {
-                 k_hit = true;
-                 break;
-            }
-        }
-        
-        if (!k_hit) {
-            while (i != arr1.size()) {
-                arr3[k] = arr1[i];
-                i++;
+
+        if (numbers < per_tile) {
+             bool k_hit = false;
+            while (i < arr1.size() && j < arr2.size()) {
+                if (arr1[i] <= arr2[j]) {
+                    arr3[k] = arr1[i];
+                    i++;
+                } else {
+                    arr3[k] = arr2[j];
+                    j++;
+                }
                 k++;
                 if (k == numbers) {
                     k_hit = true;
                     break;
                 }
             }
+            
             if (!k_hit) {
-                 while (j != arr2.size()) {
-                    arr3[k] = arr2[j];
-                    j++;
+                while (i != arr1.size()) {
+                    arr3[k] = arr1[i];
+                    i++;
                     k++;
                     if (k == numbers) {
                         k_hit = true;
                         break;
                     }
                 }
+                if (!k_hit) {
+                    while (j != arr2.size()) {
+                        arr3[k] = arr2[j];
+                        j++;
+                        k++;
+                        if (k == numbers) {
+                            k_hit = true;
+                            break;
+                        }
+                    }
+                }
+            }
+
+            for (unsigned i = 0; i < numbers / 2; i++) {
+                if (i < numbers / 2) {
+                    arr1[i] = arr3[i];
+                } else {
+                    arr1[i] = 2147483647;
+                }
+            }
+            for (unsigned i = numbers / 2; i < numbers; i++) {
+                if (i < numbers) {
+                    arr2[i - numbers / 2] = arr3[i];
+                } else {
+                    arr2[i] = 2147483647;
+                }
+            }
+        } else {
+            while (i < arr1.size() && j < arr2.size()) {
+                if (arr1[i] <= arr2[j]) {
+                    arr3[k] = arr1[i];
+                    i++;
+                } else {
+                    arr3[k] = arr2[j];
+                    j++;
+                }
+                k++;
+            }
+            
+      
+                while (i != arr1.size()) {
+                    arr3[k] = arr1[i];
+                    i++;
+                    k++;
+                    if (k == numbers) {
+                        k_hit = true;
+                        break;
+                    }
+                }
+                
+                while (j != arr2.size()) {
+                    arr3[k] = arr2[j];
+                    j++;
+                    k++;
+                }
+                
+            
+
+            for (unsigned i = 0; i < arr1.size(); i++) {
+                arr1[i] = arr3[i];
+            }
+            for (unsigned i = arr1.size(); i < arr3.size(); i++) {
+                arr2[i - arr1.size()] = arr3[i];
             }
         }
-
-        for (unsigned i = 0; i < numbers / 2; i++) {
-            if (i < numbers / 2) {
-                 arr1[i] = arr3[i];
-            } else {
-                arr1[i] = 2147483647;
-            }
-        }
-        for (unsigned i = numbers / 2; i < numbers; i++) {
-            if (i < numbers) {
-                 arr2[i - numbers / 2] = arr3[i];
-            } else {
-                arr2[i] = 2147483647;
-            }
-        }
-
-
        
+
         return true;
     }
        
