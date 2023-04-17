@@ -311,10 +311,6 @@ class MergeSort : public Vertex {
                     arr3[k] = arr1[i];
                     i++;
                     k++;
-                    if (k == numbers) {
-                        k_hit = true;
-                        break;
-                    }
                 }
                 
                 while (j != arr2.size()) {
