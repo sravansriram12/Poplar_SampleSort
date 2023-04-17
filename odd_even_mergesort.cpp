@@ -62,7 +62,7 @@ int main(int argc, char *argv[]) {
     device = ipuModel.createDevice();
   }
   
-  prog.add(PrintTensor(initial_list.slice(0, k)));
+  
 
   srand48(0);
   auto input_list = std::vector<int>(n);
@@ -113,7 +113,8 @@ int main(int argc, char *argv[]) {
         graph.setTileMapping(p, i);
         paddings[i] = p;
     }
-
+    
+    prog.add(PrintTensor(initial_list.slice(0, k)));
     prog.add(Execute(cs));
 
     ComputeSet cs_even = graph.addComputeSet("mergeEven");
