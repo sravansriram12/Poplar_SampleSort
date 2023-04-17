@@ -65,9 +65,13 @@ int main(int argc, char *argv[]) {
 
   srand48(0);
   auto input_list = std::vector<int>(n);
+  auto dup_list = std::vector<int>(n);
   for (unsigned idx = 0; idx < n; ++idx) {
     input_list[idx] = (int) mrand48();
+    dup_list[idx] = input_list[idx];
   }
+
+  std::sort(dup_list.start(), dup_list.end());
 
   struct timespec cpu_start, cpu_stop, compile_start, compile_stop, engine_start, engine_stop, complete_start, complete_stop;
   double cpu_time, compile_time, engine_time, complete_time;
@@ -139,7 +143,7 @@ int main(int argc, char *argv[]) {
         graph.connect(mergesort_vtx["arr1"], initial_list.slice(nums, end_index1));
         graph.connect(mergesort_vtx["arr2"], initial_list.slice(nums2, end_index2));
         graph.connect(mergesort_vtx["arr3"], paddings[i]);
-        graph.connect(mergesort_vtx["numbers"], retain);
+        graph.connect(mergesort_vtx["numbers"], k);
         graph.setTileMapping(mergesort_vtx, i);
       
 
@@ -148,7 +152,7 @@ int main(int argc, char *argv[]) {
           graph.connect(mergesort_k["arr1"], initial_list.slice(nums, end_index1));
           graph.connect(mergesort_k["arr2"], initial_list.slice(nums2, end_index2));
           graph.connect(mergesort_k["arr3"], paddings[i]);
-          graph.connect(mergesort_k["numbers"], retain);
+          graph.connect(mergesort_k["numbers"], k);
           graph.setTileMapping(mergesort_k, i);
 
         }
@@ -174,7 +178,7 @@ int main(int argc, char *argv[]) {
         graph.connect(mergesort_vtx["arr1"], initial_list.slice(nums, end_index1));
         graph.connect(mergesort_vtx["arr2"], initial_list.slice(nums2, end_index2));
         graph.connect(mergesort_vtx["arr3"], paddings[i]);
-        graph.connect(mergesort_vtx["numbers"], retain);
+        graph.connect(mergesort_vtx["numbers"], k);
         graph.setTileMapping(mergesort_vtx, i);
 
          if (i <= k_in_use) {
@@ -182,7 +186,7 @@ int main(int argc, char *argv[]) {
           graph.connect(mergesort_k["arr1"], initial_list.slice(nums, end_index1));
           graph.connect(mergesort_k["arr2"], initial_list.slice(nums2, end_index2));
           graph.connect(mergesort_k["arr3"], paddings[i]);
-          graph.connect(mergesort_k["numbers"], retain);
+          graph.connect(mergesort_k["numbers"], k);
           graph.setTileMapping(mergesort_k, i);
 
         }
@@ -270,7 +274,7 @@ int main(int argc, char *argv[]) {
   cout << "Complete time: " << complete_time << endl;
 
   for (int i = 0; i < k; i++) {
-    if (input_list[i + 1] < input_list[i]) {
+    if (dup_list[i] != input_list[i]) {
         cout << "ERROR: NOT SORTED" << endl;
         break;
     }
