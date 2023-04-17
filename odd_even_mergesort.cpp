@@ -71,7 +71,7 @@ int main(int argc, char *argv[]) {
     dup_list[idx] = input_list[idx];
   }
 
-  std::sort(dup_list.start(), dup_list.end());
+  std::sort(dup_list.begin(), dup_list.end());
 
   struct timespec cpu_start, cpu_stop, compile_start, compile_stop, engine_start, engine_stop, complete_start, complete_stop;
   double cpu_time, compile_time, engine_time, complete_time;
