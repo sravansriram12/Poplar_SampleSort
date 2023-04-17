@@ -232,18 +232,9 @@ class MergeSort : public Vertex {
     InOut<Vector<int>> arr2;
     InOut<Vector<int>> arr3;
     Input<int> numbers;
+\
 
     bool compute() {
-    
-        /*
-        for (unsigned i = 0; i < arr1.size(); i++) {
-            arr3[binary_search_arr1(arr1[i]) + i] = arr1[i];
-        }
-        for (unsigned i = 0 ; i < arr2.size(); i++) {
-            arr3[binary_search_arr2(arr2[i]) + i] = arr2[i];
-        } */
-
-
 
         int i = 0; 
         int j = 0;

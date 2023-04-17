@@ -136,14 +136,13 @@ int main(int argc, char *argv[]) {
     for (int i = 0; i < even_stop; i += 2) { 
         int end_index1 = std::min(n, nums + numbers_per_tile);
         int end_index2 = std::min(n, nums2 + numbers_per_tile);
-        if (retain == numbers_per_tile * 2) {
-          retain = end_index2 - nums2 + 1 + end_index1 - nums + 1;
-        }
+     
         VertexRef mergesort_vtx = graph.addVertex(cs_even, "MergeSort");
         graph.connect(mergesort_vtx["arr1"], initial_list.slice(nums, end_index1));
         graph.connect(mergesort_vtx["arr2"], initial_list.slice(nums2, end_index2));
         graph.connect(mergesort_vtx["arr3"], paddings[i]);
         graph.connect(mergesort_vtx["numbers"], k);
+
         graph.setTileMapping(mergesort_vtx, i);
       
 
