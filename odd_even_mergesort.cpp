@@ -237,7 +237,7 @@ int main(int argc, char *argv[]) {
   clock_gettime(CLOCK_REALTIME, &engine_start);
   engine.run(0);
   clock_gettime(CLOCK_REALTIME, &engine_stop);
-  if (retain == numbers_per_tile * 2) {
+  if (k >= numbers_per_tile * 2) {
     engine.readTensor("list-read", input_list.data(), input_list.data() + k);
   } else {
      engine.readTensor("list-read-1", input_list.data(), input_list.data() + k / 2);
