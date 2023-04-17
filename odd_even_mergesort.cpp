@@ -133,7 +133,7 @@ int main(int argc, char *argv[]) {
         graph.setTileMapping(mergesort_vtx, i);
       
 
-        if (i < k_in_use) {
+        if (i <= k_in_use) {
           VertexRef mergesort_k = graph.addVertex(cs_even_k, "MergeSort");
           graph.connect(mergesort_k["arr1"], initial_list.slice(nums, end_index1));
           graph.connect(mergesort_k["arr2"], initial_list.slice(nums2, end_index2));
@@ -162,7 +162,7 @@ int main(int argc, char *argv[]) {
         graph.connect(mergesort_vtx["arr3"], paddings[i]);
         graph.setTileMapping(mergesort_vtx, i);
 
-         if (i < k_in_use) {
+         if (i <= k_in_use) {
           VertexRef mergesort_k = graph.addVertex(cs_odd_k, "MergeSort");
           graph.connect(mergesort_k["arr1"], initial_list.slice(nums, end_index1));
           graph.connect(mergesort_k["arr2"], initial_list.slice(nums2, end_index2));
