@@ -88,6 +88,8 @@ int main(int argc, char *argv[]) {
   int k_numbers = ceil(float(k) / p);
   int k_in_use = ceil(float(n) / k_numbers);
 
+  cout << k_in_use << endl;
+
   int tile_num = 0;
   int nums = 0;
 
