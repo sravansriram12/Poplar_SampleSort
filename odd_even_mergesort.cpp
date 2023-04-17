@@ -113,8 +113,7 @@ int main(int argc, char *argv[]) {
         graph.setTileMapping(p, i);
         paddings[i] = p;
     }
-    
-    prog.add(PrintTensor(initial_list.slice(0, k)));
+  
     prog.add(Execute(cs));
 
     ComputeSet cs_even = graph.addComputeSet("mergeEven");
@@ -169,8 +168,6 @@ int main(int argc, char *argv[]) {
         prog.add(Execute(cs_even));
         prog.add(Execute(cs_odd));
     } 
-
-    prog.add(PrintTensor(initial_list.slice(0, k)));
 
     clock_gettime(CLOCK_REALTIME, &cpu_stop);
 
