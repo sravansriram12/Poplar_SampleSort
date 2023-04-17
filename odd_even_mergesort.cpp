@@ -184,12 +184,12 @@ int main(int argc, char *argv[]) {
 
     
     
-    for (int i = 0; i < k_in_use; i++) {
+    for (int i = 0; i < p_in_use - k_in_use + 1; i++) {
       prog.add(Execute(cs_even));
       prog.add(Execute(cs_odd));
     }
 
-    for (int i = 0; i < p_in_use - k_in_use + 1; i++) {
+    for (int i = 0; i < k_in_use; i++) {
       prog.add(Execute(cs_even_k));
       prog.add(Execute(cs_odd_k));
     }
