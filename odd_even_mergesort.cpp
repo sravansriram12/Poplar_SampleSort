@@ -89,8 +89,15 @@ int main(int argc, char *argv[]) {
   int numbers_per_tile = ceil(float(n) / p);
   int p_in_use = ceil(float(n) / numbers_per_tile);
 
-  int numbers_per_tile_k = ceil(float(k) / p);
-  int k_in_use = ceil(float(k) / numbers_per_tile_k);
+  int k_in_use = 0;
+   
+  if (k >= numbers_per_tile * 2) {
+     int numbers_per_tile_k = ceil(float(k) / p);
+     k_in_use = ceil(float(k) / numbers_per_tile_k);
+  } else {
+    k_in_use = 2;
+  }
+ 
 
   cout << k_in_use << endl;
 
