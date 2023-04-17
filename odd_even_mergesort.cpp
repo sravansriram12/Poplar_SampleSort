@@ -30,7 +30,8 @@ int main(int argc, char *argv[]) {
     cout << "Error in number of arguments" << endl;
   }
 
-  int n = atoi(argv[argc - 1]);  // number of elements
+  int n = atoi(argv[argc - 2]);  // number of elements
+  int k = atoi(argv[argc - 1]);
   const char *dev = "ipu";
   
   Device device;
@@ -84,6 +85,9 @@ int main(int argc, char *argv[]) {
   int numbers_per_tile = ceil(float(n) / p);
   int p_in_use = ceil(float(n) / numbers_per_tile);
 
+  int k_numbers = ceil(float(k) / p);
+  int k_in_use = ceil(float(n) / k_numbers);
+
   int tile_num = 0;
   int nums = 0;
 
@@ -111,6 +115,7 @@ int main(int argc, char *argv[]) {
     prog.add(Execute(cs));
 
     ComputeSet cs_even = graph.addComputeSet("mergeEven");
+    ComputeSet cs_even_k = graph.addComputeSet("mergeEven_k");
      
 
     nums = 0;
@@ -124,12 +129,24 @@ int main(int argc, char *argv[]) {
         graph.connect(mergesort_vtx["arr2"], initial_list.slice(nums2, end_index2));
         graph.connect(mergesort_vtx["arr3"], paddings[i]);
         graph.setTileMapping(mergesort_vtx, i);
+      
+
+        if (i < k_in_use) {
+          VertexRef mergesort_k = graph.addVertex(cs_even_k, "MergeSort");
+          graph.connect(mergesort_k["arr1"], initial_list.slice(nums, end_index1));
+          graph.connect(mergesort_k["arr2"], initial_list.slice(nums2, end_index2));
+          graph.connect(mergesort_k["arr3"], paddings[i]);
+          graph.setTileMapping(mergesort_k, i);
+
+        }
+
         nums += (numbers_per_tile * 2);
         nums2 += (numbers_per_tile * 2);
        
     }
 
     ComputeSet cs_odd = graph.addComputeSet("mergeOdd");
+    ComputeSet cs_odd_k = graph.addComputeSet("mergeOdd_k");
 
     nums = numbers_per_tile;
     nums2 = nums + numbers_per_tile;
@@ -142,21 +159,49 @@ int main(int argc, char *argv[]) {
         graph.connect(mergesort_vtx["arr2"], initial_list.slice(nums2, end_index2));
         graph.connect(mergesort_vtx["arr3"], paddings[i]);
         graph.setTileMapping(mergesort_vtx, i);
+
+         if (i < k_in_use) {
+          VertexRef mergesort_k = graph.addVertex(cs_odd_k, "MergeSort");
+          graph.connect(mergesort_k["arr1"], initial_list.slice(nums, end_index1));
+          graph.connect(mergesort_k["arr2"], initial_list.slice(nums2, end_index2));
+          graph.connect(mergesort_k["arr3"], paddings[i]);
+          graph.setTileMapping(mergesort_k, i);
+
+        }
+
         nums += (numbers_per_tile * 2);
         nums2 += (numbers_per_tile * 2);
     }
 
-    
-    for (int k = 0; k < p_in_use; k++) {
+    /*
+    for (int i = 0; i < p_in_use; i++) {
         prog.add(Execute(cs_even));
         prog.add(Execute(cs_odd));
+    } */
+
+
+    
+    
+    for (int i = 0; i < k_in_use; i++) {
+      prog.add(Execute(cs_even));
+      prog.add(Execute(cs_odd));
     }
+
+    for (int i = 0; i < p_in_use - k_in_use + 1; i++) {
+      prog.add(Execute(cs_even_k));
+      prog.add(Execute(cs_odd_k));
+    }
+
+
+
+
+
 
     clock_gettime(CLOCK_REALTIME, &cpu_stop);
 
     
   graph.createHostWrite("list-write", initial_list);
-  graph.createHostRead("list-read", initial_list);
+  graph.createHostRead("list-read", initial_list.slice(0, k));
 
   clock_gettime(CLOCK_REALTIME, &compile_start);
   Engine engine(graph, prog, OptionFlags{{"debug.retainDebugInformation", "true"}});
@@ -194,7 +239,7 @@ int main(int argc, char *argv[]) {
   cout << "Engine time: " << engine_time << endl;
   cout << "Complete time: " << complete_time << endl;
 
-  for (int i = 0; i < input_list.size() - 1; i++) {
+  for (int i = 0; i < k; i++) {
     if (input_list[i + 1] < input_list[i]) {
         cout << "ERROR: NOT SORTED" << endl;
         break;
