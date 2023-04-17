@@ -128,6 +128,7 @@ int main(int argc, char *argv[]) {
     prog.add(Execute(cs));
 
     ComputeSet cs_even = graph.addComputeSet("mergeEven");
+    ComputeSet cs_even_k = graph.addComputeSet("mergeEven_k");
      
 
     nums = 0;
@@ -147,7 +148,7 @@ int main(int argc, char *argv[]) {
 
         graph.setTileMapping(mergesort_vtx, i);
       
-/*
+
         if (i <= k_in_use) {
           VertexRef mergesort_k = graph.addVertex(cs_even_k, "MergeSort");
           graph.connect(mergesort_k["arr1"], initial_list.slice(nums, end_index1));
@@ -158,7 +159,7 @@ int main(int argc, char *argv[]) {
           graph.setTileMapping(mergesort_k, i);
           
 
-        } */
+        }
 
         nums += (numbers_per_tile * 2);
         nums2 += (numbers_per_tile * 2);
@@ -166,6 +167,7 @@ int main(int argc, char *argv[]) {
     }
 
     ComputeSet cs_odd = graph.addComputeSet("mergeOdd");
+    ComputeSet cs_odd_k = graph.addComputeSet("mergeOdd_k");
 
     nums = numbers_per_tile;
     nums2 = nums + numbers_per_tile;
@@ -181,7 +183,7 @@ int main(int argc, char *argv[]) {
         graph.connect(mergesort_vtx["numbers"], k);
         graph.connect(mergesort_vtx["per_tile"], numbers_per_tile * 2);
         graph.setTileMapping(mergesort_vtx, i);
-  /*
+
          if (i <= k_in_use) {
           VertexRef mergesort_k = graph.addVertex(cs_odd_k, "MergeSort");
           graph.connect(mergesort_k["arr1"], initial_list.slice(nums, end_index1));
@@ -191,7 +193,7 @@ int main(int argc, char *argv[]) {
           graph.connect(mergesort_k["per_tile"], numbers_per_tile * 2);
           graph.setTileMapping(mergesort_k, i);
 
-        } */
+        }
 
         nums += (numbers_per_tile * 2);
         nums2 += (numbers_per_tile * 2);
@@ -206,16 +208,15 @@ int main(int argc, char *argv[]) {
 
     
     
-    for (int i = 0; i < p_in_use; i++) {
+    for (int i = 0; i < p_in_use - k_in_use + 1; i++) {
       prog.add(Execute(cs_even));
       prog.add(Execute(cs_odd));
     }
 
-/*
     for (int i = 0; i < k_in_use; i++) {
       prog.add(Execute(cs_even_k));
       prog.add(Execute(cs_odd_k));
-    } */
+    }
 
 
 
