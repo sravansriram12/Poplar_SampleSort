@@ -219,7 +219,7 @@ int main(int argc, char *argv[]) {
 
     
   graph.createHostWrite("list-write", initial_list);
-  if (retain == numbers_per_tile * 2) {
+  if (k >= numbers_per_tile * 2) {
      graph.createHostRead("list-read", initial_list.slice(0, k));
   } else {
     graph.createHostRead("list-read-1", initial_list.slice(0, k / 2));
