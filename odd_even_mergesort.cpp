@@ -176,7 +176,7 @@ int main(int argc, char *argv[]) {
           graph.connect(mergesort_k["arr1"], initial_list.slice(nums, end_index1));
           graph.connect(mergesort_k["arr2"], initial_list.slice(nums2, end_index2));
           graph.connect(mergesort_k["arr3"], paddings[i]);
-          graph.connect(mergesort_k"numbers"], retain);
+          graph.connect(mergesort_k["numbers"], retain);
           graph.setTileMapping(mergesort_k, i);
 
         }
