@@ -231,44 +231,7 @@ class MergeSort : public Vertex {
     InOut<Vector<int>> arr1;
     InOut<Vector<int>> arr2;
     InOut<Vector<int>> arr3;
-
-
-    int binary_search_arr2(int v) {
-        int left = 0; 
-        int right = arr1.size() - 1; 
-
-        if (arr1[left] >= v) return left;
-        if (arr1[right] < v) return right+1;
-        int mid = (left+right)/2; 
-        while (mid > left) {
-            if (arr1[mid] < v) {
-                left = mid; 
-            } else {
-                right = mid;
-            }
-            mid = (left+right)/2;
-        }
-        return right;
-    }
-
-    int binary_search_arr1(int v) {
-        int left = 0; 
-        int right = arr2.size() - 1; 
-
-        if (arr2[left] > v) return left; 
-        if (arr2[right] <= v) return right+1;
-        int mid = (left+right)/2; 
-        while (mid > left) {
-            if (arr2[mid] <= v) {
-                left = mid; 
-            } else {
-                right = mid;
-            }
-            mid = (left+right)/2;
-        }
-        return right;
-    }
-
+    Input<int> numbers;
 
     bool compute() {
     
@@ -280,10 +243,13 @@ class MergeSort : public Vertex {
             arr3[binary_search_arr2(arr2[i]) + i] = arr2[i];
         } */
 
+
+
         int i = 0; 
         int j = 0;
         int k = 0;
-        while (i < arr1.size() && j != arr2.size()) {
+        bool k_hit = false;
+        while (i < arr1.size() && j < arr2.size()) {
             if (arr1[i] <= arr2[j]) {
                 arr3[k] = arr1[i];
                 i++;
@@ -292,29 +258,51 @@ class MergeSort : public Vertex {
                 j++;
             }
             k++;
+            if (k == numbers) {
+                 k_hit = true;
+                 break;
+            }
         }
-
-        if (i < arr1.size()) {
+        
+        if (!k_hit) {
             while (i != arr1.size()) {
                 arr3[k] = arr1[i];
                 i++;
                 k++;
+                if (k == numbers) {
+                    k_hit = true;
+                    break;
+                }
             }
-          
-        } else {
-             while (j != arr2.size()) {
-                arr3[k] = arr2[j];
-                j++;
-                k++;
+            if (!k_hit) {
+                 while (j != arr2.size()) {
+                    arr3[k] = arr2[j];
+                    j++;
+                    k++;
+                    if (k == numbers) {
+                        k_hit = true;
+                        break;
+                    }
+                }
             }
         }
-        
-        for (unsigned i = 0; i < arr1.size(); i++) {
-            arr1[i] = arr3[i];
+
+        for (unsigned i = 0; i < numbers / 2; i++) {
+            if (i < numbers / 2) {
+                 arr1[i] = arr3[i];
+            } else {
+                arr1[i] = 2147483647;
+            }
         }
-        for (unsigned i = arr1.size(); i < arr1.size() + arr2.size(); i++) {
-            arr2[i - arr1.size()] = arr3[i];
+        for (unsigned i = numbers / 2; i < numbers; i++) {
+            if (i < numbers) {
+                 arr2[i - numbers / 2] = arr3[i];
+            } else {
+                arr2[i] = 2147483647;
+            }
         }
+
+
        
         return true;
     }

@@ -122,6 +122,13 @@ int main(int argc, char *argv[]) {
     nums = 0;
     int nums2 = nums + numbers_per_tile;
     
+    int retain = 0;
+    if (k < numbers_per_tile * 2) {
+      retain = k;
+    } else {
+      retain = numbers_per_tile * 2;
+    }
+    
     for (int i = 0; i < even_stop; i += 2) { 
         int end_index1 = std::min(n, nums + numbers_per_tile);
         int end_index2 = std::min(n, nums2 + numbers_per_tile);
@@ -129,6 +136,7 @@ int main(int argc, char *argv[]) {
         graph.connect(mergesort_vtx["arr1"], initial_list.slice(nums, end_index1));
         graph.connect(mergesort_vtx["arr2"], initial_list.slice(nums2, end_index2));
         graph.connect(mergesort_vtx["arr3"], paddings[i]);
+        graph.connect(mergesort_vtx["numbers"], retain);
         graph.setTileMapping(mergesort_vtx, i);
       
 
@@ -137,6 +145,7 @@ int main(int argc, char *argv[]) {
           graph.connect(mergesort_k["arr1"], initial_list.slice(nums, end_index1));
           graph.connect(mergesort_k["arr2"], initial_list.slice(nums2, end_index2));
           graph.connect(mergesort_k["arr3"], paddings[i]);
+          graph.connect(mergesort_k["numbers"], retain);
           graph.setTileMapping(mergesort_k, i);
 
         }
@@ -159,6 +168,7 @@ int main(int argc, char *argv[]) {
         graph.connect(mergesort_vtx["arr1"], initial_list.slice(nums, end_index1));
         graph.connect(mergesort_vtx["arr2"], initial_list.slice(nums2, end_index2));
         graph.connect(mergesort_vtx["arr3"], paddings[i]);
+        graph.connect(mergesort_vtx["numbers"], retain);
         graph.setTileMapping(mergesort_vtx, i);
 
          if (i <= k_in_use) {
@@ -166,6 +176,7 @@ int main(int argc, char *argv[]) {
           graph.connect(mergesort_k["arr1"], initial_list.slice(nums, end_index1));
           graph.connect(mergesort_k["arr2"], initial_list.slice(nums2, end_index2));
           graph.connect(mergesort_k["arr3"], paddings[i]);
+          graph.connect(mergesort_k"numbers"], retain);
           graph.setTileMapping(mergesort_k, i);
 
         }
@@ -202,7 +213,13 @@ int main(int argc, char *argv[]) {
 
     
   graph.createHostWrite("list-write", initial_list);
-  graph.createHostRead("list-read", initial_list.slice(0, k));
+  if (retain == numbers_per_tile * 2) {
+     graph.createHostRead("list-read", initial_list.slice(0, k));
+  } else {
+    graph.createHostRead("list-read-1", initial_list.slice(0, k / 2));
+    graph.createHostRead("list-read-2", initial_list.slice(numbers_per_tile, numbers_per_tile + k / 2));
+  }
+  
 
   clock_gettime(CLOCK_REALTIME, &compile_start);
   Engine engine(graph, prog, OptionFlags{{"debug.retainDebugInformation", "true"}});
@@ -214,7 +231,13 @@ int main(int argc, char *argv[]) {
   clock_gettime(CLOCK_REALTIME, &engine_start);
   engine.run(0);
   clock_gettime(CLOCK_REALTIME, &engine_stop);
-  engine.readTensor("list-read", input_list.data(), input_list.data() + input_list.size());
+  if (retain == numbers_per_tile * 2) {
+    engine.readTensor("list-read", input_list.data(), input_list.data() + k);
+  } else {
+     engine.readTensor("list-read-1", input_list.data(), input_list.data() + k / 2);
+      engine.readTensor("list-read-2", input_list.data() + k/2, input_list.data() + k);
+  }
+  
 
   clock_gettime(CLOCK_REALTIME, &complete_stop);
   
