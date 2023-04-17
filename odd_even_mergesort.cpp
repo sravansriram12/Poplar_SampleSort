@@ -61,7 +61,8 @@ int main(int argc, char *argv[]) {
     ipuModel.relativeSyncDelay = IPUModel::RelativeSyncDelayType::NO_DELAY;
     device = ipuModel.createDevice();
   }
-
+  
+  prog.add(PrintTensor(initial_list.slice(0, k)));
 
   srand48(0);
   auto input_list = std::vector<int>(n);
@@ -161,10 +162,14 @@ int main(int argc, char *argv[]) {
     }
 
     
+
+    
     for (int i = 0; i < p_in_use; i++) {
         prog.add(Execute(cs_even));
         prog.add(Execute(cs_odd));
     } 
+
+    prog.add(PrintTensor(initial_list.slice(0, k)));
 
     clock_gettime(CLOCK_REALTIME, &cpu_stop);
 
