@@ -136,7 +136,7 @@ int main(int argc, char *argv[]) {
 
         graph.setTileMapping(mergesort_vtx, i);
 
-         if (i >= p / 2 - 1) {
+         /*if (i >= p / 2 - 1) {
             VertexRef mergesort_vtx2 = graph.addVertex(cs_even_ext, "MergeSort");
             graph.connect(mergesort_vtx2["arr1"], initial_list.slice(nums, end_index1));
             graph.connect(mergesort_vtx2["arr2"], initial_list.slice(nums2, end_index2));
@@ -144,8 +144,8 @@ int main(int argc, char *argv[]) {
             graph.connect(mergesort_vtx2["numbers"], k);
             graph.connect(mergesort_vtx2["per_tile"], numbers_per_tile * 2);
             graph.setTileMapping(mergesort_vtx2, i);
-        }
-
+        } */
+ 
         nums += (numbers_per_tile * 2);
         nums2 += (numbers_per_tile * 2);
        
@@ -169,7 +169,7 @@ int main(int argc, char *argv[]) {
         graph.connect(mergesort_vtx["numbers"], k);
         graph.connect(mergesort_vtx["per_tile"], numbers_per_tile * 2);
         graph.setTileMapping(mergesort_vtx, i);
-
+/*
         if (i >= p / 2 - 1) {
           VertexRef mergesort_vtx2 = graph.addVertex(cs_odd_ext, "MergeSort");
           graph.connect(mergesort_vtx2["arr1"], initial_list.slice(nums, end_index1));
@@ -178,7 +178,7 @@ int main(int argc, char *argv[]) {
           graph.connect(mergesort_vtx2["numbers"], k);
           graph.connect(mergesort_vtx2["per_tile"], numbers_per_tile * 2);
           graph.setTileMapping(mergesort_vtx2, i);
-        }
+        } */
 
         nums += (numbers_per_tile * 2);
         nums2 += (numbers_per_tile * 2);
