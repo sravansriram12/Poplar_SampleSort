@@ -252,6 +252,7 @@ int main(int argc, char *argv[]) {
   cout << "Complete time: " << complete_time << endl;
 
   for (int i = n - k; i < n; i++) {
+    cout << dup_list[i] << " " << input_list[i - n - k] << endl;
     if (dup_list[i] != input_list[i - n - k]) {
         cout << "ERROR: NOT SORTED" << endl;
         break;
