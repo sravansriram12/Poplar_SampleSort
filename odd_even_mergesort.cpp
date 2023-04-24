@@ -118,6 +118,7 @@ int main(int argc, char *argv[]) {
 
     ComputeSet cs_even = graph.addComputeSet("mergeEven");
     ComputeSet cs_even_ext = graph.addComputeSet("mergeEven_ext");
+    ComputeSet cs_even_ext2 = graph.addComputeSet("mergeEven_ext2");
 
     nums = 0;
     int nums2 = nums + numbers_per_tile;
@@ -146,6 +147,26 @@ int main(int argc, char *argv[]) {
           graph.setTileMapping(mergesort_vtx2, i);
         }
 
+        if (i <= p / 2) {
+          VertexRef mergesort_vtx2 = graph.addVertex(cs_even_ext, "MergeSort");
+          graph.connect(mergesort_vtx2["arr1"], initial_list.slice(nums, end_index1));
+          graph.connect(mergesort_vtx2["arr2"], initial_list.slice(nums2, end_index2));
+          graph.connect(mergesort_vtx2["arr3"], paddings[i]);
+          graph.connect(mergesort_vtx2["numbers"], k);
+          graph.connect(mergesort_vtx2["per_tile"], numbers_per_tile * 2);
+          graph.setTileMapping(mergesort_vtx2, i);
+        }
+
+        if (i <= p / 4) {
+          VertexRef mergesort_vtx3 = graph.addVertex(cs_even_ext2, "MergeSort");
+          graph.connect(mergesort_vtx3["arr1"], initial_list.slice(nums, end_index1));
+          graph.connect(mergesort_vtx3["arr2"], initial_list.slice(nums2, end_index2));
+          graph.connect(mergesort_vtx3["arr3"], paddings[i]);
+          graph.connect(mergesort_vtx3["numbers"], k);
+          graph.connect(mergesort_vtx3["per_tile"], numbers_per_tile * 2);
+          graph.setTileMapping(mergesort_vtx3, i);
+        }
+
         nums += (numbers_per_tile * 2);
         nums2 += (numbers_per_tile * 2);
        
@@ -153,6 +174,7 @@ int main(int argc, char *argv[]) {
 
     ComputeSet cs_odd = graph.addComputeSet("mergeOdd");
     ComputeSet cs_odd_ext = graph.addComputeSet("mergeOdd_ext");
+    ComputeSet cs_odd_ext2 = graph.addComputeSet("mergeOdd_ext2");
 
     nums = numbers_per_tile;
     nums2 = nums + numbers_per_tile;
@@ -179,6 +201,16 @@ int main(int argc, char *argv[]) {
           graph.setTileMapping(mergesort_vtx2, i);
         }
 
+        if (i <= p / 4) {
+          VertexRef mergesort_vtx3 = graph.addVertex(cs_odd_ext2, "MergeSort");
+          graph.connect(mergesort_vtx3["arr1"], initial_list.slice(nums, end_index1));
+          graph.connect(mergesort_vtx3["arr2"], initial_list.slice(nums2, end_index2));
+          graph.connect(mergesort_vtx3["arr3"], paddings[i]);
+          graph.connect(mergesort_vtx3["numbers"], k);
+          graph.connect(mergesort_vtx3["per_tile"], numbers_per_tile * 2);
+          graph.setTileMapping(mergesort_vtx3, i);
+        }
+
         nums += (numbers_per_tile * 2);
         nums2 += (numbers_per_tile * 2);
     }
@@ -191,9 +223,14 @@ int main(int argc, char *argv[]) {
         prog.add(Execute(cs_odd));
     } 
 
-    for (int i = 0; i < p_in_use / 2; i++) {
+    for (int i = 0; i < p_in_use / 4; i++) {
         prog.add(Execute(cs_even_ext));
         prog.add(Execute(cs_odd_ext));
+    }
+
+    for (int i = 0; i < p_in_use / 4; i++) {
+        prog.add(Execute(cs_even_ext2));
+        prog.add(Execute(cs_odd_ext2));
     }
 
     clock_gettime(CLOCK_REALTIME, &cpu_stop);
