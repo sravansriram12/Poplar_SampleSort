@@ -170,7 +170,8 @@ int main(int argc, char *argv[]) {
     } 
 
     clock_gettime(CLOCK_REALTIME, &cpu_stop);
-
+  cout << numbers_per_tile << endl;
+  cout << k / 2 << endl;
     
   graph.createHostWrite("list-write", initial_list);
   if (k >= numbers_per_tile * 2) {
