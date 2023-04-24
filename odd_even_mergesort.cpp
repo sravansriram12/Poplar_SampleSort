@@ -191,11 +191,11 @@ int main(int argc, char *argv[]) {
         prog.add(Execute(cs_even));
         prog.add(Execute(cs_odd));
     } 
-
+/*
     for (int i = 0; i < p_in_use / 2 + 1; i++) {
         prog.add(Execute(cs_even_ext));
         prog.add(Execute(cs_odd_ext));
-    } 
+    }  */
 
     prog.add(PrintTensor(initial_list));
 
