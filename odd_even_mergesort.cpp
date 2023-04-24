@@ -147,16 +147,6 @@ int main(int argc, char *argv[]) {
           graph.setTileMapping(mergesort_vtx2, i);
         }
 
-        if (i <= p / 2) {
-          VertexRef mergesort_vtx2 = graph.addVertex(cs_even_ext, "MergeSort");
-          graph.connect(mergesort_vtx2["arr1"], initial_list.slice(nums, end_index1));
-          graph.connect(mergesort_vtx2["arr2"], initial_list.slice(nums2, end_index2));
-          graph.connect(mergesort_vtx2["arr3"], paddings[i]);
-          graph.connect(mergesort_vtx2["numbers"], k);
-          graph.connect(mergesort_vtx2["per_tile"], numbers_per_tile * 2);
-          graph.setTileMapping(mergesort_vtx2, i);
-        }
-
         if (i <= p / 4) {
           VertexRef mergesort_vtx3 = graph.addVertex(cs_even_ext2, "MergeSort");
           graph.connect(mergesort_vtx3["arr1"], initial_list.slice(nums, end_index1));
