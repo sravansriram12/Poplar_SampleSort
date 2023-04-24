@@ -197,6 +197,8 @@ int main(int argc, char *argv[]) {
         prog.add(Execute(cs_odd_ext));
     } 
 
+    prog.add(PrintTensor(initial_list));
+
     clock_gettime(CLOCK_REALTIME, &cpu_stop);
 
     
