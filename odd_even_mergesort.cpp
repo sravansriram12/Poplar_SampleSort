@@ -117,6 +117,7 @@ int main(int argc, char *argv[]) {
     prog.add(Execute(cs));
 
     ComputeSet cs_even = graph.addComputeSet("mergeEven");
+    ComputeSet cs_even_ext = graph.addComputeSet("mergeEven_ext");
 
     nums = 0;
     int nums2 = nums + numbers_per_tile;
@@ -135,12 +136,24 @@ int main(int argc, char *argv[]) {
 
         graph.setTileMapping(mergesort_vtx, i);
 
+         if (i <= p / 2 - 1) {
+            VertexRef mergesort_vtx = graph.addVertex(cs_even_ext, "MergeSort");
+            graph.connect(mergesort_vtx["arr1"], initial_list.slice(nums, end_index1));
+            graph.connect(mergesort_vtx["arr2"], initial_list.slice(nums2, end_index2));
+            graph.connect(mergesort_vtx["arr3"], paddings[i]);
+            graph.connect(mergesort_vtx["numbers"], k);
+            graph.connect(mergesort_vtx["per_tile"], numbers_per_tile * 2);
+            graph.setTileMapping(mergesort_vtx, i);
+        }
+
         nums += (numbers_per_tile * 2);
         nums2 += (numbers_per_tile * 2);
        
     }
 
     ComputeSet cs_odd = graph.addComputeSet("mergeOdd");
+    ComputeSet cs_odd_ext = graph.addComputeSet("mergeOdd_ext");
+
 
     nums = numbers_per_tile;
     nums2 = nums + numbers_per_tile;
@@ -157,6 +170,16 @@ int main(int argc, char *argv[]) {
         graph.connect(mergesort_vtx["per_tile"], numbers_per_tile * 2);
         graph.setTileMapping(mergesort_vtx, i);
 
+        if (i <= p / 2 - 1) {
+          VertexRef mergesort_vtx = graph.addVertex(cs_odd_ext, "MergeSort");
+          graph.connect(mergesort_vtx["arr1"], initial_list.slice(nums, end_index1));
+          graph.connect(mergesort_vtx["arr2"], initial_list.slice(nums2, end_index2));
+          graph.connect(mergesort_vtx["arr3"], paddings[i]);
+          graph.connect(mergesort_vtx["numbers"], k);
+          graph.connect(mergesort_vtx["per_tile"], numbers_per_tile * 2);
+          graph.setTileMapping(mergesort_vtx, i);
+        }
+
         nums += (numbers_per_tile * 2);
         nums2 += (numbers_per_tile * 2);
     }
@@ -164,9 +187,14 @@ int main(int argc, char *argv[]) {
     
 
     
-    for (int i = 0; i < p_in_use; i++) {
+    for (int i = 0; i < p_in_use / 2; i++) {
         prog.add(Execute(cs_even));
         prog.add(Execute(cs_odd));
+    } 
+
+    for (int i = 0; i < p_in_use / 2; i++) {
+        prog.add(Execute(cs_even_ext));
+        prog.add(Execute(cs_odd_ext));
     } 
 
     clock_gettime(CLOCK_REALTIME, &cpu_stop);
@@ -176,8 +204,8 @@ int main(int argc, char *argv[]) {
   if (k >= numbers_per_tile * 2) {
      graph.createHostRead("list-read", initial_list.slice(0, k));
   } else {
-    graph.createHostRead("list-read-1", initial_list.slice(0, k / 2));
-    graph.createHostRead("list-read-2", initial_list.slice(numbers_per_tile, numbers_per_tile + k / 2));
+    graph.createHostRead("list-read-1", initial_list.slice(n - (2 * numbers_per_tile), n - (2 * numbers_per_tile) + k / 2));
+    graph.createHostRead("list-read-2", initial_list.slice(n - numbers_per_tile, n - numbers_per_tile + k / 2));
   }
   
 
@@ -223,8 +251,8 @@ int main(int argc, char *argv[]) {
   cout << "Engine time: " << engine_time << endl;
   cout << "Complete time: " << complete_time << endl;
 
-  for (int i = 0; i < k; i++) {
-    if (dup_list[i] != input_list[i]) {
+  for (int i = n - k; i < n; i++) {
+    if (dup_list[i] != input_list[i - n - k]) {
         cout << "ERROR: NOT SORTED" << endl;
         break;
     }
