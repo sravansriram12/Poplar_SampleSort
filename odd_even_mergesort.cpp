@@ -116,9 +116,10 @@ int main(int argc, char *argv[]) {
   
     prog.add(Execute(cs));
 
+
+    /*
+
     ComputeSet cs_even = graph.addComputeSet("mergeEven");
-    ComputeSet cs_even_ext = graph.addComputeSet("mergeEven_ext");
-    ComputeSet cs_even_ext2 = graph.addComputeSet("mergeEven_ext2");
 
     nums = 0;
     int nums2 = nums + numbers_per_tile;
@@ -137,25 +138,7 @@ int main(int argc, char *argv[]) {
 
         graph.setTileMapping(mergesort_vtx, i);
 
-        if (i <= p / 2) {
-          VertexRef mergesort_vtx2 = graph.addVertex(cs_even_ext, "MergeSort");
-          graph.connect(mergesort_vtx2["arr1"], initial_list.slice(nums, end_index1));
-          graph.connect(mergesort_vtx2["arr2"], initial_list.slice(nums2, end_index2));
-          graph.connect(mergesort_vtx2["arr3"], paddings[i]);
-          graph.connect(mergesort_vtx2["numbers"], k);
-          graph.connect(mergesort_vtx2["per_tile"], numbers_per_tile * 2);
-          graph.setTileMapping(mergesort_vtx2, i);
-        }
-
-        if (i <= p / 4) {
-          VertexRef mergesort_vtx3 = graph.addVertex(cs_even_ext2, "MergeSort");
-          graph.connect(mergesort_vtx3["arr1"], initial_list.slice(nums, end_index1));
-          graph.connect(mergesort_vtx3["arr2"], initial_list.slice(nums2, end_index2));
-          graph.connect(mergesort_vtx3["arr3"], paddings[i]);
-          graph.connect(mergesort_vtx3["numbers"], k);
-          graph.connect(mergesort_vtx3["per_tile"], numbers_per_tile * 2);
-          graph.setTileMapping(mergesort_vtx3, i);
-        }
+   
 
         nums += (numbers_per_tile * 2);
         nums2 += (numbers_per_tile * 2);
@@ -163,8 +146,6 @@ int main(int argc, char *argv[]) {
     }
 
     ComputeSet cs_odd = graph.addComputeSet("mergeOdd");
-    ComputeSet cs_odd_ext = graph.addComputeSet("mergeOdd_ext");
-    ComputeSet cs_odd_ext2 = graph.addComputeSet("mergeOdd_ext2");
 
     nums = numbers_per_tile;
     nums2 = nums + numbers_per_tile;
@@ -181,26 +162,6 @@ int main(int argc, char *argv[]) {
         graph.connect(mergesort_vtx["per_tile"], numbers_per_tile * 2);
         graph.setTileMapping(mergesort_vtx, i);
 
-        if (i <= p / 2) {
-          VertexRef mergesort_vtx2 = graph.addVertex(cs_odd_ext, "MergeSort");
-          graph.connect(mergesort_vtx2["arr1"], initial_list.slice(nums, end_index1));
-          graph.connect(mergesort_vtx2["arr2"], initial_list.slice(nums2, end_index2));
-          graph.connect(mergesort_vtx2["arr3"], paddings[i]);
-          graph.connect(mergesort_vtx2["numbers"], k);
-          graph.connect(mergesort_vtx2["per_tile"], numbers_per_tile * 2);
-          graph.setTileMapping(mergesort_vtx2, i);
-        }
-
-        if (i <= p / 4) {
-          VertexRef mergesort_vtx3 = graph.addVertex(cs_odd_ext2, "MergeSort");
-          graph.connect(mergesort_vtx3["arr1"], initial_list.slice(nums, end_index1));
-          graph.connect(mergesort_vtx3["arr2"], initial_list.slice(nums2, end_index2));
-          graph.connect(mergesort_vtx3["arr3"], paddings[i]);
-          graph.connect(mergesort_vtx3["numbers"], k);
-          graph.connect(mergesort_vtx3["per_tile"], numbers_per_tile * 2);
-          graph.setTileMapping(mergesort_vtx3, i);
-        }
-
         nums += (numbers_per_tile * 2);
         nums2 += (numbers_per_tile * 2);
     }
@@ -208,19 +169,37 @@ int main(int argc, char *argv[]) {
     
 
     
-    for (int i = 0; i < p_in_use / 2; i++) {
+    for (int i = 0; i < p_in_use; i++) {
         prog.add(Execute(cs_even));
         prog.add(Execute(cs_odd));
-    } 
+    }  */
 
-    for (int i = 0; i < p_in_use / 4; i++) {
-        prog.add(Execute(cs_even_ext));
-        prog.add(Execute(cs_odd_ext));
+
+    vector<int> tiles(p_in_use);
+    for (int i = 0; i < p_in_use; i++) {
+      p_in_use[i] = i;
     }
 
-    for (int i = 0; i < p_in_use / 4; i++) {
-        prog.add(Execute(cs_even_ext2));
-        prog.add(Execute(cs_odd_ext2));
+    for (int i = 0; i < ceil(log(p_in_use, 2)); i++) {
+      ComputeSet csbinary = graph.addComputeSet("csbinary");
+      for (int j = 0; j < p_in_use.size(); j += pow(2, i) * 2) {
+          if (j % pow(2, i) == 0) {
+            int end_index1 = std::min(n, nums + k);
+            int end_index2 = std::min(n, nums + (numbers_per_tile * pow(2, i)) + k);
+            VertexRef mergesort_vtx = graph.addVertex(csbinary, "MergeSort");
+            graph.connect(mergesort_vtx["arr1"], initial_list.slice(nums, nums + end_index1));
+            graph.connect(mergesort_vtx["arr2"], initial_list.slice(nums + (numbers_per_tile * pow(2, i)), nums + (numbers_per_tile * pow(2, i)) + end_index2));
+            graph.connect(mergesort_vtx["arr3"], paddings[i]);
+            graph.connect(mergesort_vtx["numbers"], k);
+            graph.connect(mergesort_vtx["per_tile"], k * 2);
+            graph.setTileMapping(mergesort_vtx, j);
+
+          }
+
+          nums += (numbers_per_tile * 2);
+          nums2 += (numbers_per_tile * 2);
+      }
+      prog.add(csbinary)
     }
 
     clock_gettime(CLOCK_REALTIME, &cpu_stop);
@@ -230,8 +209,7 @@ int main(int argc, char *argv[]) {
   if (k >= numbers_per_tile * 2) {
      graph.createHostRead("list-read", initial_list.slice(0, k));
   } else {
-    graph.createHostRead("list-read-1", initial_list.slice(0, k / 2));
-    graph.createHostRead("list-read-2", initial_list.slice(numbers_per_tile, numbers_per_tile + k / 2));
+    graph.createHostRead("list-read-1", initial_list.slice(0, k));
   }
   
 
@@ -248,8 +226,7 @@ int main(int argc, char *argv[]) {
   if (k >= numbers_per_tile * 2) {
     engine.readTensor("list-read", input_list.data(), input_list.data() + k);
   } else {
-     engine.readTensor("list-read-1", input_list.data(), input_list.data() + k / 2);
-      engine.readTensor("list-read-2", input_list.data() + k/2, input_list.data() + k);
+    engine.readTensor("list-read-1", input_list.data(), input_list.data() + k);
   }
   
 
