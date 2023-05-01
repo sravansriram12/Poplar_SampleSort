@@ -182,10 +182,10 @@ int main(int argc, char *argv[]) {
           if (j % int(pow(2, i)) == 0) {
             int end_index1 = std::min(n, nums + k);
             int end_index2 = std::min(n, nums + (numbers_per_tile * int(pow(2, i))) + k);
-            print(nums);
-            print(end_index1);
-            print(nums + (numbers_per_tile * pow(2, i)));
-            print(nums + (numbers_per_tile * int(pow(2, i))) + end_index2);
+            cout << nums << endl;;
+            cout << end_index1 << endl;
+            cout << nums + (numbers_per_tile * pow(2, i)) << endl;
+            cout << nums + (numbers_per_tile * int(pow(2, i))) + end_index2 << endl;
             VertexRef mergesort_vtx = graph.addVertex(csbinary, "MergeSort");
             graph.connect(mergesort_vtx["arr1"], initial_list.slice(nums, nums + end_index1));
             graph.connect(mergesort_vtx["arr2"], initial_list.slice(nums + (numbers_per_tile * pow(2, i)), nums + (numbers_per_tile * int(pow(2, i))) + end_index2));
