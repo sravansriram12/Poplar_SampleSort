@@ -198,7 +198,7 @@ int main(int argc, char *argv[]) {
 
           nums += (numbers_per_tile * 2);
       }
-      prog.add(csbinary);
+      prog.add(Execute(csbinary));
     }
 
     clock_gettime(CLOCK_REALTIME, &cpu_stop);
