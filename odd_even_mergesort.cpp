@@ -191,7 +191,7 @@ int main(int argc, char *argv[]) {
 
           }
 
-          nums += (numbers_per_tile * int(pow(2, i)));
+          nums += (numbers_per_tile * 2 * int(pow(2, i)));
       }
       prog.add(Execute(csbinary));
     }
