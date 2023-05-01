@@ -175,15 +175,11 @@ int main(int argc, char *argv[]) {
     }  */
 
 
-    vector<int> tiles(p_in_use);
-    for (int i = 0; i < p_in_use; i++) {
-      p_in_use[i] = i;
-    }
 
     for (int i = 0; i < ceil(log(p_in_use, 2)); i++) {
       ComputeSet csbinary = graph.addComputeSet("csbinary");
       for (int j = 0; j < p_in_use.size(); j += pow(2, i) * 2) {
-          if (j % pow(2, i) == 0) {
+          if (j % int(pow(2, i)) == 0) {
             int end_index1 = std::min(n, nums + k);
             int end_index2 = std::min(n, nums + (numbers_per_tile * pow(2, i)) + k);
             VertexRef mergesort_vtx = graph.addVertex(csbinary, "MergeSort");
