@@ -176,7 +176,7 @@ int main(int argc, char *argv[]) {
 
     for (int i = 0; i < ceil(log2(p_in_use)); i++) {
       nums = 0;
-      ComputeSet csbinary = graph.addComputeSet("csbinary"+str(i));
+      ComputeSet csbinary = graph.addComputeSet("csbinary"+to_string(i));
       for (int j = 0; j < p_in_use; j += pow(2, i) * 2) {
           if (j % int(pow(2, i)) == 0) {
             int end_index1 = std::min(n, nums + k);
@@ -193,7 +193,7 @@ int main(int argc, char *argv[]) {
 
           nums += (numbers_per_tile * int(pow(2, i)));
       }
-      prog.add(Execute(csbinary)+str(i));
+      prog.add(Execute(csbinary)+to_string(i));
     }
 
     clock_gettime(CLOCK_REALTIME, &cpu_stop);
