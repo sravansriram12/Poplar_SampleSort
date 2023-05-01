@@ -178,13 +178,13 @@ int main(int argc, char *argv[]) {
 
     for (int i = 0; i < ceil(log(p_in_use, 2)); i++) {
       ComputeSet csbinary = graph.addComputeSet("csbinary");
-      for (int j = 0; j < p_in_use.size(); j += pow(2, i) * 2) {
+      for (int j = 0; j < p_in_use; j += pow(2, i) * 2) {
           if (j % int(pow(2, i)) == 0) {
             int end_index1 = std::min(n, nums + k);
-            int end_index2 = std::min(n, nums + (numbers_per_tile * pow(2, i)) + k);
+            int end_index2 = std::min(n, nums + (numbers_per_tile * int(pow(2, i))) + k);
             VertexRef mergesort_vtx = graph.addVertex(csbinary, "MergeSort");
             graph.connect(mergesort_vtx["arr1"], initial_list.slice(nums, nums + end_index1));
-            graph.connect(mergesort_vtx["arr2"], initial_list.slice(nums + (numbers_per_tile * pow(2, i)), nums + (numbers_per_tile * pow(2, i)) + end_index2));
+            graph.connect(mergesort_vtx["arr2"], initial_list.slice(nums + (numbers_per_tile * pow(2, i)), nums + (numbers_per_tile * int(pow(2, i))) + end_index2));
             graph.connect(mergesort_vtx["arr3"], paddings[i]);
             graph.connect(mergesort_vtx["numbers"], k);
             graph.connect(mergesort_vtx["per_tile"], k * 2);
