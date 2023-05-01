@@ -174,9 +174,8 @@ int main(int argc, char *argv[]) {
         prog.add(Execute(cs_odd));
     }  */
 
-   nums = 0;
-
     for (int i = 0; i < ceil(log2(p_in_use)); i++) {
+      nums = 0;
       ComputeSet csbinary = graph.addComputeSet("csbinary");
       for (int j = 0; j < p_in_use; j += pow(2, i) * 2) {
           if (j % int(pow(2, i)) == 0) {
