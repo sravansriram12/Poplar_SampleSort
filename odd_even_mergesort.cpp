@@ -116,6 +116,12 @@ int main(int argc, char *argv[]) {
   
     prog.add(Execute(cs));
 
+     for(int i = 0; i < p_in_use; i++) {
+        int end_index = std::min(n, nums + numbers_per_tile);
+        prog.add(WriteUndef(initial_list.slice(nums + k + 1, end_index));
+        nums += numbers_per_tile;
+    }
+
 
     /*
 
