@@ -86,7 +86,7 @@ int main(int argc, char *argv[]) {
   
   clock_gettime(CLOCK_REALTIME, &cpu_start);
   Tensor initial_list = graph.addVariable(INT, {n}, "initial_list");
-  int p = 1472;
+  int p = 1024;
   int numbers_per_tile = ceil(float(n) / p);
   int p_in_use = ceil(float(n) / numbers_per_tile);
 
