@@ -174,16 +174,20 @@ int main(int argc, char *argv[]) {
         prog.add(Execute(cs_odd));
     }  */
 
+    std::vector<ComputeSet> csbinary;
+     for (int i = 0; i < ceil(log2(p_in_use)); i++) {
+        csbinary.push_back(graph.addComputeSet("csbinary"+to_string(i)));
+     }
+
     for (int i = 0; i < ceil(log2(p_in_use)); i++) {
       nums = 0;
-      ComputeSet csbinary = graph.addComputeSet("csbinary"+to_string(i));
       for (int j = 0; j < p_in_use; j += pow(2, i) * 2) {
           if (j % int(pow(2, i)) == 0) {
             int end_index1 = std::min(n, nums + k);
             int end_index2 = std::min(n, nums + (numbers_per_tile * int(pow(2, i))) + k);
             cout << nums << " " << end_index1 << endl;
             cout << nums + (numbers_per_tile * int(pow(2, i))) << " " << end_index2 << endl;
-            VertexRef mergesort_vtx = graph.addVertex(csbinary, "MergeSort");
+            VertexRef mergesort_vtx = graph.addVertex(csbinary[i], "MergeSort");
             graph.connect(mergesort_vtx["arr1"], initial_list.slice(nums, end_index1));
             graph.connect(mergesort_vtx["arr2"], initial_list.slice(nums + (numbers_per_tile * int(pow(2, i))), end_index2));
             graph.connect(mergesort_vtx["arr3"], paddings[i]);
@@ -194,8 +198,12 @@ int main(int argc, char *argv[]) {
 
           nums += (numbers_per_tile * 2 * int(pow(2, i)));
       }
-      prog.add(Execute(csbinary));
+      
     }
+
+     for (int i = 0; i < ceil(log2(p_in_use)); i++) {
+        prog.add(Execute(csbinary[i]));
+     }
 
     clock_gettime(CLOCK_REALTIME, &cpu_stop);
 
