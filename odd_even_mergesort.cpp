@@ -190,7 +190,7 @@ int main(int argc, char *argv[]) {
             VertexRef mergesort_vtx = graph.addVertex(csbinary[i], "MergeSort");
             graph.connect(mergesort_vtx["arr1"], initial_list.slice(nums, end_index1));
             graph.connect(mergesort_vtx["arr2"], initial_list.slice(nums + (numbers_per_tile * int(pow(2, i))), end_index2));
-            graph.connect(mergesort_vtx["arr3"], paddings[i]);
+            graph.connect(mergesort_vtx["arr3"], paddings[j]);
             graph.connect(mergesort_vtx["numbers"], k);
             graph.connect(mergesort_vtx["per_tile"], k * 2);
             graph.setTileMapping(mergesort_vtx, j);
